@@ -37,6 +37,13 @@ fn make_subcommands() -> Vec<Command> {
                 .long("location")
                 .short('l')
                 .help("a valid URL to where this module should be located"),
+        )
+        .arg(
+            Arg::new("validate")
+                .value_parser(clap::value_parser!(PathBuf))
+                .long("validate")
+                .help("a path on disk to a YAML file which declares validation requirements")
+                .default_value("mod.yaml"),
         );
 
     let delete = clap::Command::new("delete")
@@ -106,6 +113,15 @@ fn make_subcommands() -> Vec<Command> {
                 .help("adds a search parameter to match on `strings`"),
         );
 
+    let validate = clap::Command::new("validate")
+        .about("Validate a module using a module requirement file.")
+        .arg(
+            Arg::new("path")
+                .long("path")
+                .short('p')
+                .help("a path on disk to a YAML file which declares validation requirements"),
+        );
+
     let yank = clap::Command::new("yank")
         .about("Mark a module version as yanked (unavailable).")
         .arg(
@@ -121,5 +137,5 @@ fn make_subcommands() -> Vec<Command> {
                 .help("the version of a module entry in Modsurfer (if no version exists, this command has no effect)",
         ));
 
-    vec![create, delete, get, list, search, yank]
+    vec![create, delete, get, list, search, validate, yank]
 }
