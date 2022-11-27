@@ -1,2 +1,11 @@
 [workspace]
-members = [ "modsurfer-cli" ]
+members = ["modsurfer-cli"]
+
+[workspace.dependencies]
+anyhow = "1"
+modserver-convert = { path = "../private-modsurfer/modserver-convert", version = "0.1" }
+modsurfer = { path = "../private-modsurfer/modsurfer", version = "0.1" }
+modsurfer-proto-v1 = { path = "../private-modsurfer/proto/v1", package = "modsurfer-proto" }
+serde = { version = "1", features = ["derive"]}
+serde_yaml = "0.9.14"
+tokio = { version = "1", features = ["full"] }
