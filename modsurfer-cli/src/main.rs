@@ -4,7 +4,10 @@ use std::path::PathBuf;
 mod cli;
 use cli::{Cli, Hash, Id, Limit, Offset, Version};
 
-fn main() {
+use modsurfer;
+
+#[tokio::main]
+async fn main() {
     let cmd = Command::new("modsurfer")
         .arg(
             Arg::new("host")
@@ -18,7 +21,7 @@ fn main() {
         .before_help("Copyright Dylibso, Inc. <support@dylib.so>")
         .subcommands(make_subcommands());
 
-    Cli::new(cmd).execute();
+    Cli::new(cmd).execute().await;
 }
 
 fn make_subcommands() -> Vec<Command> {
@@ -117,8 +120,17 @@ fn make_subcommands() -> Vec<Command> {
         .about("Validate a module using a module requirement file.")
         .arg(
             Arg::new("path")
+                .value_parser(clap::value_parser!(PathBuf))
                 .long("path")
                 .short('p')
+                .help("a path on disk to a valid WebAssembly module"),
+        )
+        .arg(
+            Arg::new("check")
+                .value_parser(clap::value_parser!(PathBuf))
+                .long("check")
+                .short('c')
+                .default_value("mod.yaml")
                 .help("a path on disk to a YAML file which declares validation requirements"),
         );
 
