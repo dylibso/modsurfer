@@ -4,8 +4,6 @@ use std::path::PathBuf;
 mod cli;
 use cli::{Cli, Hash, Id, Limit, Offset, Version};
 
-use modsurfer;
-
 #[tokio::main]
 async fn main() {
     let cmd = Command::new("modsurfer")

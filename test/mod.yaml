@@ -1,5 +1,5 @@
 validate:
-  # - url: https://github.com/wasmCloud/wash/blob/main/mod.yaml
+  # url: https://github.com/wasmCloud/wash/blob/main/mod.yaml
   wasi: false
   
   imports:
@@ -17,15 +17,16 @@ validate:
         - wasi_snapshot_preview1
 
   exports: 
-    max: 50
+    max: 150
     contains:
       - _start
+      - bar
     excludes:
       - main
       - foo
 
   size:
-    max: 1MB
+    max: 4MB
 
   complexity:
     max_risk: medium

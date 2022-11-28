@@ -814,6 +814,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c4a1e36c821dbe04574f602848a19f742f4fb3c98d40449f11bcad18d6b17421"
 
 [[package]]
+name = "human_bytes"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "39b528196c838e8b3da8b665e08c30958a6f2ede91d79f2ffcd0d4664b9c64eb"
+
+[[package]]
 name = "hyper"
 version = "0.14.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1040,8 +1046,10 @@ dependencies = [
  "chrono",
  "clap",
  "futures",
+ "human_bytes",
  "log",
  "modsurfer",
+ "parse-size",
  "protobuf",
  "reqwest",
  "serde",
@@ -1176,6 +1184,12 @@ dependencies = [
  "smallvec",
  "windows-sys 0.42.0",
 ]
+
+[[package]]
+name = "parse-size"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "944553dd59c802559559161f9816429058b869003836120e262e8caec061b7ae"
 
 [[package]]
 name = "percent-encoding"

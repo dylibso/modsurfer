@@ -10,7 +10,9 @@ anyhow = { workspace = true }
 chrono = "0.4.22"
 clap = { version = "4.0.18" }
 futures = "0.3.25"
+human_bytes = "0.4"
 log = "0.4.17"
+parse-size = "1"
 protobuf = "3.2.0"
 reqwest = "0.11.12"
 serde = { workspace = true }
