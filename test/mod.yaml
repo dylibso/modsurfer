@@ -6,17 +6,23 @@ validate:
     contains:
       - http_get
       - log_message
+      - proc_exit
+    excludes: 
+      - fd_write
     namespace:
-      allow:
+      contains:
         - env
-        - wasi_snapshot_preview1
-      block:
+      excludes:
         - some_future_deprecated_module_name
+        - wasi_snapshot_preview1
 
   exports: 
     max: 50
     contains:
       - _start
+    excludes:
+      - main
+      - foo
 
   size:
     max: 1MB
