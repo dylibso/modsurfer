@@ -74,12 +74,24 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
         .read_to_end(&mut buf)
         .await?;
 
-    let validation: Validation = serde_yaml::from_slice(&buf)?;
+    let mut validation: Validation = serde_yaml::from_slice(&buf)?;
     if let Some(url) = validation.validate.url {
         // fetch remote validation file
         println!("Fetching validation schema from URL: {}", url);
 
+        let resp = reqwest::get(&url).await?;
+        if !resp.status().is_success() {
+            anyhow::bail!(
+                "Failed to make request for remote validation schema: {}",
+                url
+            );
+        }
+
+        buf.clear();
+        buf = resp.bytes().await?.into();
+
         // parse the file again & reassign `validation`
+        validation = serde_yaml::from_slice(&buf)?;
     }
 
     let mut report = Report::new();

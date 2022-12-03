@@ -1,8 +1,10 @@
 #![allow(unused)]
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::HashMap, ffi::OsString, path::PathBuf};
 
+use anyhow::Result;
 use url::Url;
 
+use super::get::get_module;
 use super::validate::validate_module;
 
 pub type Id = i64;
@@ -45,31 +47,28 @@ pub enum Subcommand {
 }
 
 impl Cli {
-    pub fn new(mut cmd: clap::Command) -> Self {
+    pub fn new(mut cmd: clap::Command, host: Url) -> Self {
         let help = cmd.render_long_help().to_string();
-        let host = cmd
-            .clone()
-            .get_matches_from(["host"])
-            .get_one::<Url>("host")
-            .expect("host is present or default")
-            .clone();
 
         Self { cmd, help, host }
     }
 
-    pub async fn execute(&self) {
+    pub async fn execute(&self) -> Result<()> {
         match self.cmd.clone().get_matches().subcommand() {
-            Some(x) => self.run(x.into()).await.unwrap(),
-            _ => println!("{}", self.help),
+            Some(x) => self.run(x.into()).await,
+            _ => anyhow::bail!("{}", self.help),
         }
     }
 
-    async fn run(&self, sub: Subcommand) -> anyhow::Result<()> {
+    async fn run(&self, sub: Subcommand) -> Result<()> {
         match sub {
             Subcommand::Unknown => unimplemented!("Unknown subcommand.\n\n{}", self.help),
             Subcommand::Create(_, _, _, _) => todo!(),
             Subcommand::Delete(_) => todo!(),
-            Subcommand::Get(id) => todo!("make request for module ID: {}", id),
+            Subcommand::Get(id) => {
+                let module = get_module(&self.host, id).await?;
+                Ok(())
+            }
             Subcommand::List(_, _) => todo!(),
             Subcommand::Search(_, _, _, _, _) => todo!(),
             Subcommand::Validate(file, check) => validate_module(&file, &check).await,

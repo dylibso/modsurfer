@@ -1,25 +1,29 @@
+use anyhow::Result;
 use clap::{Arg, ArgAction, Command};
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
+use url::Url;
 
 mod cli;
 use cli::{Cli, Hash, Id, Limit, Offset, Version};
 
+const BASE_URL_ENV: &'static str = "MODSURFER_BASE_URL";
+const DEFAULT_BASE_URL: &'static str = "http://localhost:1739";
+
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
+    // get MODSURFER_BASE_URL environment variable if set
+    let base_url = Url::parse(
+        env::var_os(BASE_URL_ENV)
+            .unwrap_or_else(|| DEFAULT_BASE_URL.into())
+            .to_str()
+            .unwrap_or(DEFAULT_BASE_URL),
+    )?;
     let cmd = Command::new("modsurfer")
-        .arg(
-            Arg::new("host")
-                .value_parser(clap::value_parser!(url::Url))
-                .long("host")
-                .help("Define the API host where Modsurfer CLI should connect.")
-                .value_name("BASE_URL")
-                .default_value("http://localhost:1739"),
-        )
         .about("Modsurfer CLI is used to interact with the HTTP API.")
         .before_help("Copyright Dylibso, Inc. <support@dylib.so>")
         .subcommands(make_subcommands());
 
-    Cli::new(cmd).execute().await;
+    Cli::new(cmd, base_url).execute().await
 }
 
 fn make_subcommands() -> Vec<Command> {

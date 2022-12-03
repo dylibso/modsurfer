@@ -20,6 +20,8 @@ serde_yaml = { workspace = true }
 tokio = { workspace = true }
 url = "2.3.1"
 modsurfer = { workspace = true }
+modsurfer-proto-v1 = { workspace = true }
+modserver-convert = { workspace = true }
 
 [[bin]]
 name = "modsurfer"

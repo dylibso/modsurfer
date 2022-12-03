@@ -1019,6 +1019,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "modserver-convert"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "modsurfer",
+ "modsurfer-proto",
+ "protobuf",
+ "url",
+]
+
+[[package]]
 name = "modsurfer"
 version = "0.1.0"
 dependencies = [
@@ -1048,7 +1059,9 @@ dependencies = [
  "futures",
  "human_bytes",
  "log",
+ "modserver-convert",
  "modsurfer",
+ "modsurfer-proto",
  "parse-size",
  "protobuf",
  "reqwest",
@@ -1056,6 +1069,13 @@ dependencies = [
  "serde_yaml",
  "tokio",
  "url",
+]
+
+[[package]]
+name = "modsurfer-proto"
+version = "0.1.0"
+dependencies = [
+ "protobuf",
 ]
 
 [[package]]
