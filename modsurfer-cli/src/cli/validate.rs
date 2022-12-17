@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, path::PathBuf};
+use std::{collections::BTreeMap, fmt::Display, path::PathBuf};
 
 use anyhow::Result;
 use human_bytes::human_bytes;
@@ -46,9 +46,37 @@ struct Size {
 }
 
 #[derive(Debug)]
+struct FailureDetail {
+    actual: String,
+    expected: String,
+}
+
+#[derive(Debug)]
 struct Report {
     // k/v pair of the dot-separated path to validation field and expectation info
-    fails: BTreeMap<String, String>,
+    fails: BTreeMap<String, FailureDetail>,
+}
+
+// TODO: change this to implement some table view
+impl Display for Report {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let _ = f.write_str("Modsurfer Validation Report\n");
+        let _ = f.write_str("---------------------------\n");
+
+        if self.fails.is_empty() {
+            let _ = f.write_str("All expectations met!\n");
+            return Ok(());
+        }
+
+        self.fails.iter().for_each(|fail| {
+            let _ = f.write_str(&format!(
+                "'{}': expected: '{}', actual: '{}'\n",
+                fail.0, fail.1.expected, fail.1.actual
+            ));
+        });
+
+        Ok(())
+    }
 }
 
 impl Report {
@@ -58,10 +86,25 @@ impl Report {
         }
     }
 
-    fn validate_fn(&mut self, name: &str, expects: &str, f: &dyn Fn() -> bool) {
-        if !f() {
-            self.fails.insert(name.to_string(), expects.to_string());
+    fn validate_fn(&mut self, name: &str, expected: String, actual: String, valid: bool) {
+        if !valid {
+            self.fails
+                .insert(name.to_string(), FailureDetail { actual, expected });
         }
+    }
+}
+
+struct Exist(bool);
+
+impl Display for Exist {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.0 {
+            let _ = f.write_str("exist");
+        } else {
+            let _ = f.write_str("not exist");
+        }
+
+        Ok(())
     }
 }
 
@@ -98,14 +141,18 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
 
     // WASI
     if let Some(wasi) = validation.validate.wasi {
-        if module
+        let actual = module
             .get_import_namespaces()
-            .contains(&"wasi_snapshot_preview1")
-        {
-            report.validate_fn("wasi", "true", &|| wasi == true);
-        } else {
-            report.validate_fn("wasi", "false", &|| wasi == false);
-        }
+            .contains(&"wasi_snapshot_preview1");
+        // if module
+        //     .get_import_namespaces()
+        //     .contains(&"wasi_snapshot_preview1")
+        // {
+        //     report.validate_fn("wasi", "true", &|| wasi == true);
+        // } else {
+        //     report.validate_fn("wasi", "false", &|| wasi == false);
+        // }
+        report.validate_fn("wasi", wasi.to_string(), actual.to_string(), wasi == actual);
     }
 
     // Imports
@@ -120,39 +167,51 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
 
         if let Some(contains) = imports.contains {
             contains.iter().for_each(|name| {
-                report.validate_fn(&format!("imports.contains.{}", name), "exist", &|| {
-                    import_func_names.contains(name)
-                })
-            })
+                let test = import_func_names.contains(name);
+                report.validate_fn(
+                    &format!("imports.contains.{}", name),
+                    Exist(true).to_string(),
+                    Exist(test).to_string(),
+                    test,
+                )
+            });
         }
 
         if let Some(excludes) = imports.excludes {
             excludes.iter().for_each(|name| {
-                report.validate_fn(&format!("imports.excludes.{}", name), "not exist", &|| {
-                    !import_func_names.contains(name)
-                })
-            })
+                let test = import_func_names.contains(name);
+                report.validate_fn(
+                    &format!("imports.excludes.{}", name),
+                    Exist(false).to_string(),
+                    Exist(test).to_string(),
+                    test,
+                );
+            });
         }
 
         if let Some(namespace) = imports.namespace {
             if let Some(contains) = namespace.contains {
                 contains.iter().for_each(|name| {
+                    let test = import_module_names.contains(&name.as_str());
                     report.validate_fn(
                         &format!("imports.namespace.contains.{}", name),
-                        "exist",
-                        &|| import_module_names.contains(&name.as_str()),
+                        Exist(true).to_string(),
+                        Exist(test).to_string(),
+                        test,
                     );
-                })
+                });
             }
 
             if let Some(excludes) = namespace.excludes {
                 excludes.iter().for_each(|name| {
+                    let test = import_module_names.contains(&name.as_str());
                     report.validate_fn(
                         &format!("imports.namespace.excludes.{}", name),
-                        "not exist",
-                        &|| !import_module_names.contains(&name.as_str()),
+                        Exist(false).to_string(),
+                        Exist(test).to_string(),
+                        !test,
                     )
-                })
+                });
             }
         }
     }
@@ -166,23 +225,32 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
             .collect::<Vec<_>>();
         if let Some(max) = exports.max {
             let num = export_func_names.len() as u32;
-            report.validate_fn("exports.max", &format!("{} > {}", num, max), &|| num <= max)
+            let test = num <= max;
+            report.validate_fn("exports.max", format!("<= {max}"), num.to_string(), test)
         }
 
         if let Some(contains) = exports.contains {
             contains.iter().for_each(|name| {
-                report.validate_fn(&format!("exports.contains.{}", name), "exist", &|| {
-                    export_func_names.contains(name)
-                });
-            })
+                let test = export_func_names.contains(name);
+                report.validate_fn(
+                    &format!("exports.contains.{}", name),
+                    Exist(true).to_string(),
+                    Exist(test).to_string(),
+                    test,
+                );
+            });
         }
 
         if let Some(excludes) = exports.excludes {
             excludes.iter().for_each(|name| {
-                report.validate_fn(&format!("exports.excludes.{}", name), "not exist", &|| {
-                    !export_func_names.contains(name)
-                })
-            })
+                let test = export_func_names.contains(name);
+                report.validate_fn(
+                    &format!("exports.excludes.{}", name),
+                    Exist(false).to_string(),
+                    Exist(test).to_string(),
+                    !test,
+                );
+            });
         }
     }
 
@@ -191,13 +259,17 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
         if let Some(max) = size.max {
             let parsed = parse_size(&max).unwrap();
             let human_actual = human_bytes(module.size as f64);
-            report.validate_fn("size.max", &format!("{} > {}", human_actual, max), &|| {
-                module.size <= parsed
-            })
+            let test = module.size <= parsed;
+            report.validate_fn(
+                "size.max",
+                format!("<= {max}"),
+                human_actual.to_string(),
+                test,
+            );
         }
     }
 
-    println!("{:#?}", report);
+    println!("{report}");
 
     Ok(())
 }
