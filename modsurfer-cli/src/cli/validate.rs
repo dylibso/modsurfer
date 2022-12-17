@@ -1,6 +1,7 @@
 use std::{collections::BTreeMap, fmt::Display, path::PathBuf};
 
 use anyhow::Result;
+use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
 use human_bytes::human_bytes;
 use parse_size::parse_size;
 use serde::Deserialize;
@@ -57,24 +58,28 @@ struct Report {
     fails: BTreeMap<String, FailureDetail>,
 }
 
-// TODO: change this to implement some table view
 impl Display for Report {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let _ = f.write_str("Modsurfer Validation Report\n");
-        let _ = f.write_str("---------------------------\n");
-
         if self.fails.is_empty() {
             let _ = f.write_str("All expectations met!\n");
             return Ok(());
         }
 
+        let mut table = Table::new();
+        table.load_preset(UTF8_FULL);
+        table.apply_modifier(UTF8_SOLID_INNER_BORDERS);
+        table.set_header(vec!["Status", "Property", "Expected", "Actual"]);
+
         self.fails.iter().for_each(|fail| {
-            let _ = f.write_str(&format!(
-                "'{}': expected: '{}', actual: '{}'\n",
-                fail.0, fail.1.expected, fail.1.actual
-            ));
+            table.add_row(Row::from(vec![
+                "FAIL",
+                fail.0.as_str(),
+                fail.1.expected.as_str(),
+                fail.1.actual.as_str(),
+            ]));
         });
 
+        let _ = f.write_str(table.to_string().as_str());
         Ok(())
     }
 }
