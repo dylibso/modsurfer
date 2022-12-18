@@ -15,7 +15,7 @@ struct Validation {
 #[derive(Debug, Deserialize)]
 struct Check {
     pub url: Option<String>,
-    pub wasi: Option<bool>,
+    pub allow_wasi: Option<bool>,
     pub imports: Option<Imports>,
     pub exports: Option<Exports>,
     pub size: Option<Size>,
@@ -47,9 +47,29 @@ struct Size {
 }
 
 #[derive(Debug)]
+enum Classification {
+    AbiCompatibilty,
+    ResourceLimit,
+    Security,
+}
+
+impl Display for Classification {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Classification::AbiCompatibilty => f.write_str("ABI Compatibility")?,
+            Classification::ResourceLimit => f.write_str("Resource Limit")?,
+            Classification::Security => f.write_str("Security")?,
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
 struct FailureDetail {
     actual: String,
     expected: String,
+    severity: usize,
+    classification: Classification,
 }
 
 #[derive(Debug)]
@@ -61,25 +81,41 @@ struct Report {
 impl Display for Report {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.fails.is_empty() {
-            let _ = f.write_str("All expectations met!\n");
+            f.write_str("All expectations met!\n")?;
             return Ok(());
         }
 
         let mut table = Table::new();
         table.load_preset(UTF8_FULL);
         table.apply_modifier(UTF8_SOLID_INNER_BORDERS);
-        table.set_header(vec!["Status", "Property", "Expected", "Actual"]);
+        table.set_header(vec![
+            "Status",
+            "Property",
+            "Expected",
+            "Actual",
+            "Classification",
+            "Severity",
+        ]);
 
         self.fails.iter().for_each(|fail| {
+            const SEVERITY_MAX: usize = 10;
+            let severity = if fail.1.severity <= SEVERITY_MAX {
+                fail.1.severity
+            } else {
+                SEVERITY_MAX
+            };
+
             table.add_row(Row::from(vec![
                 "FAIL",
                 fail.0.as_str(),
                 fail.1.expected.as_str(),
                 fail.1.actual.as_str(),
+                fail.1.classification.to_string().as_str(),
+                "|".repeat(severity).as_str(),
             ]));
         });
 
-        let _ = f.write_str(table.to_string().as_str());
+        f.write_str(table.to_string().as_str())?;
         Ok(())
     }
 }
@@ -91,10 +127,25 @@ impl Report {
         }
     }
 
-    fn validate_fn(&mut self, name: &str, expected: String, actual: String, valid: bool) {
+    fn validate_fn(
+        &mut self,
+        name: &str,
+        expected: String,
+        actual: String,
+        valid: bool,
+        severity: usize,
+        classification: Classification,
+    ) {
         if !valid {
-            self.fails
-                .insert(name.to_string(), FailureDetail { actual, expected });
+            self.fails.insert(
+                name.to_string(),
+                FailureDetail {
+                    actual,
+                    expected,
+                    severity,
+                    classification,
+                },
+            );
         }
     }
 }
@@ -104,9 +155,9 @@ struct Exist(bool);
 impl Display for Exist {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.0 {
-            let _ = f.write_str("exist");
+            f.write_str("included")?;
         } else {
-            let _ = f.write_str("not exist");
+            f.write_str("excluded")?;
         }
 
         Ok(())
@@ -145,19 +196,18 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
     let mut report = Report::new();
 
     // WASI
-    if let Some(wasi) = validation.validate.wasi {
+    if let Some(allowed) = validation.validate.allow_wasi {
         let actual = module
             .get_import_namespaces()
             .contains(&"wasi_snapshot_preview1");
-        // if module
-        //     .get_import_namespaces()
-        //     .contains(&"wasi_snapshot_preview1")
-        // {
-        //     report.validate_fn("wasi", "true", &|| wasi == true);
-        // } else {
-        //     report.validate_fn("wasi", "false", &|| wasi == false);
-        // }
-        report.validate_fn("wasi", wasi.to_string(), actual.to_string(), wasi == actual);
+        report.validate_fn(
+            "allow_wasi",
+            allowed.to_string(),
+            actual.to_string(),
+            allowed == false && actual,
+            10,
+            Classification::AbiCompatibilty,
+        );
     }
 
     // Imports
@@ -178,6 +228,8 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
                     Exist(true).to_string(),
                     Exist(test).to_string(),
                     test,
+                    8,
+                    Classification::AbiCompatibilty,
                 )
             });
         }
@@ -190,6 +242,8 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
                     Exist(false).to_string(),
                     Exist(test).to_string(),
                     test,
+                    5,
+                    Classification::AbiCompatibilty,
                 );
             });
         }
@@ -203,6 +257,8 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
                         Exist(true).to_string(),
                         Exist(test).to_string(),
                         test,
+                        8,
+                        Classification::AbiCompatibilty,
                     );
                 });
             }
@@ -215,6 +271,8 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
                         Exist(false).to_string(),
                         Exist(test).to_string(),
                         !test,
+                        10,
+                        Classification::AbiCompatibilty,
                     )
                 });
             }
@@ -231,7 +289,14 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
         if let Some(max) = exports.max {
             let num = export_func_names.len() as u32;
             let test = num <= max;
-            report.validate_fn("exports.max", format!("<= {max}"), num.to_string(), test)
+            report.validate_fn(
+                "exports.max",
+                format!("<= {max}"),
+                num.to_string(),
+                test,
+                8,
+                Classification::Security,
+            );
         }
 
         if let Some(contains) = exports.contains {
@@ -242,6 +307,8 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
                     Exist(true).to_string(),
                     Exist(test).to_string(),
                     test,
+                    10,
+                    Classification::AbiCompatibilty,
                 );
             });
         }
@@ -254,6 +321,8 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
                     Exist(false).to_string(),
                     Exist(test).to_string(),
                     !test,
+                    5,
+                    Classification::Security,
                 );
             });
         }
@@ -270,9 +339,14 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
                 format!("<= {max}"),
                 human_actual.to_string(),
                 test,
+                (module.size / parsed) as usize,
+                Classification::ResourceLimit,
             );
         }
     }
+
+    // Complexity
+    // TODO
 
     println!("{report}");
 

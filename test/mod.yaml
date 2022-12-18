@@ -1,6 +1,6 @@
 validate:
   # url: https://github.com/wasmCloud/wash/blob/main/mod.yaml
-  wasi: false
+  allow_wasi: false
   
   imports:
     contains:
