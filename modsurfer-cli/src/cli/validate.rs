@@ -204,7 +204,7 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
             "allow_wasi",
             allowed.to_string(),
             actual.to_string(),
-            allowed == false && actual,
+            !(allowed == false && actual),
             10,
             Classification::AbiCompatibilty,
         );
@@ -288,13 +288,16 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
             .collect::<Vec<_>>();
         if let Some(max) = exports.max {
             let num = export_func_names.len() as u32;
+            let overage = num.saturating_sub(max);
+            let max = if max == 0 { 1 } else { max };
+            let severity = ((overage as f32 / max as f32) * 10.0).ceil() as usize;
             let test = num <= max;
             report.validate_fn(
                 "exports.max",
                 format!("<= {max}"),
                 num.to_string(),
                 test,
-                8,
+                severity,
                 Classification::Security,
             );
         }

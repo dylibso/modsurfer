@@ -17,7 +17,7 @@ validate:
         - wasi_snapshot_preview1
 
   exports: 
-    max: 150
+    max: 100
     contains:
       - _start
       - bar
