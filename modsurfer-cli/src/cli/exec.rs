@@ -1,4 +1,5 @@
 #![allow(unused)]
+use std::process::ExitCode;
 use std::{collections::HashMap, ffi::OsString, path::PathBuf};
 
 use anyhow::Result;
@@ -53,25 +54,30 @@ impl Cli {
         Self { cmd, help, host }
     }
 
-    pub async fn execute(&self) -> Result<()> {
+    pub async fn execute(&self) -> Result<ExitCode> {
         match self.cmd.clone().get_matches().subcommand() {
             Some(x) => self.run(x.into()).await,
             _ => anyhow::bail!("{}", self.help),
         }
     }
 
-    async fn run(&self, sub: Subcommand) -> Result<()> {
+    async fn run(&self, sub: Subcommand) -> Result<ExitCode> {
         match sub {
             Subcommand::Unknown => unimplemented!("Unknown subcommand.\n\n{}", self.help),
             Subcommand::Create(_, _, _, _) => todo!(),
             Subcommand::Delete(_) => todo!(),
             Subcommand::Get(id) => {
                 let module = get_module(&self.host, id).await?;
-                Ok(())
+                Ok(ExitCode::SUCCESS)
             }
             Subcommand::List(_, _) => todo!(),
             Subcommand::Search(_, _, _, _, _) => todo!(),
-            Subcommand::Validate(file, check) => validate_module(&file, &check).await,
+            Subcommand::Validate(file, check) => {
+                let report = validate_module(&file, &check).await?;
+                println!("{report}");
+
+                Ok(report.as_exit_code())
+            }
             Subcommand::Yank(_, _) => todo!(),
         }
     }

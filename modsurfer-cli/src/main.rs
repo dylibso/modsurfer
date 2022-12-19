@@ -1,6 +1,7 @@
+use std::{env, path::PathBuf, process::ExitCode};
+
 use anyhow::Result;
 use clap::{Arg, ArgAction, Command};
-use std::{env, path::PathBuf};
 use url::Url;
 
 mod cli;
@@ -10,7 +11,7 @@ const BASE_URL_ENV: &'static str = "MODSURFER_BASE_URL";
 const DEFAULT_BASE_URL: &'static str = "http://localhost:1739";
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> Result<ExitCode> {
     // get MODSURFER_BASE_URL environment variable if set
     let base_url = Url::parse(
         env::var_os(BASE_URL_ENV)

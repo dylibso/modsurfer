@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, fmt::Display, path::PathBuf};
+use std::{collections::BTreeMap, fmt::Display, path::PathBuf, process::ExitCode};
 
 use anyhow::Result;
 use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
@@ -73,9 +73,18 @@ struct FailureDetail {
 }
 
 #[derive(Debug)]
-struct Report {
-    // k/v pair of the dot-separated path to validation field and expectation info
+pub struct Report {
+    /// k/v pair of the dot-separated path to validation field and expectation info
     fails: BTreeMap<String, FailureDetail>,
+}
+
+impl Report {
+    pub fn as_exit_code(&self) -> ExitCode {
+        match self.fails.len() {
+            0 => ExitCode::SUCCESS,
+            _ => ExitCode::FAILURE,
+        }
+    }
 }
 
 impl Display for Report {
@@ -164,7 +173,7 @@ impl Display for Exist {
     }
 }
 
-pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
+pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> {
     let module = modsurfer::Module::new_from_file(file).await?;
 
     let mut buf = vec![];
@@ -351,7 +360,5 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<()> {
     // Complexity
     // TODO
 
-    println!("{report}");
-
-    Ok(())
+    Ok(report)
 }
