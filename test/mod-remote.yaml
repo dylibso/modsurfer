@@ -1,0 +1,3 @@
+validate:
+  url: http://localhost:8000/mod.yaml
+  

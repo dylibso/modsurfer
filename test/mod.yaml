@@ -1,0 +1,34 @@
+validate:
+  # url: https://github.com/wasmCloud/wash/blob/main/mod.yaml
+  allow_wasi: false
+  
+  imports:
+    contains:
+      - http_get
+      - log_message
+      - proc_exit
+    excludes: 
+      - fd_write
+    namespace:
+      contains:
+        - env
+      excludes:
+        - some_future_deprecated_module_name
+        - wasi_snapshot_preview1
+
+  exports: 
+    max: 100
+    contains:
+      - _start
+      - bar
+    excludes:
+      - main
+      - foo
+
+  size:
+    max: 4MB
+
+  complexity:
+    max_risk: medium
+    # max_score: 300
+

@@ -1,6 +1,12 @@
-use std::{collections::HashMap, path::PathBuf};
+#![allow(unused)]
+use std::process::ExitCode;
+use std::{collections::HashMap, ffi::OsString, path::PathBuf};
 
+use anyhow::Result;
 use url::Url;
+
+use super::get::get_module;
+use super::validate::validate_module;
 
 pub type Id = i64;
 pub type Hash = String;
@@ -37,39 +43,40 @@ pub enum Subcommand {
         Option<Offset>,
         Option<Limit>,
     ),
-    Validate(ValidationFile),
+    Validate(ModuleFile, ValidationFile),
     Yank(Id, Version),
 }
 
 impl Cli {
-    pub fn new(mut cmd: clap::Command) -> Self {
+    pub fn new(mut cmd: clap::Command, host: Url) -> Self {
         let help = cmd.render_long_help().to_string();
-        let host = cmd
-            .clone()
-            .get_matches_from(["host"])
-            .get_one::<Url>("host")
-            .expect("host is present or default")
-            .clone();
 
         Self { cmd, help, host }
     }
 
-    pub fn execute(&self) {
+    pub async fn execute(&self) -> Result<ExitCode> {
         match self.cmd.clone().get_matches().subcommand() {
-            Some(x) => self.run(x.into()),
-            _ => println!("{}", self.help),
+            Some(x) => self.run(x).await,
+            _ => anyhow::bail!("{}", self.help),
         }
     }
 
-    fn run(&self, sub: Subcommand) {
-        match sub {
-            Subcommand::Unknown => println!("Unknown subcommand.\n\n{}", self.help),
+    async fn run(&self, sub: impl Into<Subcommand>) -> Result<ExitCode> {
+        match sub.into() {
+            Subcommand::Unknown => unimplemented!("Unknown subcommand.\n\n{}", self.help),
             Subcommand::Create(_, _, _, _) => todo!(),
             Subcommand::Delete(_) => todo!(),
-            Subcommand::Get(id) => todo!("make request for module ID: {}", id),
+            Subcommand::Get(id) => {
+                let module = get_module(&self.host, id).await?;
+                Ok(ExitCode::SUCCESS)
+            }
             Subcommand::List(_, _) => todo!(),
             Subcommand::Search(_, _, _, _, _) => todo!(),
-            Subcommand::Validate(_) => todo!(),
+            Subcommand::Validate(file, check) => {
+                let report = validate_module(&file, &check).await?;
+                println!("{report}");
+                Ok(report.as_exit_code())
+            }
             Subcommand::Yank(_, _) => todo!(),
         }
     }
@@ -83,7 +90,14 @@ impl From<(&str, &clap::ArgMatches)> for Subcommand {
             ("get", args) => Subcommand::Get(*args.get_one("id").expect("valid moudle ID")),
             ("list", _args) => todo!(),
             ("search", _args) => todo!(),
-            ("validate", _args) => todo!(),
+            ("validate", args) => Subcommand::Validate(
+                args.get_one::<PathBuf>("path")
+                    .expect("valid module path")
+                    .clone(),
+                args.get_one::<PathBuf>("check")
+                    .expect("valid check file path")
+                    .clone(),
+            ),
             ("yank", _args) => todo!(),
             _ => Subcommand::Unknown,
         }
