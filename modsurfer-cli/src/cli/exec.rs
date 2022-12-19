@@ -56,13 +56,13 @@ impl Cli {
 
     pub async fn execute(&self) -> Result<ExitCode> {
         match self.cmd.clone().get_matches().subcommand() {
-            Some(x) => self.run(x.into()).await,
+            Some(x) => self.run(x).await,
             _ => anyhow::bail!("{}", self.help),
         }
     }
 
-    async fn run(&self, sub: Subcommand) -> Result<ExitCode> {
-        match sub {
+    async fn run(&self, sub: impl Into<Subcommand>) -> Result<ExitCode> {
+        match sub.into() {
             Subcommand::Unknown => unimplemented!("Unknown subcommand.\n\n{}", self.help),
             Subcommand::Create(_, _, _, _) => todo!(),
             Subcommand::Delete(_) => todo!(),
@@ -75,7 +75,6 @@ impl Cli {
             Subcommand::Validate(file, check) => {
                 let report = validate_module(&file, &check).await?;
                 println!("{report}");
-
                 Ok(report.as_exit_code())
             }
             Subcommand::Yank(_, _) => todo!(),
