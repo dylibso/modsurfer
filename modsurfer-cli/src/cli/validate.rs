@@ -23,21 +23,21 @@ struct Check {
 
 #[derive(Debug, Deserialize)]
 struct Namespace {
-    pub contains: Option<Vec<String>>,
-    pub excludes: Option<Vec<String>>,
+    pub include: Option<Vec<String>>,
+    pub exclude: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize)]
 struct Imports {
-    pub contains: Option<Vec<String>>,
-    pub excludes: Option<Vec<String>>,
+    pub include: Option<Vec<String>>,
+    pub exclude: Option<Vec<String>>,
     pub namespace: Option<Namespace>,
 }
 
 #[derive(Debug, Deserialize)]
 struct Exports {
-    pub contains: Option<Vec<String>>,
-    pub excludes: Option<Vec<String>>,
+    pub include: Option<Vec<String>>,
+    pub exclude: Option<Vec<String>>,
     pub max: Option<u32>,
 }
 
@@ -229,11 +229,11 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
 
         let import_module_names = module.get_import_namespaces();
 
-        if let Some(contains) = imports.contains {
-            contains.iter().for_each(|name| {
+        if let Some(include) = imports.include {
+            include.iter().for_each(|name| {
                 let test = import_func_names.contains(name);
                 report.validate_fn(
-                    &format!("imports.contains.{}", name),
+                    &format!("imports.include.{}", name),
                     Exist(true).to_string(),
                     Exist(test).to_string(),
                     test,
@@ -243,11 +243,11 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
             });
         }
 
-        if let Some(excludes) = imports.excludes {
-            excludes.iter().for_each(|name| {
+        if let Some(exclude) = imports.exclude {
+            exclude.iter().for_each(|name| {
                 let test = import_func_names.contains(name);
                 report.validate_fn(
-                    &format!("imports.excludes.{}", name),
+                    &format!("imports.exclude.{}", name),
                     Exist(false).to_string(),
                     Exist(test).to_string(),
                     test,
@@ -258,11 +258,11 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
         }
 
         if let Some(namespace) = imports.namespace {
-            if let Some(contains) = namespace.contains {
-                contains.iter().for_each(|name| {
+            if let Some(include) = namespace.include {
+                include.iter().for_each(|name| {
                     let test = import_module_names.contains(&name.as_str());
                     report.validate_fn(
-                        &format!("imports.namespace.contains.{}", name),
+                        &format!("imports.namespace.include.{}", name),
                         Exist(true).to_string(),
                         Exist(test).to_string(),
                         test,
@@ -272,11 +272,11 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                 });
             }
 
-            if let Some(excludes) = namespace.excludes {
-                excludes.iter().for_each(|name| {
+            if let Some(exclude) = namespace.exclude {
+                exclude.iter().for_each(|name| {
                     let test = import_module_names.contains(&name.as_str());
                     report.validate_fn(
-                        &format!("imports.namespace.excludes.{}", name),
+                        &format!("imports.namespace.exclude.{}", name),
                         Exist(false).to_string(),
                         Exist(test).to_string(),
                         !test,
@@ -311,11 +311,11 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
             );
         }
 
-        if let Some(contains) = exports.contains {
-            contains.iter().for_each(|name| {
+        if let Some(include) = exports.include {
+            include.iter().for_each(|name| {
                 let test = export_func_names.contains(name);
                 report.validate_fn(
-                    &format!("exports.contains.{}", name),
+                    &format!("exports.include.{}", name),
                     Exist(true).to_string(),
                     Exist(test).to_string(),
                     test,
@@ -325,11 +325,11 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
             });
         }
 
-        if let Some(excludes) = exports.excludes {
-            excludes.iter().for_each(|name| {
+        if let Some(exclude) = exports.exclude {
+            exclude.iter().for_each(|name| {
                 let test = export_func_names.contains(name);
                 report.validate_fn(
-                    &format!("exports.excludes.{}", name),
+                    &format!("exports.exclude.{}", name),
                     Exist(false).to_string(),
                     Exist(test).to_string(),
                     !test,

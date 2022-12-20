@@ -3,25 +3,25 @@ validate:
   allow_wasi: false
   
   imports:
-    contains:
+    include:
       - http_get
       - log_message
       - proc_exit
-    excludes: 
+    exclude: 
       - fd_write
     namespace:
-      contains:
+      include:
         - env
-      excludes:
+      exclude:
         - some_future_deprecated_module_name
         - wasi_snapshot_preview1
 
   exports: 
     max: 100
-    contains:
+    include:
       - _start
       - bar
-    excludes:
+    exclude:
       - main
       - foo
 
