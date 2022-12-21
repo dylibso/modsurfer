@@ -1,0 +1,13 @@
+[package]
+name = "modsurfer-convert"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+modsurfer-proto-v1 = { path = "../proto/v1", package = "modsurfer-proto" }
+modsurfer = { workspace = true, path = "../modsurfer" }
+protobuf = {workspace = true}
+url = {workspace = true}
+chrono = {workspace = true}
