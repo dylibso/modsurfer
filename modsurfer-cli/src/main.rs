@@ -5,6 +5,8 @@ use clap::{Arg, ArgAction, Command};
 use url::Url;
 
 mod cli;
+mod plugins;
+
 use cli::{Cli, Hash, Id, Limit, Offset, Version};
 
 const BASE_URL_ENV: &'static str = "MODSURFER_BASE_URL";

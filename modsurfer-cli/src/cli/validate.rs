@@ -2,7 +2,9 @@ use std::{collections::BTreeMap, fmt::Display, path::PathBuf, process::ExitCode}
 
 use anyhow::Result;
 use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
+use extism::{Context, Plugin};
 use human_bytes::human_bytes;
+use modsurfer_convert::from_api;
 use parse_size::parse_size;
 use serde::Deserialize;
 use tokio::io::AsyncReadExt;
@@ -174,7 +176,41 @@ impl Display for Exist {
 }
 
 pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> {
-    let module = modsurfer::Module::new_from_file(file).await?;
+    // let module = modsurfer::Module::new_from_file(file).await?;
+
+    let file = file
+        .as_path()
+        .to_str()
+        .ok_or_else(|| anyhow::anyhow!("bad filepath for module"))?;
+
+    let ctx = Context::new();
+    let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, true)?;
+    let data = plugin.call("parse_module", file)?;
+    let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
+    let metadata = if a.metadata.is_empty() {
+        None
+    } else {
+        Some(a.metadata)
+    };
+
+    let inserted_at: std::time::SystemTime = a
+        .inserted_at
+        .unwrap_or_else(|| protobuf::well_known_types::timestamp::Timestamp::new())
+        .into();
+
+    let module = modsurfer::Module {
+        hash: a.hash,
+        imports: from_api::imports(a.imports),
+        exports: from_api::exports(a.exports),
+        size: a.size as u64,
+        location: a.location,
+        source_language: from_api::source_language(a.source_language.enum_value_or_default()),
+        metadata,
+        inserted_at: inserted_at.into(),
+        strings: a.strings,
+        complexity: a.complexity,
+        graph: a.graph,
+    };
 
     let mut buf = vec![];
     tokio::fs::File::open(check)
