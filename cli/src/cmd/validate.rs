@@ -176,7 +176,6 @@ impl Display for Exist {
 
 pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> {
     let module_data = tokio::fs::read(file).await?;
-
     let ctx = Context::new();
     let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, false)?;
     let data = plugin.call("parse_module", module_data)?;
