@@ -7,7 +7,6 @@ use human_bytes::human_bytes;
 use modsurfer_convert::from_api;
 use parse_size::parse_size;
 use serde::Deserialize;
-use tokio::io::AsyncReadExt;
 
 #[derive(Debug, Deserialize)]
 struct Validation {
@@ -176,16 +175,11 @@ impl Display for Exist {
 }
 
 pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> {
-    // let module = modsurfer::Module::new_from_file(file).await?;
-
-    let file = file
-        .as_path()
-        .to_str()
-        .ok_or_else(|| anyhow::anyhow!("bad filepath for module"))?;
+    let module_data = tokio::fs::read(file).await?;
 
     let ctx = Context::new();
-    let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, true)?;
-    let data = plugin.call("parse_module", file)?;
+    let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, false)?;
+    let data = plugin.call("parse_module", module_data)?;
     let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
     let metadata = if a.metadata.is_empty() {
         None
@@ -212,11 +206,7 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
         graph: a.graph,
     };
 
-    let mut buf = vec![];
-    tokio::fs::File::open(check)
-        .await?
-        .read_to_end(&mut buf)
-        .await?;
+    let mut buf = tokio::fs::read(check).await?;
 
     let mut validation: Validation = serde_yaml::from_slice(&buf)?;
     if let Some(url) = validation.validate.url {

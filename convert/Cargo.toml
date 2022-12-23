@@ -8,6 +8,10 @@ edition = "2021"
 [dependencies]
 modsurfer-proto-v1 = { path = "../proto/v1", package = "modsurfer-proto" }
 modsurfer = { workspace = true, path = "../modsurfer" }
-protobuf = {workspace = true}
-url = {workspace = true}
-chrono = {workspace = true}
+protobuf = { workspace = true }
+url = { workspace = true }
+chrono = { workspace = true, optional = true }
+
+[features]
+default = ["api"]
+api = ["chrono"]

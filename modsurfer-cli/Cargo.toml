@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
-chrono = "0.4.22"
 clap = { version = "4.0.18" }
 futures = "0.3.25"
 human_bytes = "0.4"

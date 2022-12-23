@@ -1,6 +1,9 @@
 mod types;
 
-pub use types::{Order, Pagination, Search, Sort, SortField};
+pub use types::{Order, Pagination, Sort, SortField};
+
+#[cfg(feature = "api")]
+pub use types::Search;
 
 pub(crate) use modsurfer::SourceLanguage;
 pub use modsurfer_proto_v1::api;

@@ -31,6 +31,7 @@ pub fn val_type(v: modsurfer::ValType) -> api::ValType {
     }
 }
 
+#[cfg(feature = "api")]
 pub fn module(module: modsurfer::Module, id: i64) -> api::Module {
     let mut dest = api::Module::new();
     dest.id = id;
@@ -46,6 +47,23 @@ pub fn module(module: modsurfer::Module, id: i64) -> api::Module {
             special_fields: protobuf::SpecialFields::new(),
         });
 
+    dest.exports = exports(module.exports);
+    dest.imports = imports(module.imports);
+    dest.strings = module.strings;
+    dest.complexity = module.complexity;
+
+    dest
+}
+
+#[cfg(not(feature = "api"))]
+pub fn module(module: modsurfer::Module, id: i64) -> api::Module {
+    let mut dest = api::Module::new();
+    dest.id = id;
+    dest.location = module.location;
+    dest.hash = module.hash;
+    dest.metadata = module.metadata.unwrap_or_default();
+    dest.size = module.size as u64;
+    dest.source_language = protobuf::EnumOrUnknown::new(source_language(module.source_language));
     dest.exports = exports(module.exports);
     dest.imports = imports(module.imports);
     dest.strings = module.strings;

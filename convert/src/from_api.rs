@@ -84,6 +84,7 @@ pub fn exports(exports: Vec<api::Export>) -> Vec<modsurfer::Export> {
     exports.into_iter().map(export).collect()
 }
 
+#[cfg(feature = "api")]
 pub fn search(mut req: api::SearchModulesRequest) -> Search {
     Search {
         page: req

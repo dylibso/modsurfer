@@ -1,3 +1,6 @@
+#[cfg(feature = "api")]
+use chrono::Utc;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Order {
     Asc,
@@ -45,6 +48,7 @@ pub struct Sort {
     pub field: SortField,
 }
 
+#[cfg(feature = "api")]
 #[derive(Default)]
 pub struct Search {
     pub page: Pagination,
@@ -55,8 +59,8 @@ pub struct Search {
     pub function_name: Option<String>,
     pub module_name: Option<String>,
     pub source_language: Option<modsurfer::SourceLanguage>,
-    pub inserted_after: Option<chrono::DateTime<chrono::Utc>>,
-    pub inserted_before: Option<chrono::DateTime<chrono::Utc>>,
+    pub inserted_after: Option<chrono::DateTime<Utc>>,
+    pub inserted_before: Option<chrono::DateTime<Utc>>,
     pub strings: Option<Vec<String>>,
     pub sort: Option<Sort>,
 }
