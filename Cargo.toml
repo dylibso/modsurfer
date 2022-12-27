@@ -1,5 +1,5 @@
 [workspace]
-members = ["modsurfer-cli"]
+members = ["cli"]
 
 [workspace.dependencies]
 anyhow = "1"
