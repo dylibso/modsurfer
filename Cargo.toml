@@ -2,7 +2,8 @@
 members = [
   "api", 
   "cli",
-  "proto/v1"
+  "proto/v1",
+  "scripts/*"
 ]
 
 [workspace.dependencies]

@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
-modserver = { workspace = true }
 modsurfer-convert = { workspace = true }
 modsurfer = { workspace = true }
 protobuf = { workspace = true }
