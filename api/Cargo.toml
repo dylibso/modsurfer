@@ -1,0 +1,22 @@
+[package]
+name = "modsurfer-api"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = "0.1.57"
+chrono = { workspace = true }
+url = { workspace = true }
+reqwest = "0.11.12"
+protobuf = { workspace = true }
+lazy_static = { version = "1.4.0", optional = true }
+modsurfer = { workspace = true }
+modsurfer-convert = { workspace = true }
+
+[features]
+default = []
+mock = ["lazy_static"]
+mock-empty = ["mock"]
