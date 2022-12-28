@@ -1,0 +1,12 @@
+# Update this manually if/when protobuf requirements change.
+[package]
+name = "modsurfer-proto"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+# This, along with src/api.rs are generated. Don't edit them manually.
+path = "src/mod.rs" 
+
+[dependencies]
+protobuf = { workspace = true }

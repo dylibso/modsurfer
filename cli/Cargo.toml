@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
-chrono = "0.4.22"
 clap = { version = "4.0.18" }
 futures = "0.3.25"
 human_bytes = "0.4"
@@ -21,9 +20,9 @@ tokio = { workspace = true }
 url = "2.3.1"
 modsurfer = { workspace = true }
 modsurfer-proto-v1 = { workspace = true }
-modserver-convert = { workspace = true }
-modsurfer-web = { workspace = true }
+modsurfer-convert = { workspace = true }
 comfy-table = "6.1.3"
+extism = { git = "https://github.com/extism/extism.git" }
 
 [[bin]]
 name = "modsurfer"

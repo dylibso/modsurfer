@@ -4,8 +4,10 @@ use anyhow::Result;
 use clap::{Arg, ArgAction, Command};
 use url::Url;
 
-mod cli;
-use cli::{Cli, Hash, Id, Limit, Offset, Version};
+mod cmd;
+mod plugins;
+
+use cmd::{Cli, Hash, Id, Limit, Offset, Version};
 
 const BASE_URL_ENV: &'static str = "MODSURFER_BASE_URL";
 const DEFAULT_BASE_URL: &'static str = "http://localhost:1739";
