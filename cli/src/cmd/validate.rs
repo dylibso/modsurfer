@@ -174,36 +174,63 @@ impl Display for Exist {
     }
 }
 
+struct Module {}
+
+impl Module {
+    // NOTE: this function executes WebAssembly code as a plugin managed by Extism (https://extism.org)
+    // and is distributed under the same license as the primary codebase. See LICENSE file in the
+    // root of this repository.
+    //
+    // The source code to the WebAssembly binary is not open source.
+    //
+    // Importantly, this code has no side-effects, and uses no system resources. The `false`
+    // parameter provided to `Plugin::new` below, ensures that the module is run without functions
+    // provided by the WASI module namespace. Therefore it has no access to your running environment
+    // nor any system resources such as a filesystem or network.
+    //
+    // The function within the WebAssembly, "parse_module", only parses bytes provided to it from
+    // the host context (the `wasm`), and collects parsed information into the `Module` which is
+    // returned as a protobuf-encoded struct.
+    fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer::Module> {
+        let ctx = Context::new();
+        let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, false)?;
+        let data = plugin.call("parse_module", wasm)?;
+        let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
+        let metadata = if a.metadata.is_empty() {
+            None
+        } else {
+            Some(a.metadata)
+        };
+
+        let inserted_at: std::time::SystemTime = a
+            .inserted_at
+            .unwrap_or_else(|| protobuf::well_known_types::timestamp::Timestamp::new())
+            .into();
+
+        let module = modsurfer::Module {
+            hash: a.hash,
+            imports: from_api::imports(a.imports),
+            exports: from_api::exports(a.exports),
+            size: a.size as u64,
+            location: a.location,
+            source_language: from_api::source_language(a.source_language.enum_value_or_default()),
+            metadata,
+            inserted_at: inserted_at.into(),
+            strings: a.strings,
+            complexity: a.complexity,
+            graph: a.graph,
+        };
+
+        Ok(module)
+    }
+}
+
 pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> {
+    // read the wasm file and parse a Module from it to later validate against the check file.
+    // NOTE: the Module is produced by executing plugin code, linked and called from the
+    // `Module::parse` function.
     let module_data = tokio::fs::read(file).await?;
-    let ctx = Context::new();
-    let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, false)?;
-    let data = plugin.call("parse_module", module_data)?;
-    let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
-    let metadata = if a.metadata.is_empty() {
-        None
-    } else {
-        Some(a.metadata)
-    };
-
-    let inserted_at: std::time::SystemTime = a
-        .inserted_at
-        .unwrap_or_else(|| protobuf::well_known_types::timestamp::Timestamp::new())
-        .into();
-
-    let module = modsurfer::Module {
-        hash: a.hash,
-        imports: from_api::imports(a.imports),
-        exports: from_api::exports(a.exports),
-        size: a.size as u64,
-        location: a.location,
-        source_language: from_api::source_language(a.source_language.enum_value_or_default()),
-        metadata,
-        inserted_at: inserted_at.into(),
-        strings: a.strings,
-        complexity: a.complexity,
-        graph: a.graph,
-    };
+    let module = Module::parse(&module_data)?;
 
     let mut buf = tokio::fs::read(check).await?;
 
