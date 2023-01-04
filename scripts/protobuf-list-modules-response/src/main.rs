@@ -7,6 +7,7 @@ use modsurfer_convert::{
     to_api,
 };
 use modsurfer_module::Module;
+use modsurfer::ModuleParser;
 use protobuf::Message;
 
 #[tokio::main]

@@ -1,6 +1,5 @@
 [workspace]
 members = ["api", "cli", "module", "proto/v1"]
-# members = ["api", "cli", "module", "proto/v1", "scripts/*"]
 
 [workspace.dependencies]
 anyhow = "1"
