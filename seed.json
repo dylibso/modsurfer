@@ -1,0 +1,542 @@
+{
+    "data": {
+        "getInterfaceVersion": {
+            "interface": {
+                "name": "wasi",
+                "description": "The WebAssembly System Interface. WASI is a modular system interface for WebAssembly. It’s focused on security and portability."
+            },
+            "packageVersions": {
+                "edges": [
+                    {
+                        "node": {
+                            "version": "0.1.27",
+                            "package": {
+                                "name": "guregu/trealla"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/guregu/trealla/trealla-0.1.27.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.1",
+                            "package": {
+                                "name": "xpepermint/pkg1"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/xpepermint/pkg1/pkg1-0.0.1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.0",
+                            "package": {
+                                "name": "nibbstack/pkg1"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/nibbstack/pkg1/pkg1-0.0.0.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.22.11",
+                            "package": {
+                                "name": "yozuk/zuk"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/yozuk/zuk/zuk-0.22.11.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.15",
+                            "package": {
+                                "name": "Michael-F-Bryan/wabt"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/Michael-F-Bryan/wabt/wabt-1.0.15.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.13",
+                            "package": {
+                                "name": "ayushjha/wapm2pirita"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/ayushjha/wapm2pirita/wapm2pirita-1.0.13.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.12",
+                            "package": {
+                                "name": "fschuett/wapm2pirita"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/fschuett/wapm2pirita/wapm2pirita-1.0.12.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.1.0",
+                            "package": {
+                                "name": "amscotti/prisoners_rusty_riddle"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/amscotti/prisoners_rusty_riddle/prisoners_rusty_riddle-0.1.0.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.2.0",
+                            "package": {
+                                "name": "ken-matsui/jyt"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/ken-matsui/jyt/jyt-0.2.0.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.1.1",
+                            "package": {
+                                "name": "liftm/wasm-custom-section"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/wasm-custom-section/wasm-custom-section-0.1.1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.1.0",
+                            "package": {
+                                "name": "liftm/patch-json"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/patch-json/patch-json-0.1.0.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.2",
+                            "package": {
+                                "name": "yunqiangwu/code-stock"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/yunqiangwu/code-stock/code-stock-0.0.2.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.2.2",
+                            "package": {
+                                "name": "ken-matsui/uuid"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/ken-matsui/uuid/uuid-0.2.2.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.1.4",
+                            "package": {
+                                "name": "ken-matsui/base64"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/ken-matsui/base64/base64-0.1.4.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.0-1",
+                            "package": {
+                                "name": "liftm/sam"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/sam/sam-0.0.0-1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.2.0",
+                            "package": {
+                                "name": "jas/cowsay"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/jas/cowsay/cowsay-0.2.0.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.2",
+                            "package": {
+                                "name": "matiu-hostopia/hcl2json"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/matiu-hostopia/hcl2json/hcl2json-1.0.2.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.2.2",
+                            "package": {
+                                "name": "liftm/cowsay"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/cowsay/cowsay-0.2.2.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.0",
+                            "package": {
+                                "name": "pitpet/ai-web3-persuasion-engine"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/syrusakbary/ai-web3-persuasion-engine/ai-web3-persuasion-engine-1.0.0.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.3",
+                            "package": {
+                                "name": "cramhead/wapm-play"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/cramhead/wapm-play/wapm-play-0.0.3.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.0",
+                            "package": {
+                                "name": "dermagen/advent"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/dermagen/advent/advent-1.0.0.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.3",
+                            "package": {
+                                "name": "dermagen/siof"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/dermagen/siof/siof-1.0.3.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.7",
+                            "package": {
+                                "name": "calcit/wasi-calcit"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/calcit/wasi-calcit/wasi-calcit-0.0.7.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.3.4",
+                            "package": {
+                                "name": "ken-matsui/suggest"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/ken-matsui/suggest/suggest-0.3.4.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.2",
+                            "package": {
+                                "name": "chrishayuk/hello-wasi-assemblyscript"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/chrishayuk/hello-wasi-assemblyscript/hello-wasi-assemblyscript-0.0.2.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.4",
+                            "package": {
+                                "name": "chrishayuk/hello-wasi"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/chrishayuk/hello-wasi/hello-wasi-1.0.4.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.0",
+                            "package": {
+                                "name": "jackos/mdbook"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/jackos/mdbook/mdbook-1.0.0.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.2",
+                            "package": {
+                                "name": "Me163/mdbook"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/Me163/mdbook/mdbook-1.0.2.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.0",
+                            "package": {
+                                "name": "bitocean/first-test"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/bitocean/first-test/first-test-1.0.0.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.7.5",
+                            "package": {
+                                "name": "mbrock/wisp"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/mbrock/wisp/wisp-0.7.5.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.1",
+                            "package": {
+                                "name": "mozilla/spidermonkey"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/mozilla/spidermonkey/spidermonkey-0.0.1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.20",
+                            "package": {
+                                "name": "rajsite/exorbitant"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/rajsite/exorbitant/exorbitant-0.0.20.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.1",
+                            "package": {
+                                "name": "syrusakbary/figlet"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/syrusakbary/figlet/figlet-0.0.1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.0",
+                            "package": {
+                                "name": "akb74/metamath-knife"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/akb74/metamath-knife/metamath-knife-1.0.0.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.198.20210807-4",
+                            "package": {
+                                "name": "liftm/metamath"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/metamath/metamath-0.198.20210807-4.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.1.1",
+                            "package": {
+                                "name": "liftm/pee"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/pee/pee-0.1.1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "2.2.0-1",
+                            "package": {
+                                "name": "liftm/minisat"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/minisat/minisat-2.2.0-1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.1",
+                            "package": {
+                                "name": "syrusakbary/f2c"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/_/f2c/f2c-0.0.1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.1",
+                            "package": {
+                                "name": "syrusakbary/atmega_mnist"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/_/atmega_mnist/atmega_mnist-1.0.1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.1.2",
+                            "package": {
+                                "name": "whyte/demimud"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/whyte/demimud/demimud-0.1.2.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "12.1.1-1",
+                            "package": {
+                                "name": "liftm/rg"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/rg/rg-12.1.1-1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "8.2.1-1",
+                            "package": {
+                                "name": "liftm/fd"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/fd/fd-8.2.1-1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.1.0-1",
+                            "package": {
+                                "name": "liftm/starlark-cmd"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/starlark-cmd/starlark-cmd-0.1.0-1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "1.0.3-alpha.0-1",
+                            "package": {
+                                "name": "liftm/rq"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/rq/rq-1.0.3-alpha.0-1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.9.0-1",
+                            "package": {
+                                "name": "liftm/exa-wasi"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/exa-wasi/exa-wasi-0.9.0-1.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.5.4-3",
+                            "package": {
+                                "name": "liftm/dust-wasi"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/liftm/dust-wasi/dust-wasi-0.5.4-3.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.0.4",
+                            "package": {
+                                "name": "rapidlua/llc"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/rapidlua/llc/llc-0.0.4.tar.gz"
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "version": "0.1.2",
+                            "package": {
+                                "name": "soeur/rcnb-rs"
+                            },
+                            "distribution": {
+                                "downloadUrl": "https://registry-cdn.wapm.io/packages/soeur/rcnb-rs/rcnb-rs-0.1.2.tar.gz"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

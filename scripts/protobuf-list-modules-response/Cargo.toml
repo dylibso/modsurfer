@@ -5,9 +5,16 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[workspace]
+
 [dependencies]
-anyhow = { workspace = true }
-modsurfer-convert = { workspace = true }
-modsurfer = { workspace = true }
-protobuf = { workspace = true }
-tokio = { workspace = true }
+anyhow = "1"
+modsurfer = { path = "../../../private-modsurfer/modsurfer", features = [
+    "api",
+] }
+modsurfer-convert = { path = "../../convert", version = "0.1" }
+modsurfer-module = { path = "../../module", version = "0.1", features = [
+    "api",
+] }
+protobuf = "3.2.0"
+tokio = { version = "1", features = ["full"] }

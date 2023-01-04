@@ -18,7 +18,7 @@ pub use interop::{List, Persisted};
 
 pub use anyhow::Result;
 use async_trait::async_trait;
-use modsurfer::{Export, Import, Module};
+use modsurfer_module::{Export, Import, Module};
 
 #[async_trait(?Send)]
 pub trait ApiClient {

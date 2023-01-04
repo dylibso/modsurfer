@@ -1,19 +1,15 @@
 [workspace]
-members = [
-  "api", 
-  "cli",
-  "proto/v1",
-  "scripts/*"
-]
+members = ["api", "cli", "module", "proto/v1"]
 
 [workspace.dependencies]
 anyhow = "1"
 chrono = { version = "0.4", features = ["serde"] }
+log = "0.4"
 modsurfer-convert = { path = "convert", version = "0.1" }
-modsurfer = { path = "../private-modsurfer/modsurfer", version = "0.1", features = ["api"] }
+modsurfer-module = { path = "module", version = "0.1" }
 modsurfer-proto-v1 = { path = "proto/v1", package = "modsurfer-proto" }
 protobuf = "3.2.0"
-serde = { version = "1", features = ["derive"]}
+serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9.14"
 tokio = { version = "1", features = ["full"] }
 url = "2"

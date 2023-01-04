@@ -8,7 +8,7 @@ use lazy_static::lazy_static;
 #[cfg(not(feature = "mock-empty"))]
 use modsurfer_convert::api::ListModulesResponse;
 
-use modsurfer::{Export, Import, Module, SourceLanguage};
+use crate::{Export, Import, Module, SourceLanguage};
 use url::Url;
 
 use crate::api::{ApiClient, List, Persisted};

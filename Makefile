@@ -14,5 +14,5 @@ generate: install
 	protoc --experimental_allow_proto3_optional --rust_out=proto/v1/src proto/v1/api.proto
 
 generate-web-list-mods-response:
-	cargo run --release --manifest-path scripts/protobuf-list-modules-response/Cargo.toml -- $(take)
-	mv ListModulesResponse.pb api/
+	cd scripts/protobuf-list-modules-response && cargo run --release -- $(take)
+	mv scripts/protobuf-list-modules-response/ListModulesResponse.pb api/
