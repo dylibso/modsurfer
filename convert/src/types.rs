@@ -1,5 +1,7 @@
 #[cfg(feature = "api")]
 use chrono::Utc;
+#[cfg(feature = "api")]
+use modsurfer_module::{Export, Import, SourceLanguage};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Order {
@@ -54,11 +56,11 @@ pub struct Search {
     pub page: Pagination,
     pub hash: Option<String>,
     pub location: Option<String>,
-    pub imports: Vec<modsurfer::Import>,
-    pub exports: Vec<modsurfer::Export>,
+    pub imports: Vec<Import>,
+    pub exports: Vec<Export>,
     pub function_name: Option<String>,
     pub module_name: Option<String>,
-    pub source_language: Option<modsurfer::SourceLanguage>,
+    pub source_language: Option<SourceLanguage>,
     pub inserted_after: Option<chrono::DateTime<Utc>>,
     pub inserted_before: Option<chrono::DateTime<Utc>>,
     pub strings: Option<Vec<String>>,

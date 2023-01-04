@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 use async_trait::async_trait;
-use modsurfer::{Export, Import, Module};
 use modsurfer_convert::{api, to_api};
+use modsurfer_module::{Export, Import, Module};
 use protobuf::{self, EnumOrUnknown, Message, MessageField};
 use reqwest;
 use url::Url;

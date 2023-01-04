@@ -1,6 +1,6 @@
 use crate::*;
 
-use modsurfer::{Export, Import};
+use modsurfer_module::{Export, Import, Module, ValType};
 
 pub fn source_language(src: SourceLanguage) -> api::SourceLanguage {
     match src {
@@ -13,26 +13,26 @@ pub fn source_language(src: SourceLanguage) -> api::SourceLanguage {
     }
 }
 
-pub fn val_types(v: Vec<modsurfer::ValType>) -> Vec<protobuf::EnumOrUnknown<api::ValType>> {
+pub fn val_types(v: Vec<ValType>) -> Vec<protobuf::EnumOrUnknown<api::ValType>> {
     v.into_iter()
         .map(|x| protobuf::EnumOrUnknown::new(val_type(x)))
         .collect()
 }
 
-pub fn val_type(v: modsurfer::ValType) -> api::ValType {
+pub fn val_type(v: ValType) -> api::ValType {
     match v {
-        modsurfer::ValType::I32 => api::ValType::I32,
-        modsurfer::ValType::I64 => api::ValType::I64,
-        modsurfer::ValType::F32 => api::ValType::F32,
-        modsurfer::ValType::F64 => api::ValType::F64,
-        modsurfer::ValType::V128 => api::ValType::V128,
-        modsurfer::ValType::FuncRef => api::ValType::FuncRef,
-        modsurfer::ValType::ExternRef => api::ValType::ExternRef,
+        ValType::I32 => api::ValType::I32,
+        ValType::I64 => api::ValType::I64,
+        ValType::F32 => api::ValType::F32,
+        ValType::F64 => api::ValType::F64,
+        ValType::V128 => api::ValType::V128,
+        ValType::FuncRef => api::ValType::FuncRef,
+        ValType::ExternRef => api::ValType::ExternRef,
     }
 }
 
 #[cfg(feature = "api")]
-pub fn module(module: modsurfer::Module, id: i64) -> api::Module {
+pub fn module(module: Module, id: i64) -> api::Module {
     let mut dest = api::Module::new();
     dest.id = id;
     dest.location = module.location;
@@ -56,7 +56,7 @@ pub fn module(module: modsurfer::Module, id: i64) -> api::Module {
 }
 
 #[cfg(not(feature = "api"))]
-pub fn module(module: modsurfer::Module, id: i64) -> api::Module {
+pub fn module(module: Module, id: i64) -> api::Module {
     let mut dest = api::Module::new();
     dest.id = id;
     dest.location = module.location;

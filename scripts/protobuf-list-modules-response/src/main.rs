@@ -2,11 +2,11 @@ use std::fs;
 use std::path::PathBuf;
 
 use anyhow::Result;
-use modsurfer::Module;
 use modsurfer_convert::{
     api::{ListModulesResponse, Module as ProtoModule},
     to_api,
 };
+use modsurfer_module::Module;
 use protobuf::Message;
 
 #[tokio::main]

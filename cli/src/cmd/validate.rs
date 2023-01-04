@@ -191,7 +191,7 @@ impl Module {
     // The function within the WebAssembly, "parse_module", only parses bytes provided to it from
     // the host context (the `wasm`), and collects parsed information into the `Module` which is
     // returned as a protobuf-encoded struct.
-    fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer::Module> {
+    fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer_module::Module> {
         let ctx = Context::new();
         let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, false)?;
         let data = plugin.call("parse_module", wasm)?;
@@ -207,7 +207,7 @@ impl Module {
             .unwrap_or_else(|| protobuf::well_known_types::timestamp::Timestamp::new())
             .into();
 
-        let module = modsurfer::Module {
+        let module = modsurfer_module::Module {
             hash: a.hash,
             imports: from_api::imports(a.imports),
             exports: from_api::exports(a.exports),

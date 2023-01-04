@@ -1,4 +1,5 @@
 use crate::*;
+use modsurfer_module::{Export, Function, FunctionType, Import, ValType};
 
 pub fn source_language(src: api::SourceLanguage) -> SourceLanguage {
     match src {
@@ -11,21 +12,21 @@ pub fn source_language(src: api::SourceLanguage) -> SourceLanguage {
     }
 }
 
-pub fn val_types(v: Vec<protobuf::EnumOrUnknown<api::ValType>>) -> Vec<modsurfer::ValType> {
+pub fn val_types(v: Vec<protobuf::EnumOrUnknown<api::ValType>>) -> Vec<ValType> {
     v.into_iter()
         .map(|x| val_type(x.enum_value_or_default()))
         .collect()
 }
 
-pub fn val_type(v: api::ValType) -> modsurfer::ValType {
+pub fn val_type(v: api::ValType) -> ValType {
     match v {
-        api::ValType::I32 => modsurfer::ValType::I32,
-        api::ValType::I64 => modsurfer::ValType::I64,
-        api::ValType::F32 => modsurfer::ValType::F32,
-        api::ValType::F64 => modsurfer::ValType::F64,
-        api::ValType::V128 => modsurfer::ValType::V128,
-        api::ValType::FuncRef => modsurfer::ValType::FuncRef,
-        api::ValType::ExternRef => modsurfer::ValType::ExternRef,
+        api::ValType::I32 => ValType::I32,
+        api::ValType::I64 => ValType::I64,
+        api::ValType::F32 => ValType::F32,
+        api::ValType::F64 => ValType::F64,
+        api::ValType::V128 => ValType::V128,
+        api::ValType::FuncRef => ValType::FuncRef,
+        api::ValType::ExternRef => ValType::ExternRef,
     }
 }
 
@@ -47,14 +48,14 @@ pub fn sort(sort: api::Sort) -> Sort {
     }
 }
 
-pub fn import(import: api::Import) -> modsurfer::Import {
+pub fn import(import: api::Import) -> Import {
     let name = import.func.name.to_string();
     let f = import.func.into_option().unwrap_or_default();
-    modsurfer::Import {
+    Import {
         module_name: import.module_name,
-        func: modsurfer::Function {
+        func: Function {
             name,
-            ty: modsurfer::FunctionType {
+            ty: FunctionType {
                 args: val_types(f.args),
                 returns: val_types(f.returns),
             },
@@ -62,17 +63,17 @@ pub fn import(import: api::Import) -> modsurfer::Import {
     }
 }
 
-pub fn imports(imports: Vec<api::Import>) -> Vec<modsurfer::Import> {
+pub fn imports(imports: Vec<api::Import>) -> Vec<Import> {
     imports.into_iter().map(import).collect()
 }
 
-pub fn export(export: api::Export) -> modsurfer::Export {
+pub fn export(export: api::Export) -> Export {
     let name = export.func.name.to_string();
     let f = export.func.into_option().unwrap_or_default();
-    modsurfer::Export {
-        func: modsurfer::Function {
+    Export {
+        func: Function {
             name,
-            ty: modsurfer::FunctionType {
+            ty: FunctionType {
                 args: val_types(f.args),
                 returns: val_types(f.returns),
             },
@@ -80,7 +81,7 @@ pub fn export(export: api::Export) -> modsurfer::Export {
     }
 }
 
-pub fn exports(exports: Vec<api::Export>) -> Vec<modsurfer::Export> {
+pub fn exports(exports: Vec<api::Export>) -> Vec<Export> {
     exports.into_iter().map(export).collect()
 }
 

@@ -1,5 +1,5 @@
-use modsurfer::Module;
 use modsurfer_convert::{api, from_api};
+use modsurfer_module::Module;
 
 #[derive(Default, PartialEq)]
 pub struct List<T> {

@@ -1,17 +1,17 @@
 [package]
-name = "modsurfer-convert"
+name = "modsurfer-module"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-modsurfer-proto-v1 = { workspace = true }
-modsurfer-module = { workspace = true }
-protobuf = { workspace = true }
-url = { workspace = true }
+anyhow = { workspace = true }
 chrono = { workspace = true, optional = true }
+log = { workspace = true }
+wasmparser = "0.96.0"
+serde = { workspace = true }
+url = { workspace = true }
 
 [features]
-default = ["api"]
 api = ["chrono"]

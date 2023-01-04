@@ -1,5 +1,6 @@
+use modsurfer_module::Module;
+
 use anyhow::Result;
-use modsurfer::Module;
 use modsurfer_proto_v1::api;
 use protobuf::Message;
 use reqwest;
