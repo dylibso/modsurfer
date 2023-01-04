@@ -39,9 +39,18 @@ enum RiskLevel {
 impl RiskLevel {
     fn max(&self) -> u32 {
         match self {
-            RiskLevel::Low => 2500,
-            RiskLevel::Medium => 50000,
-            RiskLevel::High => u32::MAX,
+            RiskLevel::Low => std::env::var("MODSURFER_RISK_LOW")
+                .unwrap_or(2500.to_string())
+                .parse::<u32>()
+                .expect("valid low risk level setting"),
+            RiskLevel::Medium => std::env::var("MODSURFER_RISK_MEDIUM")
+                .unwrap_or(50000.to_string())
+                .parse::<u32>()
+                .expect("valid medium risk level setting"),
+            RiskLevel::High => std::env::var("MODSURFER_RISK_HIGH")
+                .unwrap_or(u32::MAX.to_string())
+                .parse::<u32>()
+                .expect("valid high risk level setting"),
         }
     }
 }
