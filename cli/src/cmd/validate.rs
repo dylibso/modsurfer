@@ -20,6 +20,79 @@ struct Check {
     pub imports: Option<Imports>,
     pub exports: Option<Exports>,
     pub size: Option<Size>,
+    pub complexity: Option<Complexity>,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+enum RiskLevel {
+    #[serde(rename = "low")]
+    Low,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "high")]
+    High,
+}
+
+/// The output of the "Cyclomatic Complexity" algorithm run on a graph analysis of the WebAssembly
+/// code inside the provided module. The risk is purely related to computational resource usage,
+/// not code security or any other interpretation of risk.
+impl RiskLevel {
+    fn max(&self) -> u32 {
+        match self {
+            RiskLevel::Low => 2500,
+            RiskLevel::Medium => 50000,
+            RiskLevel::High => u32::MAX,
+        }
+    }
+}
+
+impl From<u32> for RiskLevel {
+    fn from(value: u32) -> Self {
+        if value <= RiskLevel::Low.max() {
+            RiskLevel::Low
+        } else if value <= RiskLevel::Medium.max() {
+            RiskLevel::Medium
+        } else {
+            RiskLevel::High
+        }
+    }
+}
+
+impl Display for RiskLevel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            RiskLevel::Low => "low",
+            RiskLevel::Medium => "medium",
+            RiskLevel::High => "high",
+        })
+    }
+}
+
+#[derive(Debug, Deserialize)]
+struct Complexity {
+    pub max_risk: Option<RiskLevel>,
+    pub max_score: Option<u32>,
+}
+
+#[allow(unused)]
+enum ComplexityKind {
+    MaxRisk(RiskLevel),
+    MaxScore(u32),
+}
+
+impl Complexity {
+    fn kind(&self) -> Result<ComplexityKind> {
+        match (self.max_risk.clone(), self.max_score) {
+            (None, None) => anyhow::bail!("No complexity check found."),
+            (None, Some(_score)) => {
+                anyhow::bail!("Only `complexity.max_risk` is currently supported.")
+            }
+            (Some(risk), None) => Ok(ComplexityKind::MaxRisk(risk)),
+            (Some(_), Some(_)) => {
+                anyhow::bail!("Only `complexity.max_risk` is currently supported.")
+            }
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -410,7 +483,22 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
     }
 
     // Complexity
-    // TODO
+    if let Some(complexity) = validation.validate.complexity {
+        let module_complexity = module.complexity.ok_or_else(|| anyhow::anyhow!("Could not determine module complexity, please remove the complexity parameter from your checkfile."))?;
+        match complexity.kind()? {
+            ComplexityKind::MaxRisk(risk) => {
+                report.validate_fn(
+                    "complexity.max_risk",
+                    format!("<= {}", risk),
+                    RiskLevel::from(module_complexity).to_string(),
+                    risk.max() >= module_complexity,
+                    (module_complexity / risk.max()) as usize,
+                    Classification::ResourceLimit,
+                );
+            }
+            _ => unreachable!(),
+        }
+    }
 
     Ok(report)
 }

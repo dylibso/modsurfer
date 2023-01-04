@@ -29,6 +29,4 @@ validate:
     max: 4MB
 
   complexity:
-    max_risk: medium
-    # max_score: 300
-
+    max_risk: low
