@@ -1,18 +1,17 @@
-name: 'Modsurfer CLI'
-description: 'Run Modsurfer in a GitHub Action to manage WebAssembly modules and interact with Modsurfer applications.'
+name: 'Modsurfer Validate'
+description: 'Validate WebAssembly modules in a GitHub Action with the Modsurfer CLI. See more at https://dyilb.so'
 inputs:
-  command:
-    description: 'which CLI command with arguments to run: (validate, create, etc.)'
+  path: 
+    description: "a path to the .wasm binary to be validated"
     required: true
-    default: help
-  args:
-    description: 'arguments provided to the command used'
-    required: false
-    default: '-h'
-
+  check: 
+    description: "a path to the checkfile YAML to validate a module against"
+    required: true
+    default: "mod.yaml"
 runs:
   using: 'docker'
   image: 'docker://ghcr.io/dylibso/modsurfer:latest'
   args:
-    - ${{ inputs.command }}
-    - ${{ inputs.args }}
+    - validate
+    - '-p ${{ inputs.path }}'
+    - '-c ${{ inputs.check }}'
