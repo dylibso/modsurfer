@@ -10,10 +10,10 @@ inputs:
     default: "mod.yaml"
 runs:
   using: 'docker'
-  # image: 'docker://ghcr.io/dylibso/modsurfer:latest'
-  image: 'docker://ubuntu'
+  image: 'docker://ghcr.io/dylibso/modsurfer:latest'
   args:
-    # - validate
-    # - '-p ${{ inputs.path }}'
-    # - '-c ${{ inputs.check }}'
-    - ls test
+    - validate
+    - '-p'
+    - '/github/workspace/${{ inputs.path }}'
+    - '-c' 
+    - '/github/workspace/${{ inputs.check }}'
