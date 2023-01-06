@@ -8,4 +8,5 @@ jobs:
       - name: modsurfer validate
         uses: dylibso/modsurfer@action
         with:
-            command: validate -p test/spidermonkey.wasm -c test/mod.yaml
+            command: validate 
+            args: -p test/spidermonkey.wasm -c test/mod.yaml

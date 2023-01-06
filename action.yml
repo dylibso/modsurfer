@@ -5,9 +5,14 @@ inputs:
     description: 'which CLI command with arguments to run: (validate, create, etc.)'
     required: true
     default: help
+  args:
+    description: 'arguments provided to the command used'
+    required: false
+    default: '-h'
 
 runs:
   using: 'docker'
   image: 'docker://ghcr.io/dylibso/modsurfer:latest'
   args:
     - ${{ inputs.command }}
+    - ${{ inputs.args }}
