@@ -1,0 +1,13 @@
+name: 'Modsurfer CLI'
+description: 'Run Modsurfer in a GitHub Action to manage WebAssembly modules and interact with Modsurfer applications.'
+inputs:
+  command:
+    description: 'which CLI command with arguments to run: (validate, create, etc.)'
+    required: true
+    default: help
+
+runs:
+  using: 'docker'
+  image: 'ghcr.io/dylibso/modsurfer:latest'
+  args:
+    - ${{ inputs.command }}
