@@ -9,4 +9,5 @@ jobs:
         uses: dylibso/modsurfer@action
         with:
             command: validate 
+            volume: '`pwd`/test:/cli/test'
             args: -p test/spidermonkey.wasm -c test/mod.yaml

@@ -1,6 +1,10 @@
 name: 'Modsurfer CLI'
 description: 'Run Modsurfer in a GitHub Action to manage WebAssembly modules and interact with Modsurfer applications.'
 inputs:
+  volume:
+    description: 'docker `-v` parameter value to mount repo contents to container file system'
+    required: true
+    default: '`pwd`:/cli'
   command:
     description: 'which CLI command with arguments to run: (validate, create, etc.)'
     required: true
