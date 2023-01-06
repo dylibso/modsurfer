@@ -14,6 +14,6 @@ runs:
   args:
     - validate
     - '-p'
-    - '/github/workspace/${{ inputs.path }}'
+    - './${{ inputs.path }}'
     - '-c' 
-    - '/github/workspace/${{ inputs.check }}'
+    - './${{ inputs.check }}'
