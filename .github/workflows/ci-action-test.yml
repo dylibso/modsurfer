@@ -9,4 +9,4 @@ jobs:
         uses: dylibso/modsurfer@action
         with:
             command: validate 
-            args: -p test/spidermonkey.wasm -c test/mod.yaml
+            args: --path=test/spidermonkey.wasm --check=test/mod.yaml
