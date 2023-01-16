@@ -1,5 +1,6 @@
 validate:
-  # url: https://github.com/wasmCloud/wash/blob/main/mod.yaml
+  # can also point to a remote check file to track up-to-date requirements:
+  # url: https://raw.githubusercontent.com/extism/extism/main/mod.yaml
   allow_wasi: false
   
   imports:
