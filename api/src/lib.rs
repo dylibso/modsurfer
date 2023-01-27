@@ -52,4 +52,7 @@ pub trait ApiClient {
         offset: u32,
         limit: u32,
     ) -> Result<List<Persisted<Module>>>;
+    async fn delete_modules(&self, _module_ids: Vec<i64>) -> Result<HashMap<i64, String>> {
+        anyhow::bail!("Delete operation unimplemented.")
+    }
 }

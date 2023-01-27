@@ -3,9 +3,9 @@ use std::process::ExitCode;
 use std::{collections::HashMap, ffi::OsString, path::PathBuf};
 
 use anyhow::Result;
+use modsurfer_api::{ApiClient, Client};
 use url::Url;
 
-use super::get::get_module;
 use super::validate::validate_module;
 
 pub type Id = i64;
@@ -14,7 +14,8 @@ pub type Offset = u32;
 pub type Limit = u32;
 pub type Version = String;
 pub type ModuleFile = PathBuf;
-pub type ValidationFile = PathBuf;
+pub type CheckFile = PathBuf;
+pub type MetadataEntry = String;
 
 #[derive(Debug)]
 pub struct Cli {
@@ -24,12 +25,12 @@ pub struct Cli {
 }
 
 #[derive(Debug, Default)]
-pub enum Subcommand {
+pub enum Subcommand<'a> {
     #[default]
     Unknown,
     Create(
-        ModuleFile,
-        ValidationFile,
+        &'a ModuleFile,
+        Option<&'a CheckFile>,
         HashMap<String, String>,
         Option<Url>,
     ),
@@ -43,7 +44,7 @@ pub enum Subcommand {
         Option<Offset>,
         Option<Limit>,
     ),
-    Validate(ModuleFile, ValidationFile),
+    Validate(ModuleFile, CheckFile),
     Yank(Id, Version),
 }
 
@@ -61,16 +62,40 @@ impl Cli {
         }
     }
 
-    async fn run(&self, sub: impl Into<Subcommand>) -> Result<ExitCode> {
+    async fn run(&self, sub: impl Into<Subcommand<'_>>) -> Result<ExitCode> {
         match sub.into() {
             Subcommand::Unknown => unimplemented!("Unknown subcommand.\n\n{}", self.help),
-            Subcommand::Create(_, _, _, _) => todo!(),
-            Subcommand::Delete(_) => todo!(),
-            Subcommand::Get(id) => {
-                let module = get_module(&self.host, id).await?;
+            Subcommand::Create(module_path, checkfile_path, metadata, location) => {
+                if let Some(check) = checkfile_path {
+                    validate_module(&module_path, check).await?;
+                }
+
+                let wasm = tokio::fs::read(module_path).await?;
+                let client = Client::new(self.host.as_str())?;
+                let (id, hash) = client.create_module(wasm, Some(metadata), location).await?;
+
+                println!("Module {} ({}) created", id, hash);
+
                 Ok(ExitCode::SUCCESS)
             }
-            Subcommand::List(_, _) => todo!(),
+            Subcommand::Delete(ids) => {
+                let client = Client::new(self.host.as_str())?;
+                let deleted_modules = client.delete_modules(ids).await?;
+                println!("Deleted: {:#?}", deleted_modules);
+                Ok(ExitCode::SUCCESS)
+            }
+            Subcommand::Get(id) => {
+                let client = Client::new(self.host.as_str())?;
+                let module = client.get_module(id).await?.get_inner().clone();
+                println!("Module: ({}) {} {}", id, module.location, module.size);
+                Ok(ExitCode::SUCCESS)
+            }
+            Subcommand::List(offset, limit) => {
+                let client = Client::new(self.host.as_str())?;
+                let list = client.list_modules(offset, limit).await?;
+                println!("List length: {}", list.vec().len());
+                Ok(ExitCode::SUCCESS)
+            }
             Subcommand::Search(_, _, _, _, _) => todo!(),
             Subcommand::Validate(file, check) => {
                 let report = validate_module(&file, &check).await?;
@@ -82,13 +107,43 @@ impl Cli {
     }
 }
 
-impl From<(&str, &clap::ArgMatches)> for Subcommand {
-    fn from(input: (&str, &clap::ArgMatches)) -> Self {
+impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
+    fn from(input: (&'a str, &'a clap::ArgMatches)) -> Self {
         match input {
-            ("create", _args) => todo!(),
-            ("delete", _args) => todo!(),
+            ("create", args) => {
+                let module_path = args
+                    .get_one::<PathBuf>("path")
+                    .expect("must provide a --path to the module on disk");
+                let checkfile_path: Option<&PathBuf> = args.get_one("check");
+                let raw_metadata = args
+                    .get_many("metadata")
+                    .unwrap_or_default()
+                    .cloned()
+                    .collect::<Vec<String>>();
+
+                let metadata: HashMap<String, String> = raw_metadata
+                    .into_iter()
+                    .map(|raw| {
+                        let parts = raw.split("=").collect::<Vec<_>>();
+                        (parts[0].to_string(), parts[1].to_string())
+                    })
+                    .collect();
+
+                let location: Option<&Url> = args.get_one("location");
+
+                Subcommand::Create(module_path, checkfile_path, metadata, location.cloned())
+            }
+            ("delete", args) => Subcommand::Delete(
+                args.get_many("id")
+                    .expect("module id(s) to delete")
+                    .cloned()
+                    .collect::<Vec<Id>>(),
+            ),
             ("get", args) => Subcommand::Get(*args.get_one("id").expect("valid moudle ID")),
-            ("list", _args) => todo!(),
+            ("list", args) => Subcommand::List(
+                *args.get_one("offset").unwrap_or_else(|| &0),
+                *args.get_one("limit").unwrap_or_else(|| &50),
+            ),
             ("search", _args) => todo!(),
             ("validate", args) => Subcommand::Validate(
                 args.get_one::<PathBuf>("path")

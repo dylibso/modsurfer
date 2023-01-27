@@ -7,7 +7,7 @@ use url::Url;
 mod cmd;
 mod plugins;
 
-use cmd::{Cli, Hash, Id, Limit, Offset, Version};
+use cmd::{Cli, Hash, Id, Limit, MetadataEntry, Offset, Version};
 
 const BASE_URL_ENV: &'static str = "MODSURFER_BASE_URL";
 const DEFAULT_BASE_URL: &'static str = "http://localhost:1739";
@@ -40,18 +40,31 @@ fn make_subcommands() -> Vec<Command> {
                 .help("a path on disk to a valid WebAssembly module"),
         )
         .arg(
+            Arg::new("metadata")
+                .value_parser(clap::value_parser!(MetadataEntry))
+                .long("metadata")
+                .short('m')
+                .action(ArgAction::Append)
+                .required(false)
+                .help(
+                    "a repeatable key=value metadata entry, to add arbitrary context to a module",
+                ),
+        )
+        .arg(
             Arg::new("location")
                 .value_parser(clap::value_parser!(url::Url))
                 .long("location")
                 .short('l')
+                .required(false)
                 .help("a valid URL to where this module should be located"),
         )
         .arg(
-            Arg::new("validate")
+            Arg::new("check")
                 .value_parser(clap::value_parser!(PathBuf))
-                .long("validate")
-                .help("a path on disk to a YAML file which declares validation requirements")
-                .default_value("mod.yaml"),
+                .long("check")
+                .short('c')
+                .required(false)
+                .help("a path on disk to a YAML checkfile which declares validation requirements"),
         );
 
     let delete = clap::Command::new("delete")
@@ -97,27 +110,32 @@ fn make_subcommands() -> Vec<Command> {
         .arg(
             Arg::new("function_name")
                 .long("function_name")
+                .required(false)
                 .help("adds a search parameter to match on `function_name"),
         )
         .arg(
             Arg::new("module_name")
                 .long("module_name")
+                .required(false)
                 .help("adds a search parameter to match on `module_name`"),
         )
         .arg(
             Arg::new("source_language")
                 .long("source_language")
+                .required(false)
                 .help("adds a search parameter to match on `source_language`"),
         )
         .arg(
             Arg::new("hash")
                 .value_parser(clap::value_parser!(Hash))
                 .long("hash")
+                .required(false)
                 .help("adds a search parameter to match on `hash`"),
         )
         .arg(
             Arg::new("strings")
-                .long("strings")
+                .long("text")
+                .required(false)
                 .help("adds a search parameter to match on `strings`"),
         );
 

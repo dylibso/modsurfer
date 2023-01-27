@@ -18,6 +18,7 @@ serde = { workspace = true }
 serde_yaml = { workspace = true }
 tokio = { workspace = true }
 url = "2.3.1"
+modsurfer-api = { workspace = true }
 modsurfer-module = { workspace = true }
 modsurfer-proto-v1 = { workspace = true }
 modsurfer-convert = { workspace = true }

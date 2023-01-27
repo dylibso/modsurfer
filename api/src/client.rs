@@ -15,6 +15,7 @@ enum ModserverCommand {
     GetModule(api::GetModuleRequest),
     ListModules(api::ListModulesRequest),
     SearchModules(api::SearchModulesRequest),
+    DeleteModules(api::DeleteModulesRequest),
 }
 
 #[derive(Clone)]
@@ -46,7 +47,11 @@ impl ApiClient for Client {
             return Err(api_error(res.error, "get module request failed"));
         }
 
-        Ok(res.module.unwrap_or_default().into())
+        if res.module.is_some() {
+            Ok(res.module.unwrap().into())
+        } else {
+            Err(anyhow::anyhow!("No module found."))
+        }
     }
 
     async fn list_modules(&self, offset: u32, limit: u32) -> Result<List<Persisted<Module>>> {
@@ -174,6 +179,21 @@ impl ApiClient for Client {
             res.pagination.limit,
         ))
     }
+
+    async fn delete_modules(&self, module_ids: Vec<i64>) -> Result<HashMap<i64, String>> {
+        let req = api::DeleteModulesRequest {
+            module_ids,
+            ..Default::default()
+        };
+
+        let res: api::DeleteModulesResponse =
+            self.send(ModserverCommand::DeleteModules(req)).await?;
+        if res.error.is_some() {
+            return Err(api_error(res.error, "delete modules request failed"));
+        }
+
+        Ok(res.module_id_hash)
+    }
 }
 
 impl Client {
@@ -227,11 +247,25 @@ impl Client {
 
                 return Ok(val);
             }
+            ModserverCommand::DeleteModules(req) => {
+                let resp = self
+                    .inner
+                    .delete(&self.make_endpoint("/api/v1/modules"))
+                    .body(req.write_to_bytes()?)
+                    .send()
+                    .await?;
+                let data = resp.bytes().await?;
+                let val = protobuf::Message::parse_from_bytes(&data)?;
+
+                return Ok(val);
+            }
         }
     }
 
     fn make_endpoint(&self, route: &str) -> String {
-        format!("{}{}", self.base_url, route)
+        let base = self.base_url.trim_end_matches('/');
+        let s = format!("{}{}", base, route);
+        s
     }
 }
 
