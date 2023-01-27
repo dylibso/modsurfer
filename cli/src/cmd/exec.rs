@@ -4,12 +4,16 @@ use std::{collections::HashMap, ffi::OsString, path::PathBuf};
 
 use anyhow::Result;
 use modsurfer_api::{ApiClient, Client};
+use modsurfer_module::SourceLanguage;
 use url::Url;
 
 use super::validate::validate_module;
 
 pub type Id = i64;
 pub type Hash = String;
+pub type ModuleName = String;
+pub type FunctionName = String;
+pub type TextSearch = String;
 pub type Offset = u32;
 pub type Limit = u32;
 pub type Version = String;
@@ -38,11 +42,13 @@ pub enum Subcommand<'a> {
     Get(Id),
     List(Offset, Limit),
     Search(
-        Option<Id>,
-        Option<Hash>,
-        Option<String>,
-        Option<Offset>,
-        Option<Limit>,
+        Option<&'a Hash>,
+        Option<&'a ModuleName>,
+        Option<&'a FunctionName>,
+        Option<&'a SourceLanguage>,
+        Option<&'a TextSearch>,
+        Offset,
+        Limit,
     ),
     Validate(ModuleFile, CheckFile),
     Yank(Id, Version),
@@ -96,7 +102,45 @@ impl Cli {
                 println!("List length: {}", list.vec().len());
                 Ok(ExitCode::SUCCESS)
             }
-            Subcommand::Search(_, _, _, _, _) => todo!(),
+            Subcommand::Search(hash, mod_name, func_name, src_lang, text_search, offset, limit) => {
+                let client = Client::new(self.host.as_str())?;
+                let modules = client
+                    .search_modules(
+                        None,
+                        hash.map(String::clone),
+                        func_name.map(String::clone),
+                        mod_name.map(String::clone),
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        src_lang.map(|lang| lang.to_string()),
+                        None,
+                        None,
+                        None,
+                        text_search.map(|s| vec![s.clone()]),
+                        offset,
+                        limit,
+                    )
+                    .await?;
+
+                println!(
+                    "{:#?}",
+                    modules
+                        .vec()
+                        .iter()
+                        .map(|m| format!(
+                            "{} ({}) {}",
+                            m.get_id(),
+                            m.get_inner().hash,
+                            m.get_inner().file_name()
+                        ))
+                        .collect::<Vec<String>>()
+                );
+
+                Ok(ExitCode::SUCCESS)
+            }
             Subcommand::Validate(file, check) => {
                 let report = validate_module(&file, &check).await?;
                 println!("{report}");
@@ -144,7 +188,30 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                 *args.get_one("offset").unwrap_or_else(|| &0),
                 *args.get_one("limit").unwrap_or_else(|| &50),
             ),
-            ("search", _args) => todo!(),
+            ("search", args) => {
+                // hash, mod_name, func_name, src_lang, text_search, offset, limit
+                let hash: Option<&Hash> = args.get_one("hash");
+                let mod_name: Option<&ModuleName> = args.get_one("module_name");
+                let func_name: Option<&FunctionName> = args.get_one("function_name");
+                let src_lang: Option<&SourceLanguage> = args.get_one("source_language");
+                let text_search: Option<&TextSearch> = args.get_one("text");
+                let offset: Offset = *args
+                    .get_one("offset")
+                    .expect("offset should have default value");
+                let limit: Limit = *args
+                    .get_one("limit")
+                    .expect("limit should have default value");
+
+                Subcommand::Search(
+                    hash,
+                    mod_name,
+                    func_name,
+                    src_lang,
+                    text_search,
+                    offset,
+                    limit,
+                )
+            }
             ("validate", args) => Subcommand::Validate(
                 args.get_one::<PathBuf>("path")
                     .expect("valid module path")

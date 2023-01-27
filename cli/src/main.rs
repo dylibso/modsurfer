@@ -133,10 +133,24 @@ fn make_subcommands() -> Vec<Command> {
                 .help("adds a search parameter to match on `hash`"),
         )
         .arg(
-            Arg::new("strings")
+            Arg::new("text")
                 .long("text")
                 .required(false)
-                .help("adds a search parameter to match on `strings`"),
+                .help("adds a search parameter to match on `strings` extracted from a module"),
+        )
+        .arg(
+            Arg::new("offset")
+                .value_parser(clap::value_parser!(Offset))
+                .long("offset")
+                .default_value("0")
+                .help("the pagination offset by which modules are listed"),
+        )
+        .arg(
+            Arg::new("limit")
+                .value_parser(clap::value_parser!(Limit))
+                .long("limit")
+                .default_value("50")
+                .help("the maximum number of modules in a list of results"),
         );
 
     let validate = clap::Command::new("validate")
