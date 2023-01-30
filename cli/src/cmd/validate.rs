@@ -275,7 +275,7 @@ impl Module {
     // returned as a protobuf-encoded struct.
     fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer_module::Module> {
         let ctx = Context::new();
-        let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, false)?;
+        let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, [], false)?;
         let data = plugin.call("parse_module", wasm)?;
         let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
         let metadata = if a.metadata.is_empty() {

@@ -23,7 +23,7 @@ modsurfer-module = { workspace = true }
 modsurfer-proto-v1 = { workspace = true }
 modsurfer-convert = { workspace = true }
 comfy-table = "6.1.3"
-extism = { git = "https://github.com/extism/extism.git" }
+extism = "0.2.0"
 
 [[bin]]
 name = "modsurfer"
