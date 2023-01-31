@@ -9,11 +9,13 @@ use parse_size::parse_size;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Validation {
     pub validate: Check,
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Check {
     pub url: Option<String>,
     pub allow_wasi: Option<bool>,
