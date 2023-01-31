@@ -118,22 +118,22 @@ fn make_subcommands() -> Vec<Command> {
     let search = clap::Command::new("search")
         .about("Search for modules matching optional parameters.")
         .arg(
-            Arg::new("function_name")
-                .long("function_name")
+            Arg::new("function-name")
+                .long("function-name")
                 .required(false)
-                .help("adds a search parameter to match on `function_name"),
+                .help("adds a search parameter to match on `function-name"),
         )
         .arg(
-            Arg::new("module_name")
-                .long("module_name")
+            Arg::new("module-name")
+                .long("module-name")
                 .required(false)
-                .help("adds a search parameter to match on `module_name`"),
+                .help("adds a search parameter to match on `module-name`"),
         )
         .arg(
-            Arg::new("source_language")
-                .long("source_language")
+            Arg::new("source-language")
+                .long("source-language")
                 .required(false)
-                .help("adds a search parameter to match on `source_language`"),
+                .help("adds a search parameter to match on `source-language`"),
         )
         .arg(
             Arg::new("hash")

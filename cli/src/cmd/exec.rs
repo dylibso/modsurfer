@@ -78,7 +78,7 @@ pub enum Subcommand<'a> {
         Option<&'a Hash>,
         Option<&'a ModuleName>,
         Option<&'a FunctionName>,
-        Option<&'a SourceLanguage>,
+        Option<SourceLanguage>,
         Option<&'a TextSearch>,
         Offset,
         Limit,
@@ -165,6 +165,7 @@ impl Cli {
                     exports: m.exports.len(),
                     imports: m.imports.len(),
                     namespaces: m.get_import_namespaces(),
+                    source_language: m.source_language.clone(),
                     size: human_bytes(m.size as f64),
                 }];
                 let output = ApiResults { results };
@@ -193,6 +194,7 @@ impl Cli {
                         exports: m.get_inner().exports.len(),
                         imports: m.get_inner().imports.len(),
                         namespaces: m.get_inner().get_import_namespaces(),
+                        source_language: m.get_inner().source_language.clone(),
                         size: human_bytes(m.get_inner().size as f64),
                     })
                     .collect();
@@ -250,6 +252,7 @@ impl Cli {
                         exports: m.get_inner().exports.len(),
                         imports: m.get_inner().imports.len(),
                         namespaces: m.get_inner().get_import_namespaces(),
+                        source_language: m.get_inner().source_language.clone(),
                         size: human_bytes(m.get_inner().size as f64),
                     })
                     .collect();
@@ -338,9 +341,11 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
             ("search", args) => {
                 // hash, mod_name, func_name, src_lang, text_search, offset, limit
                 let hash: Option<&Hash> = args.get_one("hash");
-                let mod_name: Option<&ModuleName> = args.get_one("module_name");
-                let func_name: Option<&FunctionName> = args.get_one("function_name");
-                let src_lang: Option<&SourceLanguage> = args.get_one("source_language");
+                let mod_name: Option<&ModuleName> = args.get_one("module-name");
+                let func_name: Option<&FunctionName> = args.get_one("function-name");
+                let src_lang: Option<SourceLanguage> = args
+                    .get_one("source-language")
+                    .map(|s: &String| s.clone().into());
                 let text_search: Option<&TextSearch> = args.get_one("text");
                 let offset: Offset = *args
                     .get_one("offset")

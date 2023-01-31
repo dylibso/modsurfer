@@ -1,6 +1,7 @@
 use std::fmt::Display;
 
 use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
+use modsurfer_module::SourceLanguage;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -16,6 +17,7 @@ pub struct ApiResult<'a> {
     pub exports: usize,
     pub imports: usize,
     pub namespaces: Vec<&'a str>,
+    pub source_language: SourceLanguage,
     pub size: String,
 }
 
@@ -59,6 +61,7 @@ impl Display for ApiResults<'_> {
             "# Exports",
             "# Imports",
             "Namespaces",
+            "Source",
             "Size",
         ]);
 
@@ -74,6 +77,7 @@ impl Display for ApiResults<'_> {
                 m.exports.to_string(),
                 m.imports.to_string(),
                 m.namespaces.join(", "),
+                m.source_language.to_string(),
                 m.size.clone(),
             ]));
         });
