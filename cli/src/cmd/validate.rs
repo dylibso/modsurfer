@@ -177,7 +177,6 @@ impl Report {
 impl Display for Report {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.fails.is_empty() {
-            f.write_str("All expectations met!\n")?;
             return Ok(());
         }
 
