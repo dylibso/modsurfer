@@ -16,13 +16,15 @@ protobuf = "3.2.0"
 reqwest = "0.11.12"
 serde = { workspace = true }
 serde_yaml = { workspace = true }
+serde_json = { workspace = true }
 tokio = { workspace = true }
 url = "2.3.1"
+modsurfer-api = { workspace = true }
 modsurfer-module = { workspace = true }
 modsurfer-proto-v1 = { workspace = true }
 modsurfer-convert = { workspace = true }
 comfy-table = "6.1.3"
-extism = { git = "https://github.com/extism/extism.git" }
+extism = "0.2.0"
 
 [[bin]]
 name = "modsurfer"

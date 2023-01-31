@@ -20,6 +20,8 @@ pub use anyhow::Result;
 use async_trait::async_trait;
 use modsurfer_module::{Export, Import, Module};
 
+/// A trait to describe the functionality of Modsurfer's internal API client. This is used across
+/// the CLI and GUI application. As such, the code must compile to `wasm32-unknown-unknown` target.
 #[async_trait(?Send)]
 pub trait ApiClient {
     fn new(base_url: &str) -> Result<Self>
@@ -52,4 +54,7 @@ pub trait ApiClient {
         offset: u32,
         limit: u32,
     ) -> Result<List<Persisted<Module>>>;
+    async fn delete_modules(&self, _module_ids: Vec<i64>) -> Result<HashMap<i64, String>> {
+        anyhow::bail!("Delete operation unimplemented.")
+    }
 }

@@ -21,9 +21,9 @@ pub struct Export {
 pub struct Module {
     /// sha256 hash of the modules raw bytes
     pub hash: String,
-    /// function imports called by the module (see: https://github.com/WebAssembly/design/blob/main/Modules.md#imports)
+    /// function imports called by the module (see: <https://github.com/WebAssembly/design/blob/main/Modules.md#imports>)
     pub imports: Vec<Import>,
-    /// function exports provided by the module (see: https://github.com/WebAssembly/design/blob/main/Modules.md#exports)
+    /// function exports provided by the module (see: <https://github.com/WebAssembly/design/blob/main/Modules.md#exports>)
     pub exports: Vec<Export>,
     /// size in bytes of the module
     pub size: u64,

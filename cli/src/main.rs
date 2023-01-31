@@ -7,7 +7,7 @@ use url::Url;
 mod cmd;
 mod plugins;
 
-use cmd::{Cli, Hash, Id, Limit, Offset, Version};
+use cmd::{Cli, Hash, Id, Limit, MetadataEntry, Offset, OutputFormat, Version};
 
 const BASE_URL_ENV: &'static str = "MODSURFER_BASE_URL";
 const DEFAULT_BASE_URL: &'static str = "http://localhost:1739";
@@ -22,11 +22,22 @@ async fn main() -> Result<ExitCode> {
             .unwrap_or(DEFAULT_BASE_URL),
     )?;
     let cmd = Command::new("modsurfer")
-        .about("Modsurfer CLI is used to interact with the HTTP API.")
+        .about("Modsurfer CLI is used to interact with the HTTP API or validate modules offline.")
+        .version(env!("CARGO_PKG_VERSION"))
         .before_help("Copyright Dylibso, Inc. <support@dylib.so>")
         .subcommands(make_subcommands());
 
     Cli::new(cmd, base_url).execute().await
+}
+
+fn add_output_arg(cmd: Command) -> Command {
+    cmd.arg(
+        Arg::new("output-format")
+            .value_parser(clap::value_parser!(OutputFormat))
+            .long("output-format")
+            .required(false)
+            .help("set the output format of any command, supports `json` or `table` (default)"),
+    )
 }
 
 fn make_subcommands() -> Vec<Command> {
@@ -40,18 +51,31 @@ fn make_subcommands() -> Vec<Command> {
                 .help("a path on disk to a valid WebAssembly module"),
         )
         .arg(
+            Arg::new("metadata")
+                .value_parser(clap::value_parser!(MetadataEntry))
+                .long("metadata")
+                .short('m')
+                .action(ArgAction::Append)
+                .required(false)
+                .help(
+                    "a repeatable key=value metadata entry, to add arbitrary context to a module",
+                ),
+        )
+        .arg(
             Arg::new("location")
                 .value_parser(clap::value_parser!(url::Url))
                 .long("location")
                 .short('l')
+                .required(false)
                 .help("a valid URL to where this module should be located"),
         )
         .arg(
-            Arg::new("validate")
+            Arg::new("check")
                 .value_parser(clap::value_parser!(PathBuf))
-                .long("validate")
-                .help("a path on disk to a YAML file which declares validation requirements")
-                .default_value("mod.yaml"),
+                .long("check")
+                .short('c')
+                .required(false)
+                .help("a path on disk to a YAML checkfile which declares validation requirements"),
         );
 
     let delete = clap::Command::new("delete")
@@ -95,30 +119,49 @@ fn make_subcommands() -> Vec<Command> {
     let search = clap::Command::new("search")
         .about("Search for modules matching optional parameters.")
         .arg(
-            Arg::new("function_name")
-                .long("function_name")
-                .help("adds a search parameter to match on `function_name"),
+            Arg::new("function-name")
+                .long("function-name")
+                .required(false)
+                .help("adds a search parameter to match on `function-name"),
         )
         .arg(
-            Arg::new("module_name")
-                .long("module_name")
-                .help("adds a search parameter to match on `module_name`"),
+            Arg::new("module-name")
+                .long("module-name")
+                .required(false)
+                .help("adds a search parameter to match on `module-name`"),
         )
         .arg(
-            Arg::new("source_language")
-                .long("source_language")
-                .help("adds a search parameter to match on `source_language`"),
+            Arg::new("source-language")
+                .long("source-language")
+                .required(false)
+                .help("adds a search parameter to match on `source-language`"),
         )
         .arg(
             Arg::new("hash")
                 .value_parser(clap::value_parser!(Hash))
                 .long("hash")
+                .required(false)
                 .help("adds a search parameter to match on `hash`"),
         )
         .arg(
-            Arg::new("strings")
-                .long("strings")
-                .help("adds a search parameter to match on `strings`"),
+            Arg::new("text")
+                .long("text")
+                .required(false)
+                .help("adds a search parameter to match on `strings` extracted from a module"),
+        )
+        .arg(
+            Arg::new("offset")
+                .value_parser(clap::value_parser!(Offset))
+                .long("offset")
+                .default_value("0")
+                .help("the pagination offset by which modules are listed"),
+        )
+        .arg(
+            Arg::new("limit")
+                .value_parser(clap::value_parser!(Limit))
+                .long("limit")
+                .default_value("50")
+                .help("the maximum number of modules in a list of results"),
         );
 
     let validate = clap::Command::new("validate")
@@ -155,4 +198,7 @@ fn make_subcommands() -> Vec<Command> {
         ));
 
     vec![create, delete, get, list, search, validate, yank]
+        .into_iter()
+        .map(add_output_arg)
+        .collect()
 }

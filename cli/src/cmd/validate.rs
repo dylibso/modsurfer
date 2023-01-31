@@ -6,14 +6,16 @@ use extism::{Context, Plugin};
 use human_bytes::human_bytes;
 use modsurfer_convert::from_api;
 use parse_size::parse_size;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Validation {
     pub validate: Check,
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Check {
     pub url: Option<String>,
     pub allow_wasi: Option<bool>,
@@ -129,7 +131,7 @@ struct Size {
     pub max: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 enum Classification {
     AbiCompatibilty,
     ResourceLimit,
@@ -147,7 +149,7 @@ impl Display for Classification {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 struct FailureDetail {
     actual: String,
     expected: String,
@@ -155,7 +157,7 @@ struct FailureDetail {
     classification: Classification,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Report {
     /// k/v pair of the dot-separated path to validation field and expectation info
     fails: BTreeMap<String, FailureDetail>,
@@ -168,12 +170,15 @@ impl Report {
             _ => ExitCode::FAILURE,
         }
     }
+
+    pub fn has_failures(&self) -> bool {
+        !self.fails.is_empty()
+    }
 }
 
 impl Display for Report {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.fails.is_empty() {
-            f.write_str("All expectations met!\n")?;
             return Ok(());
         }
 
@@ -207,8 +212,7 @@ impl Display for Report {
             ]));
         });
 
-        f.write_str(table.to_string().as_str())?;
-        Ok(())
+        f.write_str(table.to_string().as_str())
     }
 }
 
@@ -275,7 +279,7 @@ impl Module {
     // returned as a protobuf-encoded struct.
     fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer_module::Module> {
         let ctx = Context::new();
-        let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, false)?;
+        let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, [], false)?;
         let data = plugin.call("parse_module", wasm)?;
         let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
         let metadata = if a.metadata.is_empty() {

@@ -6,6 +6,10 @@ empty-cli:
 	cd cli
 	cargo run -- validate -p test/spidermonkey.wasm -c test/empty.yaml
 
+unknown-cli:
+	cd cli
+	cargo run -- validate -p test/spidermonkey.wasm -c test/unknown-fields.yaml
+
 install:
 	@echo "check PROTOC: `which protoc`"
 	cargo install protobuf-codegen

@@ -1,0 +1,5 @@
+# bad: true
+validate:
+  allow_wasi: false
+
+  download_more_ram: false

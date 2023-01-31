@@ -15,8 +15,10 @@ enum ModserverCommand {
     GetModule(api::GetModuleRequest),
     ListModules(api::ListModulesRequest),
     SearchModules(api::SearchModulesRequest),
+    DeleteModules(api::DeleteModulesRequest),
 }
 
+/// The API Client implementation.
 #[derive(Clone)]
 pub struct Client {
     inner: reqwest::Client,
@@ -25,6 +27,8 @@ pub struct Client {
 
 #[async_trait(?Send)]
 impl ApiClient for Client {
+    /// Construct an API Client using the `base_url`, which should be the server host address and
+    /// port needed to communicate with a Modsurfer backend. Many backends default to http://localhost:1739.
     fn new(base_url: &str) -> Result<Self> {
         let inner = reqwest::ClientBuilder::new()
             .build()
@@ -36,6 +40,7 @@ impl ApiClient for Client {
         })
     }
 
+    /// Find a module by its ID.
     async fn get_module(&self, module_id: i64) -> Result<Persisted<Module>> {
         let req = api::GetModuleRequest {
             module_id,
@@ -46,9 +51,15 @@ impl ApiClient for Client {
             return Err(api_error(res.error, "get module request failed"));
         }
 
-        Ok(res.module.unwrap_or_default().into())
+        if res.module.is_some() {
+            Ok(res.module.unwrap().into())
+        } else {
+            Err(anyhow::anyhow!("No module found."))
+        }
     }
 
+    /// List all modules stored in the database. Provide an offset and limit to control the pagination
+    /// and size of the result set returned.
     async fn list_modules(&self, offset: u32, limit: u32) -> Result<List<Persisted<Module>>> {
         let mut pagination: api::Pagination = Default::default();
         pagination.limit = limit;
@@ -67,6 +78,10 @@ impl ApiClient for Client {
         Ok(List::new(modules, res.total as u32, offset, limit))
     }
 
+    /// Create a new module entry in Modsurfer. If no `location` is set, the module will be named
+    /// by its SHA-256 hash + some timestamp in milliseconds. A `location` must be a valid URL, and
+    /// can use arbitrary schemes such as `file://<PATH>`, `s3://<BUCKET>/<PATH>`, etc. Use the
+    /// `location` to indicate the module's current or eventual storage identifier.
     async fn create_module(
         &self,
         wasm: impl AsRef<[u8]> + Send,
@@ -88,6 +103,8 @@ impl ApiClient for Client {
         Ok((res.module_id, res.hash))
     }
 
+    /// Search for modules based on input parameters. The query will combine these inputs using
+    /// `AND` condintions.
     async fn search_modules(
         &self,
         module_id: Option<i64>,
@@ -174,6 +191,22 @@ impl ApiClient for Client {
             res.pagination.limit,
         ))
     }
+
+    /// Delete a module from the database. This is a non-reversable operation.
+    async fn delete_modules(&self, module_ids: Vec<i64>) -> Result<HashMap<i64, String>> {
+        let req = api::DeleteModulesRequest {
+            module_ids,
+            ..Default::default()
+        };
+
+        let res: api::DeleteModulesResponse =
+            self.send(ModserverCommand::DeleteModules(req)).await?;
+        if res.error.is_some() {
+            return Err(api_error(res.error, "delete modules request failed"));
+        }
+
+        Ok(res.module_id_hash)
+    }
 }
 
 impl Client {
@@ -227,11 +260,25 @@ impl Client {
 
                 return Ok(val);
             }
+            ModserverCommand::DeleteModules(req) => {
+                let resp = self
+                    .inner
+                    .delete(&self.make_endpoint("/api/v1/modules"))
+                    .body(req.write_to_bytes()?)
+                    .send()
+                    .await?;
+                let data = resp.bytes().await?;
+                let val = protobuf::Message::parse_from_bytes(&data)?;
+
+                return Ok(val);
+            }
         }
     }
 
     fn make_endpoint(&self, route: &str) -> String {
-        format!("{}{}", self.base_url, route)
+        let base = self.base_url.trim_end_matches('/');
+        let s = format!("{}{}", base, route);
+        s
     }
 }
 

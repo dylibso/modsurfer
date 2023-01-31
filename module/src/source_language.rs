@@ -1,6 +1,8 @@
+use std::ffi::OsString;
+
 /// Detected from the `producers` section in the wasm binary, or from other implicit values within
 /// the wasm binary.
-/// See more: https://github.com/WebAssembly/tool-conventions/blob/main/ProducersSection.md
+/// See more: <https://github.com/WebAssembly/tool-conventions/blob/main/ProducersSection.md>
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum SourceLanguage {
     Unknown,
@@ -21,6 +23,13 @@ impl From<String> for SourceLanguage {
             "AssemblyScript" => SourceLanguage::AssemblyScript,
             _ => SourceLanguage::Unknown,
         }
+    }
+}
+
+impl From<OsString> for SourceLanguage {
+    fn from(value: OsString) -> Self {
+        let s = value.into_string().unwrap_or_default();
+        s.into()
     }
 }
 
