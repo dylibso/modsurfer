@@ -98,7 +98,10 @@ impl Cli {
     pub async fn execute(&self) -> Result<ExitCode> {
         match self.cmd.clone().get_matches().subcommand() {
             Some(x) => self.run(x).await,
-            _ => anyhow::bail!("{}", self.help),
+            _ => {
+                println!("{}", self.help);
+                Ok(ExitCode::SUCCESS)
+            }
         }
     }
 
