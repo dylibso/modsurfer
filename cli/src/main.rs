@@ -22,7 +22,7 @@ async fn main() -> Result<ExitCode> {
             .unwrap_or(DEFAULT_BASE_URL),
     )?;
     let cmd = Command::new("modsurfer")
-        .about("Modsurfer CLI is used to interact with the HTTP API.")
+        .about("Modsurfer CLI is used to interact with the HTTP API or validate modules offline.")
         .version(env!("CARGO_PKG_VERSION"))
         .before_help("Copyright Dylibso, Inc. <support@dylib.so>")
         .subcommands(make_subcommands());
