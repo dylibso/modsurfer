@@ -168,6 +168,10 @@ impl Report {
             _ => ExitCode::FAILURE,
         }
     }
+
+    pub fn has_failures(&self) -> bool {
+        !self.fails.is_empty()
+    }
 }
 
 impl Display for Report {

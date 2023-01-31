@@ -107,7 +107,18 @@ impl Cli {
             Subcommand::Unknown => unimplemented!("Unknown subcommand.\n\n{}", self.help),
             Subcommand::Create(module_path, checkfile_path, metadata, location, output_format) => {
                 if let Some(check) = checkfile_path {
-                    validate_module(&module_path, check).await?;
+                    let report = validate_module(&module_path, check).await?;
+                    if report.has_failures() {
+                        println!(
+                            "{}",
+                            match output_format {
+                                OutputFormat::Json => serde_json::to_string_pretty(&report)?,
+                                OutputFormat::Table => report.to_string(),
+                            }
+                        );
+
+                        return Ok(report.as_exit_code());
+                    }
                 }
 
                 let wasm = tokio::fs::read(module_path).await?;
