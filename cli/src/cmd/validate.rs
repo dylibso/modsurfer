@@ -6,7 +6,7 @@ use extism::{Context, Plugin};
 use human_bytes::human_bytes;
 use modsurfer_convert::from_api;
 use parse_size::parse_size;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 struct Validation {
@@ -129,7 +129,7 @@ struct Size {
     pub max: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 enum Classification {
     AbiCompatibilty,
     ResourceLimit,
@@ -147,7 +147,7 @@ impl Display for Classification {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 struct FailureDetail {
     actual: String,
     expected: String,
@@ -155,7 +155,7 @@ struct FailureDetail {
     classification: Classification,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Report {
     /// k/v pair of the dot-separated path to validation field and expectation info
     fails: BTreeMap<String, FailureDetail>,
@@ -207,8 +207,7 @@ impl Display for Report {
             ]));
         });
 
-        f.write_str(table.to_string().as_str())?;
-        Ok(())
+        f.write_str(table.to_string().as_str())
     }
 }
 

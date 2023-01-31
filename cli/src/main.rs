@@ -7,7 +7,7 @@ use url::Url;
 mod cmd;
 mod plugins;
 
-use cmd::{Cli, Hash, Id, Limit, MetadataEntry, Offset, Version};
+use cmd::{Cli, Hash, Id, Limit, MetadataEntry, Offset, OutputFormat, Version};
 
 const BASE_URL_ENV: &'static str = "MODSURFER_BASE_URL";
 const DEFAULT_BASE_URL: &'static str = "http://localhost:1739";
@@ -27,6 +27,16 @@ async fn main() -> Result<ExitCode> {
         .subcommands(make_subcommands());
 
     Cli::new(cmd, base_url).execute().await
+}
+
+fn add_output_arg(cmd: Command) -> Command {
+    cmd.arg(
+        Arg::new("output-format")
+            .value_parser(clap::value_parser!(OutputFormat))
+            .long("output-format")
+            .required(false)
+            .help("set the output format of any command, supports `json` or `table` (default)"),
+    )
 }
 
 fn make_subcommands() -> Vec<Command> {
@@ -187,4 +197,7 @@ fn make_subcommands() -> Vec<Command> {
         ));
 
     vec![create, delete, get, list, search, validate, yank]
+        .into_iter()
+        .map(add_output_arg)
+        .collect()
 }
