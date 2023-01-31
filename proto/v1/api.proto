@@ -50,10 +50,10 @@ message Module {
   // sha256 hash of the modules raw bytes
   string hash = 3;
   // function imports called by the module (see:
-  // https://github.com/WebAssembly/design/blob/main/Modules.md#imports)
+  // <https://github.com/WebAssembly/design/blob/main/Modules.md#imports)>
   repeated Import imports = 4;
   // function exports provided by the module (see:
-  // https://github.com/WebAssembly/design/blob/main/Modules.md#exports)
+  // <https://github.com/WebAssembly/design/blob/main/Modules.md#exports)>
   repeated Export exports = 5;
   // size in bytes of the module
   uint64 size = 6;
@@ -68,7 +68,7 @@ message Module {
   // the interned strings stored in the wasm binary (panic/abort messages, etc.)
   repeated string strings = 11;
   // the cyclomatic complexity
-  // (https://en.wikipedia.org/wiki/Cyclomatic_complexity) of the instructions
+  // (<https://en.wikipedia.org/wiki/Cyclomatic_complexity>) of the instructions
   optional uint32 complexity = 13;
   // the grah in Dot format
   optional string graph = 14;
@@ -110,12 +110,12 @@ enum Field {
   Sha256 = 6;
 }
 
-// PUT /api/v1/module:
+// `PUT /api/v1/module:`
 // Insert a module, extract data from binary. Return the module ID & hash.
 message CreateModuleRequest {
   bytes wasm = 1;
   map<string, string> metadata = 2;
-  // a valid URL with a scheme prefix e.g. s3://, file://, https://
+  // a valid URL with a scheme prefix e.g. `s3://`, `file://`, `https://`
   optional string location = 3;
 }
 
@@ -126,7 +126,7 @@ message CreateModuleResponse {
   optional Error error = 3;
 }
 
-// POST /api/v1/module
+// `POST /api/v1/module:`
 // Return a single module.
 message GetModuleRequest { int64 module_id = 1; }
 
@@ -136,7 +136,7 @@ message GetModuleResponse {
   optional Error error = 2;
 }
 
-// POST /api/v1/modules:
+// `POST /api/v1/modules:`
 // Return paginated list of all modules.
 message ListModulesRequest {
   Pagination pagination = 1;
@@ -154,7 +154,7 @@ message ListModulesResponse {
   optional Error error = 5;
 }
 
-// POST /api/v1/search:
+// `POST /api/v1/search:`
 // Search for modules based on filter params provided (which should be any
 // dimension of the module schema, or string search in any metadata value).
 // Return a paginated list of matching modules.
@@ -164,10 +164,10 @@ message SearchModulesRequest {
   // original name of the binary module file
   optional string hash = 3;
   // function imports called by the module (see:
-  // https://github.com/WebAssembly/design/blob/main/Modules.md#imports)
+  // <https://github.com/WebAssembly/design/blob/main/Modules.md#imports>)
   repeated Import imports = 4;
   // function exports provided by the module (see:
-  // https://github.com/WebAssembly/design/blob/main/Modules.md#exports)
+  // <https://github.com/WebAssembly/design/blob/main/Modules.md#exports>)
   repeated Export exports = 5;
   // minimum size in bytes of the module
   optional uint64 min_size = 6;
@@ -188,7 +188,7 @@ message SearchModulesRequest {
   repeated string strings = 13;
   // match on any function name in an import or export.
   optional string function_name = 14;
-  // match on the module name e.g. "env" or "wasi_snapshot_preview1"
+  // match on the module name e.g. `env` or `wasi_snapshot_preview1`
   optional string module_name = 15;
 
   Pagination pagination = 16;
@@ -206,7 +206,7 @@ message SearchModulesResponse {
   optional Error error = 5;
 }
 
-// DELETE /api/v1/module:
+// `DELETE /api/v1/module:`
 // Remove a module from the database by its ID. Return the module IDs & hashes.
 message DeleteModulesRequest { repeated int64 module_ids = 1; }
 
