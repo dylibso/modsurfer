@@ -33,10 +33,17 @@ Options:
 
   -V, --version
           Print version
-
-
 ```
 
+## Output Format
+
+Most commands that generate output can take an optional argument `--output-format` to instruct Modsurfer CLI to render `JSON` instead of a table. This can be very useful if Modsurfer CLI is part of a pipeline or script. 
+
+e.g.
+
+```sh
+modsurfer get --id 4 | jq . | ...
+```
 
 ## Examples:
 
@@ -56,6 +63,7 @@ modsurfer get --id 3
 
 modsurfer list --offset 0 --limit 50 # (0 & 50 are defaults)
 
-modsurfer search --function-name _start --module-name env --source-language Rust --hash 121eee... --text "Help me"
-
+modsurfer search --function-name _start --module-name env --source-language Rust --text "Help me"
 ```
+
+> **NOTE:** when using the `search` command along with the `--source-language` argument, the value is case-sensitive, being one of `{Rust, Go, C, C++, AssemblyScript}`.
