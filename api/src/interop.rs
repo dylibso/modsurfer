@@ -29,11 +29,12 @@ impl<T> List<T> {
     }
 
     /// Separate the items from within the `List` to use independently.
-    pub fn split(&self) -> (Vec<&T>, u32, u32) {
+    pub fn split(&self) -> (Vec<&T>, u32, u32, u32) {
         let limit = self.limit;
         let offset = self.offset;
+        let total = self.total;
 
-        (self.vec(), offset, limit)
+        (self.vec(), offset, limit, total)
     }
 }
 

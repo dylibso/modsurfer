@@ -4,8 +4,8 @@ use std::{collections::HashMap, ffi::OsString, path::PathBuf};
 
 use anyhow::Result;
 use human_bytes::human_bytes;
-use modsurfer_api::{ApiClient, Client};
-use modsurfer_module::SourceLanguage;
+use modsurfer_api::{ApiClient, Client, Persisted};
+use modsurfer_module::{Module, SourceLanguage};
 use serde::Serialize;
 use url::Url;
 
@@ -86,6 +86,7 @@ pub enum Subcommand<'a> {
     ),
     Validate(ModuleFile, CheckFile, &'a OutputFormat),
     Yank(Id, Version, &'a OutputFormat),
+    Audit(CheckFile, &'a OutputFormat),
 }
 
 impl Cli {
@@ -171,17 +172,8 @@ impl Cli {
             }
             Subcommand::Get(id, output_format) => {
                 let client = Client::new(self.host.as_str())?;
-                let m = client.get_module(id).await?.get_inner().clone();
-                let results = vec![ApiResult {
-                    module_id: id,
-                    hash: m.hash.clone(),
-                    file_name: m.file_name(),
-                    exports: m.exports.len(),
-                    imports: m.imports.len(),
-                    namespaces: m.get_import_namespaces(),
-                    source_language: m.source_language.clone(),
-                    size: human_bytes(m.size as f64),
-                }];
+                let m = client.get_module(id).await?;
+                let results = vec![to_api_result(&m)];
                 let output = ApiResults { results };
 
                 println!(
@@ -198,20 +190,7 @@ impl Cli {
                 let client = Client::new(self.host.as_str())?;
                 let list = client.list_modules(offset, limit).await?;
 
-                let results = list
-                    .vec()
-                    .iter()
-                    .map(|m| ApiResult {
-                        module_id: m.get_id(),
-                        hash: m.get_inner().hash.clone(),
-                        file_name: m.get_inner().file_name(),
-                        exports: m.get_inner().exports.len(),
-                        imports: m.get_inner().imports.len(),
-                        namespaces: m.get_inner().get_import_namespaces(),
-                        source_language: m.get_inner().source_language.clone(),
-                        size: human_bytes(m.get_inner().size as f64),
-                    })
-                    .collect();
+                let results = list.vec().into_iter().map(to_api_result).collect();
                 let output = ApiResults { results };
 
                 println!(
@@ -256,20 +235,7 @@ impl Cli {
                     )
                     .await?;
 
-                let results = modules
-                    .vec()
-                    .iter()
-                    .map(|m| ApiResult {
-                        module_id: m.get_id(),
-                        hash: m.get_inner().hash.clone(),
-                        file_name: m.get_inner().file_name(),
-                        exports: m.get_inner().exports.len(),
-                        imports: m.get_inner().imports.len(),
-                        namespaces: m.get_inner().get_import_namespaces(),
-                        source_language: m.get_inner().source_language.clone(),
-                        size: human_bytes(m.get_inner().size as f64),
-                    })
-                    .collect();
+                let results = modules.vec().into_iter().map(to_api_result).collect();
                 let output = ApiResults { results };
 
                 println!(
@@ -295,7 +261,25 @@ impl Cli {
 
                 Ok(ExitCode::FAILURE)
             }
+            Subcommand::Audit(_check, _output_format) => {
+                println!("`audit` is not yet supported. Reach out to support@dylib.so for more information!");
+
+                Ok(ExitCode::FAILURE)
+            }
         }
+    }
+}
+
+fn to_api_result(m: &Persisted<Module>) -> ApiResult {
+    ApiResult {
+        module_id: m.get_id(),
+        hash: m.get_inner().hash.clone(),
+        file_name: m.get_inner().file_name(),
+        exports: m.get_inner().exports.len(),
+        imports: m.get_inner().imports.len(),
+        namespaces: m.get_inner().get_import_namespaces(),
+        source_language: m.get_inner().source_language.clone(),
+        size: human_bytes(m.get_inner().size as f64),
     }
 }
 
@@ -353,7 +337,6 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                 output_format(args),
             ),
             ("search", args) => {
-                // hash, mod_name, func_name, src_lang, text_search, offset, limit
                 let hash: Option<&Hash> = args.get_one("hash");
                 let mod_name: Option<&ModuleName> = args.get_one("module-name");
                 let func_name: Option<&FunctionName> = args.get_one("function-name");
@@ -392,6 +375,12 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                 *args.get_one::<Id>("id").expect("id is required"),
                 args.get_one::<Version>("version")
                     .expect("version is required")
+                    .clone(),
+                output_format(args),
+            ),
+            ("audit", args) => Subcommand::Audit(
+                args.get_one::<PathBuf>("check")
+                    .expect("valid check file path")
                     .clone(),
                 output_format(args),
             ),
