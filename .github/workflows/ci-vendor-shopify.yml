@@ -8,5 +8,5 @@ jobs:
       - name: modsurfer validate
         uses: dylibso/modsurfer-validate-action@main
         with:
-            path: vendors/shopify/test-some-discount.wasm
+            path: vendors/shopify/discount.wasm
             check: vendors/shopify/mod.yaml
