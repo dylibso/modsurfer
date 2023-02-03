@@ -197,7 +197,18 @@ fn make_subcommands() -> Vec<Command> {
                 .help("the version of a module entry in Modsurfer (if no version exists, this command has no effect)",
         ));
 
-    vec![create, delete, get, list, search, validate, yank]
+    let audit = clap::Command::new("audit")
+        .about("Return a list of modules which violate requirements in the provided checkfile.")
+        .arg(
+            Arg::new("check")
+                .value_parser(clap::value_parser!(PathBuf))
+                .long("check")
+                .short('c')
+                .default_value("mod.yaml")
+                .help("a path on disk to a YAML file which declares validation requirements"),
+        );
+
+    vec![create, delete, get, list, search, validate, yank, audit]
         .into_iter()
         .map(add_output_arg)
         .collect()
