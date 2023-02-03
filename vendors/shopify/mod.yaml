@@ -1,0 +1,19 @@
+validate:
+  allow_wasi: true
+
+  imports:
+    namespace:
+      include:
+      - wasi_snapshot_preview1
+
+  exports:
+    max: 2
+    include:
+    - __main_void
+    - _start
+
+  complexity:
+    max_risk: medium
+
+  size:
+    max: 256KB
