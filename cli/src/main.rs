@@ -165,7 +165,7 @@ fn make_subcommands() -> Vec<Command> {
         );
 
     let validate = clap::Command::new("validate")
-        .about("Validate a module using a module requirement file.")
+        .about("Validate a module using a module checkfile.")
         .arg(
             Arg::new("path")
                 .value_parser(clap::value_parser!(PathBuf))
