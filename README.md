@@ -24,7 +24,7 @@ Download the desktop application if you want module persistence and would like t
 
 ### Enterprise
 
-If you're running WebAssmebly code in production, you may be interested in using the Enterprise version of Modsurfer. Please reach out to us at [hello@dylib.so](mailto:hello@dylib.so) and we'll be happy to get you more information.
+If you're running WebAssmebly code in production, you may be interested in using the Enterprise version of Modsurfer. Please reach out to us at [hello@dylib.so](mailto:hello@dylib.so) and we'll be happy to get you more information about licensing and self-managed deployment requirements.
 
 --- 
 
