@@ -254,7 +254,7 @@ pub struct Size {
 }
 
 #[derive(Debug, Serialize)]
-enum Classification {
+pub enum Classification {
     AbiCompatibilty,
     ResourceLimit,
     Security,
@@ -472,35 +472,7 @@ fn namespace_prefix(import_item: &ImportItem, fn_name: &str) -> String {
     }
 }
 
-pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> {
-    // read the wasm file and parse a Module from it to later validate against the check file.
-    // NOTE: the Module is produced by executing plugin code, linked and called from the
-    // `Module::parse` function.
-    let module_data = tokio::fs::read(file).await?;
-    let module = Module::parse(&module_data)?;
-
-    let mut buf = tokio::fs::read(check).await?;
-
-    let mut validation: Validation = serde_yaml::from_slice(&buf)?;
-    if let Some(url) = validation.validate.url {
-        // fetch remote validation file
-        println!("Fetching validation schema from URL: {}", url);
-
-        let resp = reqwest::get(&url).await?;
-        if !resp.status().is_success() {
-            anyhow::bail!(
-                "Failed to make request for remote validation schema: {}",
-                url
-            );
-        }
-
-        buf.clear();
-        buf = resp.bytes().await?.into();
-
-        // parse the file again & reassign `validation`
-        validation = serde_yaml::from_slice(&buf)?;
-    }
-
+pub async fn validate(validation: Validation, module: modsurfer_module::Module) -> Result<Report> {
     let mut report = Report::new();
 
     // WASI
@@ -810,4 +782,37 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
     }
 
     Ok(report)
+}
+
+pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> {
+    // read the wasm file and parse a Module from it to later validate against the check file.
+    // NOTE: the Module is produced by executing plugin code, linked and called from the
+    // `Module::parse` function.
+    let module_data = tokio::fs::read(file).await?;
+    let module = Module::parse(&module_data)?;
+
+    let mut buf = tokio::fs::read(check).await?;
+
+    let mut validation: Validation = serde_yaml::from_slice(&buf)?;
+
+    if let Some(url) = validation.validate.url {
+        // fetch remote validation file
+        println!("Fetching validation schema from URL: {}", url);
+
+        let resp = reqwest::get(&url).await?;
+        if !resp.status().is_success() {
+            anyhow::bail!(
+                "Failed to make request for remote validation schema: {}",
+                url
+            );
+        }
+
+        buf.clear();
+        buf = resp.bytes().await?.into();
+
+        // parse the file again & reassign `validation`
+        validation = serde_yaml::from_slice(&buf)?;
+    }
+
+    validate(validation, module).await
 }

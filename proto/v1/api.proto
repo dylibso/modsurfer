@@ -119,7 +119,7 @@ message CreateModuleRequest {
   optional string location = 3;
 }
 
-// The message returned in reponse to a `CreateModuleRequest`.
+// The message returned in response to a `CreateModuleRequest`.
 message CreateModuleResponse {
   int64 module_id = 1;
   string hash = 2;
@@ -130,7 +130,7 @@ message CreateModuleResponse {
 // Return a single module.
 message GetModuleRequest { int64 module_id = 1; }
 
-// The message returned in reponse to a `GetModuleRequest`.
+// The message returned in response to a `GetModuleRequest`.
 message GetModuleResponse {
   Module module = 1;
   optional Error error = 2;
@@ -143,7 +143,7 @@ message ListModulesRequest {
   Sort sort = 2;
 }
 
-// The message returned in reponse to a `ListModulesRequest`.
+// The message returned in response to a `ListModulesRequest`.
 message ListModulesResponse {
   repeated Module modules = 1;
   Pagination pagination = 2;
@@ -195,7 +195,7 @@ message SearchModulesRequest {
   Sort sort = 17;
 }
 
-// The message returned in reponse to a `SearchModulesRequest`.
+// The message returned in response to a `SearchModulesRequest`.
 message SearchModulesResponse {
   repeated Module modules = 1;
   Pagination pagination = 2;
@@ -210,8 +210,24 @@ message SearchModulesResponse {
 // Remove a module from the database by its ID. Return the module IDs & hashes.
 message DeleteModulesRequest { repeated int64 module_ids = 1; }
 
-// The message returned in reponse to a `DeleteModulesRequest`.
+// The message returned in response to a `DeleteModulesRequest`.
 message DeleteModulesResponse {
   map<int64, string> module_id_hash = 1;
   optional Error error = 2;
+}
+
+// `POST /api/v1/audit:`
+// Return a list of modules which violate requirements in the provided checkfile.
+message AuditModulesRequest {
+  // the YAML checkfile (e.g. mod.yaml) bytes
+  bytes checkfile = 1;
+}
+
+// The message returned in response to a `AuditModulesRequest`.
+message AuditModulesResponse {
+  repeated Module invalid_modules = 1;
+  // each record contains the ID of the invalid Module which failed the audit, as well as the failure 
+  // report produced by the validation check (encoded in JSON)
+  map<int64, bytes> invalid_module_report = 2;
+  optional Error error = 3;
 }
