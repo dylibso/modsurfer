@@ -31,6 +31,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: "ghcr.io/modsurfer:latest"
+          tags: "ghcr.io/dylibso/modsurfer:latest"
           cache-from: type=gha
           cache-to: type=gha,mode=max
