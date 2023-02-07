@@ -1,0 +1,15 @@
+name: Modsurfer Action - Fastly
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  check-validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        wasm: [starter, static, websocket]
+    steps:
+      - uses: actions/checkout@v3
+      - name: modsurfer validate
+        uses: dylibso/modsurfer-validate-action@main
+        with:
+            path: vendors/fastly/${{ matrix.wasm }}/${{ matrix.wasm }}.wasm
+            check: vendors/fastly/${{ matrix.wasm }}/mod.yaml

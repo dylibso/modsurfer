@@ -1,0 +1,33 @@
+validate: 
+  allow_wasi: true
+  
+  imports:
+    include:
+      - close
+      - write
+      - new
+      - send_downstream
+      - body_downstream_get
+      - auto_decompress_response_set
+      - header_insert
+      - send
+      - redirect_to_websocket_proxy
+    namespace:
+      include:
+        - fastly_http_body
+        - fastly_http_req
+        - fastly_http_resp
+        - wasi_snapshot_preview1
+      exclude:
+
+  exports:
+    max: 2
+    include:
+      - _start
+      - __main_void
+
+  size:
+    max: 10MB
+
+  complexity:
+    max_risk: medium
