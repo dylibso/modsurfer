@@ -26,6 +26,7 @@ struct Check {
 }
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 enum RiskLevel {
     #[serde(rename = "low")]
     Low,
@@ -80,6 +81,7 @@ impl Display for RiskLevel {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Complexity {
     pub max_risk: Option<RiskLevel>,
     pub max_score: Option<u32>,
@@ -107,12 +109,14 @@ impl Complexity {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Namespace {
     pub include: Option<Vec<String>>,
     pub exclude: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Imports {
     pub include: Option<Vec<String>>,
     pub exclude: Option<Vec<String>>,
@@ -120,6 +124,7 @@ struct Imports {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Exports {
     pub include: Option<Vec<String>>,
     pub exclude: Option<Vec<String>>,
@@ -127,6 +132,7 @@ struct Exports {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Size {
     pub max: Option<String>,
 }
