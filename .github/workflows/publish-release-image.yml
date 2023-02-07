@@ -1,0 +1,42 @@
+name: Publish tagged release image
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env: 
+  VERSION: ${{ github.ref_name }} 
+
+jobs:
+  push_to_ghcr:
+    name: Push  to GitHub container registry
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Log in to registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: define TAG for release
+        run: echo "TAG=ghcr.io/dylibso/modsurfer:${VERSION#v}" >> $GITHUB_ENV
+      
+      - name: Build, tag, & push the latest image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ env.TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
