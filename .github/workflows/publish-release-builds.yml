@@ -1,0 +1,56 @@
+name: Publish tagged release builds
+permissions:
+  contents: write
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  create-release:
+    name: Create GitHub release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: taiki-e/create-gh-release-action@v1.3.0
+        with:
+          title: "Modsurfer CLI v$version"
+          branch: main
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  upload:
+    name: Upload release binaries
+    needs: create-release
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install system dependencies (ubuntu)
+        run: |
+          sudo apt update
+          sudo apt install libssl-dev pkg-config
+        if: startsWith(matrix.os, 'ubuntu')
+
+      - name: Build and upload modsurfer binaries
+        uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          bin: modsurfer
+          include: LICENSE,README.md
+          target: ${{ matrix.target }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
