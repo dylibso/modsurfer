@@ -1,0 +1,15 @@
+name: Modsurfer Action - Fermyon
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  check-validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        wasm: [http, redis]
+    steps:
+      - uses: actions/checkout@v3
+      - name: modsurfer validate
+        uses: dylibso/modsurfer-validate-action@main
+        with:
+            path: vendors/fermyon/${{ matrix.wasm }}/${{ matrix.wasm }}.wasm
+            check: vendors/fermyon/${{ matrix.wasm }}/mod.yaml

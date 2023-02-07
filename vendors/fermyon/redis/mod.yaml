@@ -1,0 +1,22 @@
+validate:
+  allow_wasi: true
+
+  imports:
+    include:
+    - fd_write
+    - environ_get
+    - environ_sizes_get
+    - proc_exit
+    namespace:
+      include:
+      - wasi_snapshot_preview1
+  
+  exports:
+    max: 3
+    include:
+    - handle-redis-message
+    - canonical_abi_realloc
+    - canonical_abi_free
+
+  complexity: 
+    max_risk: medium
