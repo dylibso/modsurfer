@@ -1,0 +1,36 @@
+validate: 
+  allow_wasi: true
+  
+  imports:
+    include:
+      - close
+      - write
+      - new
+      - send_downstream
+      - body_downstream_get
+      - init
+      - auto_decompress_response_set
+      - open
+      - get
+      - header_insert
+      - send
+    namespace:
+      include:
+        - fastly_http_body
+        - fastly_http_req
+        - fastly_http_resp
+        - fastly_abi
+        - fastly_dictionary
+        - wasi_snapshot_preview1
+      exclude:
+
+  exports:
+    include:
+      - _start
+      - __main_void
+
+  size:
+    max: 15MB
+
+  complexity:
+    max_risk: medium
