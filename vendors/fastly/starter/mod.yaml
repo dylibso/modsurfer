@@ -19,6 +19,7 @@ validate:
       exclude:
 
   exports:
+    max: 2
     include:
       - _start
       - __main_void
