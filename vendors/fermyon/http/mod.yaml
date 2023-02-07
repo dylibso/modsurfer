@@ -1,0 +1,23 @@
+validate:
+  allow_wasi: true
+
+  imports:
+    includes:
+    - fd_write
+    - random_get
+    - environ_get
+    - environ_sizes_get
+    - proc_exit
+    namespace:
+      include:
+      - wasi_snapshot_preview1
+  
+  exports:
+    max: 3
+    includes:
+    - handle-http-request
+    - canonical_abi_realloc
+    - canonical_abi_free
+
+  complexity: 
+    max_risk: medium
