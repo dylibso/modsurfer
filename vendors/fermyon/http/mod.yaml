@@ -2,7 +2,7 @@ validate:
   allow_wasi: true
 
   imports:
-    includes:
+    include:
     - fd_write
     - random_get
     - environ_get
@@ -14,7 +14,7 @@ validate:
   
   exports:
     max: 3
-    includes:
+    include:
     - handle-http-request
     - canonical_abi_realloc
     - canonical_abi_free
