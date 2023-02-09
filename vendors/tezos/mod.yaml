@@ -1,0 +1,20 @@
+validate:
+  allow_wasi: false
+
+  imports:
+    include:
+    - name: store_copy
+      namespace: smart_rollup_core
+    namespace:
+      include:
+      - name: smart_rollup_core
+      exclude:
+      - wasi_snapshot_preview1
+
+  exports:
+    max: 1
+    include:
+    - kernel_run
+
+  complexity:
+    max_risk: medium
