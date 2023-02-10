@@ -363,7 +363,6 @@ impl Report {
         expected: &modsurfer_module::FunctionType,
         params: Option<&[modsurfer_module::ValType]>,
         results: Option<&[modsurfer_module::ValType]>,
-        invert: bool,
     ) {
         if let Some(params) = params {
             let test_params = expected.args == params;
@@ -371,23 +370,23 @@ impl Report {
                 &format!("{name}.params"),
                 format!("{:?}", expected.args),
                 format!("{:?}", params),
-                if invert { !test_params } else { test_params },
+                test_params,
                 8,
                 Classification::AbiCompatibilty,
             );
-        }
+        };
 
         if let Some(results) = results {
-            let test_results = expected.args == results;
+            let test_results = expected.returns == results;
             self.validate_fn(
                 &format!("{name}.results"),
                 format!("{:?}", expected.returns),
                 format!("{:?}", results),
-                if invert { !test_results } else { test_results },
+                test_results,
                 8,
                 Classification::AbiCompatibilty,
             );
-        }
+        };
     }
 }
 
@@ -530,6 +529,22 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                     import_func_types.contains_key(&name.as_str())
                 };
 
+                let ty = if let Some(ns) = imp.namespace() {
+                    import_module_func_types.get(&(ns, name))
+                } else {
+                    import_func_types.get(name.as_str())
+                };
+
+                if test {
+                    let ty = ty.unwrap();
+                    report.validate_fn_type(
+                        &format!("imports.include.{}", name),
+                        *ty,
+                        imp.params(),
+                        imp.results(),
+                    );
+                }
+
                 report.validate_fn(
                     &format!("imports.include.{}", name),
                     Exist(true).to_string(),
@@ -538,22 +553,6 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                     8,
                     Classification::AbiCompatibilty,
                 );
-
-                let ty = if let Some(ns) = imp.namespace() {
-                    import_module_func_types.get(&(ns, name))
-                } else {
-                    import_func_types.get(name.as_str())
-                };
-
-                if let Some(ty) = ty {
-                    report.validate_fn_type(
-                        &format!("imports.include.{}", name),
-                        *ty,
-                        imp.params(),
-                        imp.results(),
-                        false,
-                    );
-                }
             });
         }
 
@@ -565,14 +564,6 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                 } else {
                     import_func_types.contains_key(&name.as_str())
                 };
-                report.validate_fn(
-                    &format!("imports.exclude.{}", name),
-                    Exist(false).to_string(),
-                    Exist(test).to_string(),
-                    test,
-                    5,
-                    Classification::AbiCompatibilty,
-                );
 
                 let ty = if let Some(ns) = imp.namespace() {
                     import_module_func_types.get(&(ns, name))
@@ -580,15 +571,24 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                     import_func_types.get(name.as_str())
                 };
 
-                if let Some(ty) = ty {
+                if test {
+                    let ty = ty.unwrap();
                     report.validate_fn_type(
                         &format!("imports.exclude.{}", name),
                         *ty,
                         imp.params(),
                         imp.results(),
-                        false,
                     );
-                }
+                };
+
+                report.validate_fn(
+                    &format!("imports.exclude.{}", name),
+                    Exist(false).to_string(),
+                    Exist(test).to_string(),
+                    !test,
+                    5,
+                    Classification::AbiCompatibilty,
+                );
             });
         }
 
@@ -619,14 +619,15 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                             Classification::AbiCompatibilty,
                         );
 
-                        let ty = import_module_func_types.get(&(name, f.name().as_str()));
-                        if let Some(ty) = ty {
+                        if test {
+                            let ty = import_module_func_types
+                                .get(&(name, f.name().as_str()))
+                                .unwrap();
                             report.validate_fn_type(
                                 &format!("imports.namespace.include.{}", name),
                                 *ty,
                                 f.params(),
                                 f.results(),
-                                false,
                             );
                         }
                     }
@@ -652,6 +653,19 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                         let test =
                             import_module_func_types.contains_key(&(name, f.name().as_str()));
 
+                        if test {
+                            let ty = import_module_func_types
+                                .get(&(name, f.name().as_str()))
+                                .unwrap();
+
+                            report.validate_fn_type(
+                                &format!("imports.namespace.exclude.{}", name),
+                                *ty,
+                                f.params(),
+                                f.results(),
+                            );
+                        };
+
                         report.validate_fn(
                             &format!("imports.namespace.exclude.{name}::{}", f.name()),
                             Exist(false).to_string(),
@@ -660,18 +674,6 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                             10,
                             Classification::AbiCompatibilty,
                         );
-
-                        let ty = import_module_func_types.get(&(name, f.name().as_str()));
-
-                        if let Some(ty) = ty {
-                            report.validate_fn_type(
-                                &format!("imports.namespace.exclude.{}", name),
-                                *ty,
-                                f.params(),
-                                f.results(),
-                                true,
-                            );
-                        }
                     }
                 });
             }
@@ -715,14 +717,13 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                     Classification::AbiCompatibilty,
                 );
 
-                let ty = export_func_types.get(name.as_str());
-                if let Some(ty) = ty {
+                if test {
+                    let ty = export_func_types.get(name.as_str()).unwrap();
                     report.validate_fn_type(
                         &format!("exports.include.{}", name),
                         *ty,
                         f.params(),
                         f.results(),
-                        false,
                     );
                 }
             });
@@ -732,25 +733,26 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
             exclude.iter().for_each(|f| {
                 let name = f.name();
 
-                let test = export_func_types.contains_key(name.as_str());
-                report.validate_fn(
-                    &format!("exports.exclude.{}", name),
-                    Exist(true).to_string(),
-                    Exist(test).to_string(),
-                    !test,
-                    5,
-                    Classification::AbiCompatibilty,
-                );
                 let ty = export_func_types.get(name.as_str());
-                if let Some(ty) = ty {
+                let test = ty.is_some();
+                if test {
+                    let ty = ty.unwrap();
                     report.validate_fn_type(
                         &format!("exports.include.{}", name),
                         *ty,
                         f.params(),
                         f.results(),
-                        true,
                     );
                 }
+
+                report.validate_fn(
+                    &format!("exports.exclude.{}", name),
+                    Exist(false).to_string(),
+                    Exist(test).to_string(),
+                    !test,
+                    5,
+                    Classification::AbiCompatibilty,
+                );
             });
         }
     }

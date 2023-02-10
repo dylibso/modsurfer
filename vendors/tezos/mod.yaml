@@ -9,7 +9,7 @@ validate:
       results: [I32]
     namespace:
       include:
-      - name: smart_rollup_core
+      - smart_rollup_core
       exclude:
       - wasi_snapshot_preview1
 
