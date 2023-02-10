@@ -5,6 +5,8 @@ validate:
     include:
     - name: store_copy
       namespace: smart_rollup_core
+      params: [I32, I32, I32, I32]
+      results: [I32]
     namespace:
       include:
       - name: smart_rollup_core
@@ -14,7 +16,9 @@ validate:
   exports:
     max: 1
     include:
-    - kernel_run
+    - name: kernel_run
+      results: []
+      params: []
 
   complexity:
     max_risk: medium
