@@ -111,7 +111,6 @@ impl Complexity {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 #[serde(untagged)]
-#[serde(deny_unknown_fields)]
 enum NamespaceItem {
     Name(String),
     Item {
@@ -216,6 +215,7 @@ impl FunctionItem {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Namespace {
     pub include: Option<Vec<NamespaceItem>>,
     pub exclude: Option<Vec<NamespaceItem>>,
@@ -360,16 +360,16 @@ impl Report {
     fn validate_fn_type(
         &mut self,
         name: &str,
-        expected: &modsurfer_module::FunctionType,
+        actual: &modsurfer_module::FunctionType,
         params: Option<&[modsurfer_module::ValType]>,
         results: Option<&[modsurfer_module::ValType]>,
     ) {
         if let Some(params) = params {
-            let test_params = expected.args == params;
+            let test_params = actual.args == params;
             self.validate_fn(
                 &format!("{name}.params"),
-                format!("{:?}", expected.args),
                 format!("{:?}", params),
+                format!("{:?}", actual.args),
                 test_params,
                 8,
                 Classification::AbiCompatibilty,
@@ -377,11 +377,11 @@ impl Report {
         };
 
         if let Some(results) = results {
-            let test_results = expected.returns == results;
+            let test_results = actual.returns == results;
             self.validate_fn(
                 &format!("{name}.results"),
-                format!("{:?}", expected.returns),
                 format!("{:?}", results),
+                format!("{:?}", actual.returns),
                 test_results,
                 8,
                 Classification::AbiCompatibilty,
