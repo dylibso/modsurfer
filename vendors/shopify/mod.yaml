@@ -9,8 +9,12 @@ validate:
   exports:
     max: 2
     include:
-    - __main_void
-    - _start
+    - name: __main_void
+      results: [I32]
+      params: []
+    - name: _start
+      results: []
+      params: []
 
   complexity:
     max_risk: medium
