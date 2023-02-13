@@ -3,11 +3,26 @@ validate:
 
   imports:
     include:
-    - fd_write
-    - random_get
-    - environ_get
-    - environ_sizes_get
-    - proc_exit
+    - name: fd_write
+      namespace: wasi_snapshot_preview1
+      params: [I32, I32, I32, I32]
+      results: [I32]
+    - name: random_get
+      namespace: wasi_snapshot_preview1
+      params: [I32, I32]
+      results: [I32]
+    - name: environ_get
+      namespace: wasi_snapshot_preview1
+      params: [I32, I32]
+      results: [I32]
+    - name: environ_sizes_get
+      namespace: wasi_snapshot_preview1
+      params: [I32, I32]
+      results: [I32]
+    - name: proc_exit
+      namespace: wasi_snapshot_preview1
+      params: [I32]
+      results: []
     namespace:
       include:
       - wasi_snapshot_preview1
@@ -15,9 +30,15 @@ validate:
   exports:
     max: 3
     include:
-    - handle-http-request
-    - canonical_abi_realloc
-    - canonical_abi_free
+    - name: handle-http-request
+      params: [I32, I32, I32, I32, I32, I32, I32, I32, I32, I32]
+      results: [I32]
+    - name: canonical_abi_realloc
+      params: [I32, I32, I32, I32]
+      results: [I32]
+    - name: canonical_abi_free
+      params: [I32, I32, I32]
+      results: []
 
   complexity: 
     max_risk: medium

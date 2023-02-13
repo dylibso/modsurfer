@@ -252,7 +252,11 @@ impl Cli {
                 let report = validate_module(&file, &check).await?;
                 match output_format {
                     OutputFormat::Json => println!("{}", serde_json::to_string_pretty(&report)?),
-                    OutputFormat::Table => println!("{report}"),
+                    OutputFormat::Table => {
+                        if report.has_failures() {
+                            println!("{report}")
+                        }
+                    }
                 };
                 Ok(report.as_exit_code())
             }

@@ -1,0 +1,15 @@
+name: Modsurfer Action - Fluvio
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  check-validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        wasm: [filter, map, filter-map, array-map, aggregate]
+    steps:
+      - uses: actions/checkout@v3
+      - name: modsurfer validate
+        uses: dylibso/modsurfer-validate-action@main
+        with:
+            path: vendors/fluvio/${{ matrix.wasm }}/${{ matrix.wasm }}.wasm
+            check: vendors/fluvio/${{ matrix.wasm }}/mod.yaml

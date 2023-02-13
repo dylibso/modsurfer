@@ -1463,7 +1463,7 @@ dependencies = [
 
 [[package]]
 name = "modsurfer-cli"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "anyhow",
  "clap 4.1.4",
