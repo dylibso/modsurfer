@@ -455,6 +455,13 @@ impl Module {
     }
 }
 
+fn namespace_prefix(import_item: &ImportItem, fn_name: &str) -> String {
+    match import_item.namespace() {
+        Some(ns) => format!("{}::{}", ns, fn_name),
+        None => fn_name.into(),
+    }
+}
+
 pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> {
     // read the wasm file and parse a Module from it to later validate against the check file.
     // NOTE: the Module is produced by executing plugin code, linked and called from the
@@ -546,7 +553,7 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                 }
 
                 report.validate_fn(
-                    &format!("imports.include.{}", name),
+                    &format!("imports.include.{}", namespace_prefix(&imp, name)),
                     Exist(true).to_string(),
                     Exist(test).to_string(),
                     test,
@@ -582,7 +589,7 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                 };
 
                 report.validate_fn(
-                    &format!("imports.exclude.{}", name),
+                    &format!("imports.exclude.{}", namespace_prefix(&imp, name)),
                     Exist(false).to_string(),
                     Exist(test).to_string(),
                     !test,
