@@ -1,0 +1,22 @@
+validate:
+  # url: https://github.com/extism/extism/blob/main/mod.yaml
+  allow_wasi: false
+  
+  imports:
+    namespace:
+      include:
+        - env
+
+  exports: 
+    max: 4
+    include:
+      - alloc
+      - dealloc
+      - map 
+
+  size:
+    max: 4MB
+
+  complexity:
+    max_risk: medium
+
