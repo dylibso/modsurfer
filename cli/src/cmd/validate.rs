@@ -545,7 +545,7 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                 if test {
                     let ty = ty.unwrap();
                     report.validate_fn_type(
-                        &format!("imports.include.{}", name),
+                        &format!("imports.include.{}", namespace_prefix(&imp, name)),
                         *ty,
                         imp.params(),
                         imp.results(),
@@ -581,7 +581,7 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                 if test {
                     let ty = ty.unwrap();
                     report.validate_fn_type(
-                        &format!("imports.exclude.{}", name),
+                        &format!("imports.exclude.{}", namespace_prefix(&imp, name)),
                         *ty,
                         imp.params(),
                         imp.results(),
@@ -631,7 +631,7 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                                 .get(&(name, f.name().as_str()))
                                 .unwrap();
                             report.validate_fn_type(
-                                &format!("imports.namespace.include.{}", name),
+                                &format!("imports.namespace.include.{name}::{}", f.name()),
                                 *ty,
                                 f.params(),
                                 f.results(),
@@ -666,7 +666,7 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
                                 .unwrap();
 
                             report.validate_fn_type(
-                                &format!("imports.namespace.exclude.{}", name),
+                                &format!("imports.namespace.exclude.{name}::{}", f.name()),
                                 *ty,
                                 f.params(),
                                 f.results(),
