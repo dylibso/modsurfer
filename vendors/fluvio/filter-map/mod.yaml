@@ -1,0 +1,28 @@
+validate:
+  # url: https://github.com/extism/extism/blob/main/mod.yaml
+  allow_wasi: false
+  
+  imports:
+    namespace:
+      include:
+        - env
+
+  exports: 
+    max: 4
+    include:
+      - name: alloc
+        params: [I32]
+        results: [I32]
+      - name: dealloc
+        params: [I32, I32]
+        results: []
+      - name: filter_map
+        params: [I32, I32, I32]
+        results: [I32]
+
+  size:
+    max: 4MB
+
+  complexity:
+    max_risk: medium
+
