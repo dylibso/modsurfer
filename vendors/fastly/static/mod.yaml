@@ -3,17 +3,62 @@ validate:
   
   imports:
     include:
-      - close
-      - write
-      - new
-      - send_downstream
-      - body_downstream_get
-      - init
-      - auto_decompress_response_set
-      - open
-      - get
-      - header_insert
-      - send
+      - name: init
+        namespace: fastly_abi
+        params: [I64]
+        results: [I32]
+      - name: close
+        namespace: fastly_http_body
+        params: [I32]
+        results: [I32]
+      - name: write
+        namespace: fastly_http_body
+        params: [I32, I32, I32, I32, I32]
+        results: [I32]
+      - name: new
+        namespace: fastly_http_resp
+        params: [I32]
+        results: [I32]
+      - name: close
+        namespace: fastly_http_resp
+        params: [I32]
+        results: [I32]
+      - name: status_set
+        namespace: fastly_http_resp
+        params: [I32, I32]
+        results: [I32]
+      - name: send_downstream
+        namespace: fastly_http_resp
+        params: [I32, I32, I32]
+        results: [I32]
+      - name: body_downstream_get
+        namespace: fastly_http_req
+        params: [I32, I32]
+        results: [I32]
+      - name: header_insert
+        namespace: fastly_http_req
+        params: [I32, I32, I32, I32, I32]
+        results: [I32]
+      - name: send
+        namespace: fastly_http_req
+        params: [I32, I32, I32, I32, I32, I32]
+        results: [I32]
+      - name: framing_headers_mode_set
+        namespace: fastly_http_req
+        params: [I32, I32]
+        results: [I32]
+      - name: auto_decompress_response_set
+        namespace: fastly_http_req
+        params: [I32, I32]
+        results: [I32]
+      - name: open
+        namespace: fastly_dictionary
+        params: [I32, I32, I32]
+        results: [I32]
+      - name: get
+        namespace: fastly_dictionary
+        params: [I32, I32, I32, I32, I32, I32]
+        results: [I32]
     namespace:
       include:
         - fastly_http_body
@@ -27,8 +72,12 @@ validate:
   exports:
     max: 2
     include:
-      - _start
-      - __main_void
+      - name: _start
+        params: []
+        results: []
+      - name: __main_void
+        params: []
+        results: [I32]
 
   size:
     max: 15MB
