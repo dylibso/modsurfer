@@ -10,9 +10,15 @@ validate:
   exports: 
     max: 4
     include:
-      - alloc
-      - dealloc
-      - aggregate
+      - name: alloc
+        params: [I32]
+        results: [I32]
+      - name: dealloc
+        params: [I32, I32]
+        results: []
+      - name: aggregate
+        params: [I32, I32, I32]
+        results: [I32]
 
   size:
     max: 4MB
