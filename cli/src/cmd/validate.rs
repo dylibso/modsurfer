@@ -7,16 +7,18 @@ use human_bytes::human_bytes;
 use modsurfer_convert::from_api;
 use parse_size::parse_size;
 use serde::{Deserialize, Serialize};
+use serde_with::skip_serializing_none;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Default, Serialize)]
 #[serde(deny_unknown_fields)]
-struct Validation {
+pub struct Validation {
     pub validate: Check,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Default, Serialize)]
 #[serde(deny_unknown_fields)]
-struct Check {
+#[skip_serializing_none]
+pub struct Check {
     pub url: Option<String>,
     pub allow_wasi: Option<bool>,
     pub imports: Option<Imports>,
@@ -25,9 +27,9 @@ struct Check {
     pub complexity: Option<Complexity>,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-enum RiskLevel {
+pub enum RiskLevel {
     #[serde(rename = "low")]
     Low,
     #[serde(rename = "medium")]
@@ -80,15 +82,16 @@ impl Display for RiskLevel {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
-struct Complexity {
+#[skip_serializing_none]
+pub struct Complexity {
     pub max_risk: Option<RiskLevel>,
     pub max_score: Option<u32>,
 }
 
 #[allow(unused)]
-enum ComplexityKind {
+pub enum ComplexityKind {
     MaxRisk(RiskLevel),
     MaxScore(u32),
 }
@@ -108,10 +111,11 @@ impl Complexity {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
+#[skip_serializing_none]
 #[serde(untagged)]
-enum NamespaceItem {
+pub enum NamespaceItem {
     Name(String),
     Item {
         name: String,
@@ -136,10 +140,11 @@ impl NamespaceItem {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(untagged)]
 #[serde(deny_unknown_fields)]
-enum ImportItem {
+#[skip_serializing_none]
+pub enum ImportItem {
     Name(String),
     Item {
         namespace: Option<String>,
@@ -179,10 +184,11 @@ impl ImportItem {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(untagged)]
 #[serde(deny_unknown_fields)]
-enum FunctionItem {
+#[skip_serializing_none]
+pub enum FunctionItem {
     Name(String),
     Item {
         name: String,
@@ -214,32 +220,36 @@ impl FunctionItem {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
-struct Namespace {
+#[skip_serializing_none]
+pub struct Namespace {
     pub include: Option<Vec<NamespaceItem>>,
     pub exclude: Option<Vec<NamespaceItem>>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
-struct Imports {
+#[skip_serializing_none]
+pub struct Imports {
     pub include: Option<Vec<ImportItem>>,
     pub exclude: Option<Vec<ImportItem>>,
     pub namespace: Option<Namespace>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
-struct Exports {
+#[skip_serializing_none]
+pub struct Exports {
     pub include: Option<Vec<FunctionItem>>,
     pub exclude: Option<Vec<FunctionItem>>,
     pub max: Option<u32>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
-struct Size {
+#[skip_serializing_none]
+pub struct Size {
     pub max: Option<String>,
 }
 
@@ -404,7 +414,7 @@ impl Display for Exist {
     }
 }
 
-struct Module {}
+pub struct Module {}
 
 impl Module {
     // NOTE: this function executes WebAssembly code as a plugin managed by Extism (https://extism.org)
@@ -421,7 +431,7 @@ impl Module {
     // The function within the WebAssembly, "parse_module", only parses bytes provided to it from
     // the host context (the `wasm`), and collects parsed information into the `Module` which is
     // returned as a protobuf-encoded struct.
-    fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer_module::Module> {
+    pub fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer_module::Module> {
         let ctx = Context::new();
         let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, [], false)?;
         let data = plugin.call("parse_module", wasm)?;

@@ -164,6 +164,23 @@ fn make_subcommands() -> Vec<Command> {
                 .help("the maximum number of modules in a list of results"),
         );
 
+    let generate = clap::Command::new("generate")
+        .about("Generate a starter checkfile from the given module.")
+        .arg(
+            Arg::new("path")
+                .value_parser(clap::value_parser!(PathBuf))
+                .long("path")
+                .short('p')
+                .help("a path on disk to a valid WebAssembly module"),
+        )
+        .arg(
+            Arg::new("output")
+                .value_parser(clap::value_parser!(PathBuf))
+                .long("output")
+                .short('o')
+                .default_value("mod.yaml")
+                .help("a path on disk to write a generated YAML checkfile"),
+        );
     let validate = clap::Command::new("validate")
         .about("Validate a module using a module checkfile.")
         .arg(
@@ -208,8 +225,9 @@ fn make_subcommands() -> Vec<Command> {
                 .help("a path on disk to a YAML file which declares validation requirements"),
         );
 
-    vec![create, delete, get, list, search, validate, yank, audit]
+    [create, delete, get, list, search, validate, yank, audit]
         .into_iter()
         .map(add_output_arg)
+        .chain(vec![generate])
         .collect()
 }
