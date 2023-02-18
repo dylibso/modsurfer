@@ -1,3 +1,4 @@
+# For more information about other checkfile options, see the documentation at https://dev.dylib.so/docs/modsurfer/cli#checkfile
 validate:
   allow_wasi: true
   imports:
