@@ -1,5 +1,4 @@
 validate:
-  url: null
   allow_wasi: true
   imports:
     include:
@@ -136,11 +135,9 @@ validate:
       - I32
       results:
       - I32
-    exclude: null
     namespace:
       include:
       - wasi_snapshot_preview1
-      exclude: null
   exports:
     include:
     - name: _start
@@ -872,10 +869,8 @@ validate:
       - I32
       results:
       - I32
-    exclude: null
     max: 151
   size:
     max: 4.4 MiB
   complexity:
     max_risk: medium
-    max_score: null

@@ -15,9 +15,9 @@ pub struct Validation {
     pub validate: Check,
 }
 
+#[skip_serializing_none]
 #[derive(Debug, Deserialize, Default, Serialize)]
 #[serde(deny_unknown_fields)]
-#[skip_serializing_none]
 pub struct Check {
     pub url: Option<String>,
     pub allow_wasi: Option<bool>,
@@ -82,9 +82,9 @@ impl Display for RiskLevel {
     }
 }
 
+#[skip_serializing_none]
 #[derive(Debug, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
-#[skip_serializing_none]
 pub struct Complexity {
     pub max_risk: Option<RiskLevel>,
     pub max_score: Option<u32>,
@@ -111,9 +111,9 @@ impl Complexity {
     }
 }
 
+#[skip_serializing_none]
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-#[skip_serializing_none]
 #[serde(untagged)]
 pub enum NamespaceItem {
     Name(String),
@@ -140,10 +140,10 @@ impl NamespaceItem {
     }
 }
 
+#[skip_serializing_none]
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(untagged)]
 #[serde(deny_unknown_fields)]
-#[skip_serializing_none]
 pub enum ImportItem {
     Name(String),
     Item {
@@ -184,10 +184,10 @@ impl ImportItem {
     }
 }
 
+#[skip_serializing_none]
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(untagged)]
 #[serde(deny_unknown_fields)]
-#[skip_serializing_none]
 pub enum FunctionItem {
     Name(String),
     Item {
@@ -220,35 +220,35 @@ impl FunctionItem {
     }
 }
 
+#[skip_serializing_none]
 #[derive(Debug, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
-#[skip_serializing_none]
 pub struct Namespace {
     pub include: Option<Vec<NamespaceItem>>,
     pub exclude: Option<Vec<NamespaceItem>>,
 }
 
+#[skip_serializing_none]
 #[derive(Debug, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
-#[skip_serializing_none]
 pub struct Imports {
     pub include: Option<Vec<ImportItem>>,
     pub exclude: Option<Vec<ImportItem>>,
     pub namespace: Option<Namespace>,
 }
 
+#[skip_serializing_none]
 #[derive(Debug, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
-#[skip_serializing_none]
 pub struct Exports {
     pub include: Option<Vec<FunctionItem>>,
     pub exclude: Option<Vec<FunctionItem>>,
     pub max: Option<u32>,
 }
 
+#[skip_serializing_none]
 #[derive(Debug, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
-#[skip_serializing_none]
 pub struct Size {
     pub max: Option<String>,
 }
