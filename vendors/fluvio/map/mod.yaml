@@ -16,7 +16,7 @@ validate:
       - name: dealloc
         params: [I32, I32]
         results: []
-      - name: filter_map
+      - name: map
         params: [I32, I32, I32]
         results: [I32]
 

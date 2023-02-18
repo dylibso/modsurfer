@@ -11,6 +11,7 @@ use url::Url;
 
 use crate::cmd::api_result::{ApiResult, ApiResults, SimpleApiResult, SimpleApiResults};
 
+use super::generate::checkfile_from_module;
 use super::validate::validate_module;
 
 pub type Id = i64;
@@ -84,6 +85,7 @@ pub enum Subcommand<'a> {
         Limit,
         &'a OutputFormat,
     ),
+    Generate(ModuleFile, CheckFile),
     Validate(ModuleFile, CheckFile, &'a OutputFormat),
     Yank(Id, Version, &'a OutputFormat),
     Audit(CheckFile, &'a OutputFormat),
@@ -248,6 +250,13 @@ impl Cli {
 
                 Ok(ExitCode::SUCCESS)
             }
+            Subcommand::Generate(file, check) => match checkfile_from_module(&file, &check).await {
+                Ok(_) => Ok(ExitCode::SUCCESS),
+                Err(e) => {
+                    println!("{:?}", e);
+                    Ok(ExitCode::FAILURE)
+                }
+            },
             Subcommand::Validate(file, check, output_format) => {
                 let report = validate_module(&file, &check).await?;
                 match output_format {
@@ -366,12 +375,20 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                     output_format(args),
                 )
             }
+            ("generate", args) => Subcommand::Generate(
+                args.get_one::<PathBuf>("path")
+                    .expect("valid module path")
+                    .clone(),
+                args.get_one::<PathBuf>("output")
+                    .expect("valid checkfile output path")
+                    .clone(),
+            ),
             ("validate", args) => Subcommand::Validate(
                 args.get_one::<PathBuf>("path")
                     .expect("valid module path")
                     .clone(),
                 args.get_one::<PathBuf>("check")
-                    .expect("valid check file path")
+                    .expect("valid checkfile path")
                     .clone(),
                 output_format(args),
             ),
@@ -384,7 +401,7 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
             ),
             ("audit", args) => Subcommand::Audit(
                 args.get_one::<PathBuf>("check")
-                    .expect("valid check file path")
+                    .expect("valid checkfile path")
                     .clone(),
                 output_format(args),
             ),
