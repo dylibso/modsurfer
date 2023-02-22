@@ -1,0 +1,12 @@
+name: Modsurfer Action - wasmCloud
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  check-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: modsurfer validate
+        uses: dylibso/modsurfer-validate-action@main
+        with:
+            path: vendors/wasmcloud/actor.wasm
+            check: vendors/wasmcloud/mod.yaml

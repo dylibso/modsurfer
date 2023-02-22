@@ -1,0 +1,43 @@
+# For more information about other checkfile options, see the documentation at https://dev.dylib.so/docs/modsurfer/cli#checkfile
+validate:
+  allow_wasi: false
+  imports:
+    include:
+    - namespace: wasmbus
+      name: __guest_request
+      params:
+      - I32
+      - I32
+      results: []
+    - namespace: wasmbus
+      name: __guest_response
+      params:
+      - I32
+      - I32
+      results: []
+    - namespace: wasmbus
+      name: __guest_error
+      params:
+      - I32
+      - I32
+      results: []
+    namespace:
+      include:
+      - wasmbus
+  exports:
+    include:
+    - name: __wasmbus_rpc_version
+      params: []
+      results:
+      - I32
+    - name: __guest_call
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    max: 2
+  size:
+    max: 1.9 MiB
+  complexity:
+    max_risk: medium
