@@ -1,10 +1,17 @@
-use std::{collections::BTreeMap, fmt::Display, path::PathBuf, process::ExitCode};
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+use std::path::PathBuf;
+
+use std::{collections::BTreeMap, fmt::Display, process::ExitCode};
+
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+use extism::{Context, Plugin};
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+use modsurfer_convert::from_api;
 
 use anyhow::Result;
-use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
-use extism::{Context, Plugin};
 use human_bytes::human_bytes;
-use modsurfer_convert::from_api;
 use parse_size::parse_size;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -253,8 +260,8 @@ pub struct Size {
     pub max: Option<String>,
 }
 
-#[derive(Debug, Serialize)]
-enum Classification {
+#[derive(Debug, Deserialize, Serialize)]
+pub enum Classification {
     AbiCompatibilty,
     ResourceLimit,
     Security,
@@ -271,15 +278,15 @@ impl Display for Classification {
     }
 }
 
-#[derive(Debug, Serialize)]
-struct FailureDetail {
+#[derive(Debug, Deserialize, Serialize)]
+pub struct FailureDetail {
     actual: String,
     expected: String,
     severity: usize,
     classification: Classification,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Report {
     /// k/v pair of the dot-separated path to validation field and expectation info
     fails: BTreeMap<String, FailureDetail>,
@@ -298,6 +305,7 @@ impl Report {
     }
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 impl Display for Report {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.fails.is_empty() {
@@ -414,8 +422,10 @@ impl Display for Exist {
     }
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 pub struct Module {}
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 impl Module {
     // NOTE: this function executes WebAssembly code as a plugin managed by Extism (https://extism.org)
     // and is distributed under the same license as the primary codebase. See LICENSE file in the
@@ -433,7 +443,7 @@ impl Module {
     // returned as a protobuf-encoded struct.
     pub fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer_module::Module> {
         let ctx = Context::new();
-        let mut plugin = Plugin::new(&ctx, crate::plugins::MODSURFER_WASM, [], false)?;
+        let mut plugin = Plugin::new(&ctx, modsurfer_plugins::MODSURFER_WASM, [], false)?;
         let data = plugin.call("parse_module", wasm)?;
         let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
         let metadata = if a.metadata.is_empty() {
@@ -472,35 +482,7 @@ fn namespace_prefix(import_item: &ImportItem, fn_name: &str) -> String {
     }
 }
 
-pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> {
-    // read the wasm file and parse a Module from it to later validate against the check file.
-    // NOTE: the Module is produced by executing plugin code, linked and called from the
-    // `Module::parse` function.
-    let module_data = tokio::fs::read(file).await?;
-    let module = Module::parse(&module_data)?;
-
-    let mut buf = tokio::fs::read(check).await?;
-
-    let mut validation: Validation = serde_yaml::from_slice(&buf)?;
-    if let Some(url) = validation.validate.url {
-        // fetch remote validation file
-        println!("Fetching validation schema from URL: {}", url);
-
-        let resp = reqwest::get(&url).await?;
-        if !resp.status().is_success() {
-            anyhow::bail!(
-                "Failed to make request for remote validation schema: {}",
-                url
-            );
-        }
-
-        buf.clear();
-        buf = resp.bytes().await?.into();
-
-        // parse the file again & reassign `validation`
-        validation = serde_yaml::from_slice(&buf)?;
-    }
-
+pub async fn validate(validation: Validation, module: modsurfer_module::Module) -> Result<Report> {
     let mut report = Report::new();
 
     // WASI
@@ -810,4 +792,38 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
     }
 
     Ok(report)
+}
+
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> {
+    // read the wasm file and parse a Module from it to later validate against the check file.
+    // NOTE: the Module is produced by executing plugin code, linked and called from the
+    // `Module::parse` function.
+    let module_data = tokio::fs::read(file).await?;
+    let module = Module::parse(&module_data)?;
+
+    let mut buf = tokio::fs::read(check).await?;
+
+    let mut validation: Validation = serde_yaml::from_slice(&buf)?;
+
+    if let Some(url) = validation.validate.url {
+        // fetch remote validation file
+        println!("Fetching validation schema from URL: {}", url);
+
+        let resp = reqwest::get(&url).await?;
+        if !resp.status().is_success() {
+            anyhow::bail!(
+                "Failed to make request for remote validation schema: {}",
+                url
+            );
+        }
+
+        buf.clear();
+        buf = resp.bytes().await?.into();
+
+        // parse the file again & reassign `validation`
+        validation = serde_yaml::from_slice(&buf)?;
+    }
+
+    validate(validation, module).await
 }

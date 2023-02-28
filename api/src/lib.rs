@@ -18,7 +18,9 @@ pub use interop::{List, Persisted};
 
 pub use anyhow::Result;
 use async_trait::async_trait;
+use modsurfer_convert::Audit;
 use modsurfer_module::{Export, Import, Module};
+use modsurfer_validation::Report;
 
 /// A trait to describe the functionality of Modsurfer's internal API client. This is used across
 /// the CLI and GUI application. As such, the code must compile to `wasm32-unknown-unknown` target.
@@ -56,5 +58,8 @@ pub trait ApiClient {
     ) -> Result<List<Persisted<Module>>>;
     async fn delete_modules(&self, _module_ids: Vec<i64>) -> Result<HashMap<i64, String>> {
         anyhow::bail!("Delete operation unimplemented.")
+    }
+    async fn audit_modules(&self, _audit: Audit) -> Result<HashMap<i64, Report>> {
+        anyhow::bail!("Audit operation unimplemented.")
     }
 }

@@ -66,3 +66,72 @@ pub struct Search {
     pub strings: Option<Vec<String>>,
     pub sort: Option<Sort>,
 }
+
+#[cfg(feature = "api")]
+#[derive(Debug, Clone)]
+pub enum AuditOutcome {
+    Pass,
+    Fail,
+}
+
+#[cfg(feature = "api")]
+impl std::fmt::Display for AuditOutcome {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AuditOutcome::Pass => f.write_str("pass"),
+            _ => f.write_str("fail"),
+        }
+    }
+}
+
+#[cfg(feature = "api")]
+impl From<&std::ffi::OsStr> for AuditOutcome {
+    fn from(value: &std::ffi::OsStr) -> Self {
+        value.to_str().unwrap_or_else(|| "fail").to_string().into()
+    }
+}
+
+#[cfg(feature = "api")]
+impl From<String> for AuditOutcome {
+    fn from(value: String) -> Self {
+        match value.to_lowercase().as_str() {
+            "pass" => AuditOutcome::Pass,
+            _ => AuditOutcome::Fail,
+        }
+    }
+}
+
+#[cfg(feature = "api")]
+#[derive(Debug)]
+pub struct Audit {
+    pub page: Pagination,
+    pub outcome: AuditOutcome,
+    pub checkfile: Vec<u8>,
+}
+
+#[cfg(feature = "api")]
+impl Default for AuditOutcome {
+    fn default() -> Self {
+        AuditOutcome::Fail
+    }
+}
+
+#[cfg(feature = "api")]
+impl From<modsurfer_proto_v1::api::AuditOutcome> for AuditOutcome {
+    fn from(outcome: modsurfer_proto_v1::api::AuditOutcome) -> AuditOutcome {
+        match outcome {
+            modsurfer_proto_v1::api::AuditOutcome::PASS => AuditOutcome::Pass,
+            modsurfer_proto_v1::api::AuditOutcome::FAIL => AuditOutcome::Fail,
+        }
+    }
+}
+
+#[cfg(feature = "api")]
+impl From<AuditOutcome> for modsurfer_proto_v1::api::AuditOutcome {
+    fn from(outcome: AuditOutcome) -> Self {
+        match outcome {
+            AuditOutcome::Pass => modsurfer_proto_v1::api::AuditOutcome::PASS,
+            AuditOutcome::Fail => modsurfer_proto_v1::api::AuditOutcome::FAIL,
+        }
+    }
+}

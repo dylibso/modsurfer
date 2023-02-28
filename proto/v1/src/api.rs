@@ -1406,7 +1406,7 @@ impl ::protobuf::reflect::ProtobufValue for CreateModuleRequest {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
-///  The message returned in reponse to a `CreateModuleRequest`.
+///  The message returned in response to a `CreateModuleRequest`.
 #[derive(PartialEq,Clone,Default,Debug)]
 // @@protoc_insertion_point(message:CreateModuleResponse)
 pub struct CreateModuleResponse {
@@ -1690,7 +1690,7 @@ impl ::protobuf::reflect::ProtobufValue for GetModuleRequest {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
-///  The message returned in reponse to a `GetModuleRequest`.
+///  The message returned in response to a `GetModuleRequest`.
 #[derive(PartialEq,Clone,Default,Debug)]
 // @@protoc_insertion_point(message:GetModuleResponse)
 pub struct GetModuleResponse {
@@ -1977,7 +1977,7 @@ impl ::protobuf::reflect::ProtobufValue for ListModulesRequest {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
-///  The message returned in reponse to a `ListModulesRequest`.
+///  The message returned in response to a `ListModulesRequest`.
 #[derive(PartialEq,Clone,Default,Debug)]
 // @@protoc_insertion_point(message:ListModulesResponse)
 pub struct ListModulesResponse {
@@ -2600,7 +2600,7 @@ impl ::protobuf::reflect::ProtobufValue for SearchModulesRequest {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
-///  The message returned in reponse to a `SearchModulesRequest`.
+///  The message returned in response to a `SearchModulesRequest`.
 #[derive(PartialEq,Clone,Default,Debug)]
 // @@protoc_insertion_point(message:SearchModulesResponse)
 pub struct SearchModulesResponse {
@@ -2928,7 +2928,7 @@ impl ::protobuf::reflect::ProtobufValue for DeleteModulesRequest {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
-///  The message returned in reponse to a `DeleteModulesRequest`.
+///  The message returned in response to a `DeleteModulesRequest`.
 #[derive(PartialEq,Clone,Default,Debug)]
 // @@protoc_insertion_point(message:DeleteModulesResponse)
 pub struct DeleteModulesResponse {
@@ -3084,6 +3084,366 @@ impl ::std::fmt::Display for DeleteModulesResponse {
 }
 
 impl ::protobuf::reflect::ProtobufValue for DeleteModulesResponse {
+    type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
+}
+
+///  `POST /api/v1/audit:`
+///  Return a list of modules which match the outcome requirements using the provided checkfile.
+#[derive(PartialEq,Clone,Default,Debug)]
+// @@protoc_insertion_point(message:AuditModulesRequest)
+pub struct AuditModulesRequest {
+    // message fields
+    ///  the YAML checkfile (e.g. mod.yaml) bytes
+    // @@protoc_insertion_point(field:AuditModulesRequest.checkfile)
+    pub checkfile: ::std::vec::Vec<u8>,
+    // @@protoc_insertion_point(field:AuditModulesRequest.outcome)
+    pub outcome: ::protobuf::EnumOrUnknown<AuditOutcome>,
+    // @@protoc_insertion_point(field:AuditModulesRequest.pagination)
+    pub pagination: ::protobuf::MessageField<Pagination>,
+    // special fields
+    // @@protoc_insertion_point(special_field:AuditModulesRequest.special_fields)
+    pub special_fields: ::protobuf::SpecialFields,
+}
+
+impl<'a> ::std::default::Default for &'a AuditModulesRequest {
+    fn default() -> &'a AuditModulesRequest {
+        <AuditModulesRequest as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl AuditModulesRequest {
+    pub fn new() -> AuditModulesRequest {
+        ::std::default::Default::default()
+    }
+
+    fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
+        let mut fields = ::std::vec::Vec::with_capacity(3);
+        let mut oneofs = ::std::vec::Vec::with_capacity(0);
+        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
+            "checkfile",
+            |m: &AuditModulesRequest| { &m.checkfile },
+            |m: &mut AuditModulesRequest| { &mut m.checkfile },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
+            "outcome",
+            |m: &AuditModulesRequest| { &m.outcome },
+            |m: &mut AuditModulesRequest| { &mut m.outcome },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, Pagination>(
+            "pagination",
+            |m: &AuditModulesRequest| { &m.pagination },
+            |m: &mut AuditModulesRequest| { &mut m.pagination },
+        ));
+        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<AuditModulesRequest>(
+            "AuditModulesRequest",
+            fields,
+            oneofs,
+        )
+    }
+}
+
+impl ::protobuf::Message for AuditModulesRequest {
+    const NAME: &'static str = "AuditModulesRequest";
+
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
+        while let Some(tag) = is.read_raw_tag_or_eof()? {
+            match tag {
+                10 => {
+                    self.checkfile = is.read_bytes()?;
+                },
+                16 => {
+                    self.outcome = is.read_enum_or_unknown()?;
+                },
+                26 => {
+                    ::protobuf::rt::read_singular_message_into_field(is, &mut self.pagination)?;
+                },
+                tag => {
+                    ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u64 {
+        let mut my_size = 0;
+        if !self.checkfile.is_empty() {
+            my_size += ::protobuf::rt::bytes_size(1, &self.checkfile);
+        }
+        if self.outcome != ::protobuf::EnumOrUnknown::new(AuditOutcome::PASS) {
+            my_size += ::protobuf::rt::int32_size(2, self.outcome.value());
+        }
+        if let Some(v) = self.pagination.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
+        self.special_fields.cached_size().set(my_size as u32);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
+        if !self.checkfile.is_empty() {
+            os.write_bytes(1, &self.checkfile)?;
+        }
+        if self.outcome != ::protobuf::EnumOrUnknown::new(AuditOutcome::PASS) {
+            os.write_enum(2, ::protobuf::EnumOrUnknown::value(&self.outcome))?;
+        }
+        if let Some(v) = self.pagination.as_ref() {
+            ::protobuf::rt::write_message_field_with_cached_size(3, v, os)?;
+        }
+        os.write_unknown_fields(self.special_fields.unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn special_fields(&self) -> &::protobuf::SpecialFields {
+        &self.special_fields
+    }
+
+    fn mut_special_fields(&mut self) -> &mut ::protobuf::SpecialFields {
+        &mut self.special_fields
+    }
+
+    fn new() -> AuditModulesRequest {
+        AuditModulesRequest::new()
+    }
+
+    fn clear(&mut self) {
+        self.checkfile.clear();
+        self.outcome = ::protobuf::EnumOrUnknown::new(AuditOutcome::PASS);
+        self.pagination.clear();
+        self.special_fields.clear();
+    }
+
+    fn default_instance() -> &'static AuditModulesRequest {
+        static instance: AuditModulesRequest = AuditModulesRequest {
+            checkfile: ::std::vec::Vec::new(),
+            outcome: ::protobuf::EnumOrUnknown::from_i32(0),
+            pagination: ::protobuf::MessageField::none(),
+            special_fields: ::protobuf::SpecialFields::new(),
+        };
+        &instance
+    }
+}
+
+impl ::protobuf::MessageFull for AuditModulesRequest {
+    fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
+        static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
+        descriptor.get(|| file_descriptor().message_by_package_relative_name("AuditModulesRequest").unwrap()).clone()
+    }
+}
+
+impl ::std::fmt::Display for AuditModulesRequest {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for AuditModulesRequest {
+    type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
+}
+
+///  The message returned in response to a `AuditModulesRequest`.
+#[derive(PartialEq,Clone,Default,Debug)]
+// @@protoc_insertion_point(message:AuditModulesResponse)
+pub struct AuditModulesResponse {
+    // message fields
+    ///  each record contains the ID of the invalid Module which failed the audit, as well as the failure 
+    ///  report produced by the validation check (encoded in JSON)
+    // @@protoc_insertion_point(field:AuditModulesResponse.invalid_module_report)
+    pub invalid_module_report: ::std::collections::HashMap<i64, ::std::vec::Vec<u8>>,
+    // @@protoc_insertion_point(field:AuditModulesResponse.pagination)
+    pub pagination: ::protobuf::MessageField<Pagination>,
+    ///  the full count of results in the database (not the count of this message's
+    ///  `modules`).
+    // @@protoc_insertion_point(field:AuditModulesResponse.total)
+    pub total: u64,
+    // @@protoc_insertion_point(field:AuditModulesResponse.error)
+    pub error: ::protobuf::MessageField<Error>,
+    // special fields
+    // @@protoc_insertion_point(special_field:AuditModulesResponse.special_fields)
+    pub special_fields: ::protobuf::SpecialFields,
+}
+
+impl<'a> ::std::default::Default for &'a AuditModulesResponse {
+    fn default() -> &'a AuditModulesResponse {
+        <AuditModulesResponse as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl AuditModulesResponse {
+    pub fn new() -> AuditModulesResponse {
+        ::std::default::Default::default()
+    }
+
+    fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
+        let mut fields = ::std::vec::Vec::with_capacity(4);
+        let mut oneofs = ::std::vec::Vec::with_capacity(0);
+        fields.push(::protobuf::reflect::rt::v2::make_map_simpler_accessor::<_, _, _>(
+            "invalid_module_report",
+            |m: &AuditModulesResponse| { &m.invalid_module_report },
+            |m: &mut AuditModulesResponse| { &mut m.invalid_module_report },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, Pagination>(
+            "pagination",
+            |m: &AuditModulesResponse| { &m.pagination },
+            |m: &mut AuditModulesResponse| { &mut m.pagination },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
+            "total",
+            |m: &AuditModulesResponse| { &m.total },
+            |m: &mut AuditModulesResponse| { &mut m.total },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, Error>(
+            "error",
+            |m: &AuditModulesResponse| { &m.error },
+            |m: &mut AuditModulesResponse| { &mut m.error },
+        ));
+        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<AuditModulesResponse>(
+            "AuditModulesResponse",
+            fields,
+            oneofs,
+        )
+    }
+}
+
+impl ::protobuf::Message for AuditModulesResponse {
+    const NAME: &'static str = "AuditModulesResponse";
+
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
+        while let Some(tag) = is.read_raw_tag_or_eof()? {
+            match tag {
+                10 => {
+                    let len = is.read_raw_varint32()?;
+                    let old_limit = is.push_limit(len as u64)?;
+                    let mut key = ::std::default::Default::default();
+                    let mut value = ::std::default::Default::default();
+                    while let Some(tag) = is.read_raw_tag_or_eof()? {
+                        match tag {
+                            8 => key = is.read_int64()?,
+                            18 => value = is.read_bytes()?,
+                            _ => ::protobuf::rt::skip_field_for_tag(tag, is)?,
+                        };
+                    }
+                    is.pop_limit(old_limit);
+                    self.invalid_module_report.insert(key, value);
+                },
+                18 => {
+                    ::protobuf::rt::read_singular_message_into_field(is, &mut self.pagination)?;
+                },
+                24 => {
+                    self.total = is.read_uint64()?;
+                },
+                34 => {
+                    ::protobuf::rt::read_singular_message_into_field(is, &mut self.error)?;
+                },
+                tag => {
+                    ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u64 {
+        let mut my_size = 0;
+        for (k, v) in &self.invalid_module_report {
+            let mut entry_size = 0;
+            entry_size += ::protobuf::rt::int64_size(1, *k);
+            entry_size += ::protobuf::rt::bytes_size(2, &v);
+            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(entry_size) + entry_size
+        };
+        if let Some(v) = self.pagination.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
+        }
+        if self.total != 0 {
+            my_size += ::protobuf::rt::uint64_size(3, self.total);
+        }
+        if let Some(v) = self.error.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
+        self.special_fields.cached_size().set(my_size as u32);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
+        for (k, v) in &self.invalid_module_report {
+            let mut entry_size = 0;
+            entry_size += ::protobuf::rt::int64_size(1, *k);
+            entry_size += ::protobuf::rt::bytes_size(2, &v);
+            os.write_raw_varint32(10)?; // Tag.
+            os.write_raw_varint32(entry_size as u32)?;
+            os.write_int64(1, *k)?;
+            os.write_bytes(2, &v)?;
+        };
+        if let Some(v) = self.pagination.as_ref() {
+            ::protobuf::rt::write_message_field_with_cached_size(2, v, os)?;
+        }
+        if self.total != 0 {
+            os.write_uint64(3, self.total)?;
+        }
+        if let Some(v) = self.error.as_ref() {
+            ::protobuf::rt::write_message_field_with_cached_size(4, v, os)?;
+        }
+        os.write_unknown_fields(self.special_fields.unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn special_fields(&self) -> &::protobuf::SpecialFields {
+        &self.special_fields
+    }
+
+    fn mut_special_fields(&mut self) -> &mut ::protobuf::SpecialFields {
+        &mut self.special_fields
+    }
+
+    fn new() -> AuditModulesResponse {
+        AuditModulesResponse::new()
+    }
+
+    fn clear(&mut self) {
+        self.invalid_module_report.clear();
+        self.pagination.clear();
+        self.total = 0;
+        self.error.clear();
+        self.special_fields.clear();
+    }
+
+    fn default_instance() -> &'static AuditModulesResponse {
+        static instance: ::protobuf::rt::Lazy<AuditModulesResponse> = ::protobuf::rt::Lazy::new();
+        instance.get(AuditModulesResponse::new)
+    }
+}
+
+impl ::protobuf::MessageFull for AuditModulesResponse {
+    fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
+        static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
+        descriptor.get(|| file_descriptor().message_by_package_relative_name("AuditModulesResponse").unwrap()).clone()
+    }
+}
+
+impl ::std::fmt::Display for AuditModulesResponse {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for AuditModulesResponse {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
@@ -3364,6 +3724,63 @@ impl Field {
     }
 }
 
+///  Represents the expected outcome of an AuditModulesRequest. If PASS is provided, then
+///  the audit returns modules which conform to the checkfile. If FAIL is provided, then
+///  the audit returns modules which do not conform to the checkfile.
+#[derive(Clone,Copy,PartialEq,Eq,Debug,Hash)]
+// @@protoc_insertion_point(enum:AuditOutcome)
+pub enum AuditOutcome {
+    // @@protoc_insertion_point(enum_value:AuditOutcome.PASS)
+    PASS = 0,
+    // @@protoc_insertion_point(enum_value:AuditOutcome.FAIL)
+    FAIL = 1,
+}
+
+impl ::protobuf::Enum for AuditOutcome {
+    const NAME: &'static str = "AuditOutcome";
+
+    fn value(&self) -> i32 {
+        *self as i32
+    }
+
+    fn from_i32(value: i32) -> ::std::option::Option<AuditOutcome> {
+        match value {
+            0 => ::std::option::Option::Some(AuditOutcome::PASS),
+            1 => ::std::option::Option::Some(AuditOutcome::FAIL),
+            _ => ::std::option::Option::None
+        }
+    }
+
+    const VALUES: &'static [AuditOutcome] = &[
+        AuditOutcome::PASS,
+        AuditOutcome::FAIL,
+    ];
+}
+
+impl ::protobuf::EnumFull for AuditOutcome {
+    fn enum_descriptor() -> ::protobuf::reflect::EnumDescriptor {
+        static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::EnumDescriptor> = ::protobuf::rt::Lazy::new();
+        descriptor.get(|| file_descriptor().enum_by_package_relative_name("AuditOutcome").unwrap()).clone()
+    }
+
+    fn descriptor(&self) -> ::protobuf::reflect::EnumValueDescriptor {
+        let index = *self as usize;
+        Self::enum_descriptor().value_by_index(index)
+    }
+}
+
+impl ::std::default::Default for AuditOutcome {
+    fn default() -> Self {
+        AuditOutcome::PASS
+    }
+}
+
+impl AuditOutcome {
+    fn generated_enum_descriptor_data() -> ::protobuf::reflect::GeneratedEnumDescriptorData {
+        ::protobuf::reflect::GeneratedEnumDescriptorData::new::<AuditOutcome>("AuditOutcome")
+    }
+}
+
 static file_descriptor_proto_data: &'static [u8] = b"\
     \n\x12proto/v1/api.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"`\n\x08\
     Function\x12\x1c\n\x04args\x18\x01\x20\x03(\x0e2\x08.ValTypeR\x04args\
@@ -3442,73 +3859,84 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     oduleIdHashEntryR\x0cmoduleIdHash\x12!\n\x05error\x18\x02\x20\x01(\x0b2\
     \x06.ErrorH\0R\x05error\x88\x01\x01\x1a?\n\x11ModuleIdHashEntry\x12\x10\
     \n\x03key\x18\x01\x20\x01(\x03R\x03key\x12\x14\n\x05value\x18\x02\x20\
-    \x01(\tR\x05value:\x028\x01B\x08\n\x06_error*S\n\x07ValType\x12\x07\n\
-    \x03I32\x10\0\x12\x07\n\x03I64\x10\x01\x12\x07\n\x03F32\x10\x02\x12\x07\
-    \n\x03F64\x10\x03\x12\x08\n\x04V128\x10\x04\x12\x0b\n\x07FuncRef\x10\x05\
-    \x12\r\n\tExternRef\x10\x06*S\n\x0eSourceLanguage\x12\x0b\n\x07Unknown\
-    \x10\0\x12\x08\n\x04Rust\x10\x01\x12\x06\n\x02Go\x10\x02\x12\x05\n\x01C\
-    \x10\x03\x12\x07\n\x03Cpp\x10\x04\x12\x12\n\x0eAssemblyScript\x10\x05*\
-    \x1e\n\tDirection\x12\x08\n\x04Desc\x10\0\x12\x07\n\x03Asc\x10\x01*h\n\
-    \x05Field\x12\r\n\tCreatedAt\x10\0\x12\x08\n\x04Name\x10\x01\x12\x08\n\
-    \x04Size\x10\x02\x12\x0c\n\x08Language\x10\x03\x12\x10\n\x0cImportsCount\
-    \x10\x04\x12\x10\n\x0cExportsCount\x10\x05\x12\n\n\x06Sha256\x10\x06J\
-    \x98H\n\x07\x12\x05\0\0\xd8\x01\x01\n\x08\n\x01\x0c\x12\x03\0\0\x12\n\t\
-    \n\x02\x03\0\x12\x03\x02\0)\nr\n\x02\x05\0\x12\x04\x06\0\x0e\x01\x1af\
-    \x20Used\x20to\x20type\x20the\x20arguments\x20and\x20return\x20types\x20\
-    from\x20wasm\x20elements\x20such\x20as\x20import\n\x20and\x20export\x20f\
-    unctions.\n\n\n\n\x03\x05\0\x01\x12\x03\x06\x05\x0c\n\x0b\n\x04\x05\0\
-    \x02\0\x12\x03\x07\x02\n\n\x0c\n\x05\x05\0\x02\0\x01\x12\x03\x07\x02\x05\
-    \n\x0c\n\x05\x05\0\x02\0\x02\x12\x03\x07\x08\t\n\x0b\n\x04\x05\0\x02\x01\
-    \x12\x03\x08\x02\n\n\x0c\n\x05\x05\0\x02\x01\x01\x12\x03\x08\x02\x05\n\
-    \x0c\n\x05\x05\0\x02\x01\x02\x12\x03\x08\x08\t\n\x0b\n\x04\x05\0\x02\x02\
-    \x12\x03\t\x02\n\n\x0c\n\x05\x05\0\x02\x02\x01\x12\x03\t\x02\x05\n\x0c\n\
-    \x05\x05\0\x02\x02\x02\x12\x03\t\x08\t\n\x0b\n\x04\x05\0\x02\x03\x12\x03\
-    \n\x02\n\n\x0c\n\x05\x05\0\x02\x03\x01\x12\x03\n\x02\x05\n\x0c\n\x05\x05\
-    \0\x02\x03\x02\x12\x03\n\x08\t\n\x0b\n\x04\x05\0\x02\x04\x12\x03\x0b\x02\
-    \x0b\n\x0c\n\x05\x05\0\x02\x04\x01\x12\x03\x0b\x02\x06\n\x0c\n\x05\x05\0\
-    \x02\x04\x02\x12\x03\x0b\t\n\n\x0b\n\x04\x05\0\x02\x05\x12\x03\x0c\x02\
-    \x0e\n\x0c\n\x05\x05\0\x02\x05\x01\x12\x03\x0c\x02\t\n\x0c\n\x05\x05\0\
-    \x02\x05\x02\x12\x03\x0c\x0c\r\n\x0b\n\x04\x05\0\x02\x06\x12\x03\r\x02\
-    \x10\n\x0c\n\x05\x05\0\x02\x06\x01\x12\x03\r\x02\x0b\n\x0c\n\x05\x05\0\
-    \x02\x06\x02\x12\x03\r\x0e\x0f\nL\n\x02\x04\0\x12\x04\x11\0\x15\x01\x1a@\
-    \x20Contained\x20by\x20an\x20import\x20or\x20export\x20element\x20within\
-    \x20a\x20wasm\x20binary.\n\n\n\n\x03\x04\0\x01\x12\x03\x11\x08\x10\n\x0b\
-    \n\x04\x04\0\x02\0\x12\x03\x12\x02\x1c\n\x0c\n\x05\x04\0\x02\0\x04\x12\
-    \x03\x12\x02\n\n\x0c\n\x05\x04\0\x02\0\x06\x12\x03\x12\x0b\x12\n\x0c\n\
-    \x05\x04\0\x02\0\x01\x12\x03\x12\x13\x17\n\x0c\n\x05\x04\0\x02\0\x03\x12\
-    \x03\x12\x1a\x1b\n\x0b\n\x04\x04\0\x02\x01\x12\x03\x13\x02\x1f\n\x0c\n\
-    \x05\x04\0\x02\x01\x04\x12\x03\x13\x02\n\n\x0c\n\x05\x04\0\x02\x01\x06\
-    \x12\x03\x13\x0b\x12\n\x0c\n\x05\x04\0\x02\x01\x01\x12\x03\x13\x13\x1a\n\
-    \x0c\n\x05\x04\0\x02\x01\x03\x12\x03\x13\x1d\x1e\n\x0b\n\x04\x04\0\x02\
-    \x02\x12\x03\x14\x02\x12\n\x0c\n\x05\x04\0\x02\x02\x05\x12\x03\x14\x02\
-    \x08\n\x0c\n\x05\x04\0\x02\x02\x01\x12\x03\x14\t\r\n\x0c\n\x05\x04\0\x02\
-    \x02\x03\x12\x03\x14\x10\x11\n\x8d\x01\n\x02\x04\x01\x12\x04\x19\0\x1c\
-    \x01\x1a\x80\x01\x20A\x20function\x20and\x20module\x20namespace\x20that\
-    \x20is\x20defined\x20outside\x20of\x20the\x20current\n\x20module,\x20and\
-    \x20referenced\x20&\x20called\x20by\x20the\x20current\x20module.\n\n\n\n\
-    \x03\x04\x01\x01\x12\x03\x19\x08\x0e\n\x0b\n\x04\x04\x01\x02\0\x12\x03\
-    \x1a\x02\x19\n\x0c\n\x05\x04\x01\x02\0\x05\x12\x03\x1a\x02\x08\n\x0c\n\
-    \x05\x04\x01\x02\0\x01\x12\x03\x1a\t\x14\n\x0c\n\x05\x04\x01\x02\0\x03\
-    \x12\x03\x1a\x17\x18\n\x0b\n\x04\x04\x01\x02\x01\x12\x03\x1b\x02\x14\n\
-    \x0c\n\x05\x04\x01\x02\x01\x06\x12\x03\x1b\x02\n\n\x0c\n\x05\x04\x01\x02\
-    \x01\x01\x12\x03\x1b\x0b\x0f\n\x0c\n\x05\x04\x01\x02\x01\x03\x12\x03\x1b\
-    \x12\x13\nu\n\x02\x04\x02\x12\x03\x20\0%\x1aj\x20A\x20function\x20that\
-    \x20is\x20defined\x20inside\x20the\x20current\x20module,\x20made\x20avai\
-    lable\x20to\n\x20outside\x20modules\x20/\x20environments.\n\n\n\n\x03\
-    \x04\x02\x01\x12\x03\x20\x08\x0e\n\x0b\n\x04\x04\x02\x02\0\x12\x03\x20\
-    \x11#\n\x0c\n\x05\x04\x02\x02\0\x06\x12\x03\x20\x11\x19\n\x0c\n\x05\x04\
-    \x02\x02\0\x01\x12\x03\x20\x1a\x1e\n\x0c\n\x05\x04\x02\x02\0\x03\x12\x03\
-    \x20!\"\nQ\n\x02\x05\x01\x12\x04#\0*\x01\x1aE\x20The\x20language\x20(or\
-    \x20most\x20similar\x20match)\x20used\x20to\x20produce\x20a\x20wasm\x20m\
-    odule.\n\n\n\n\x03\x05\x01\x01\x12\x03#\x05\x13\n\x0b\n\x04\x05\x01\x02\
-    \0\x12\x03$\x02\x0e\n\x0c\n\x05\x05\x01\x02\0\x01\x12\x03$\x02\t\n\x0c\n\
-    \x05\x05\x01\x02\0\x02\x12\x03$\x0c\r\n\x0b\n\x04\x05\x01\x02\x01\x12\
-    \x03%\x02\x0b\n\x0c\n\x05\x05\x01\x02\x01\x01\x12\x03%\x02\x06\n\x0c\n\
-    \x05\x05\x01\x02\x01\x02\x12\x03%\t\n\n\x0b\n\x04\x05\x01\x02\x02\x12\
-    \x03&\x02\t\n\x0c\n\x05\x05\x01\x02\x02\x01\x12\x03&\x02\x04\n\x0c\n\x05\
-    \x05\x01\x02\x02\x02\x12\x03&\x07\x08\n\x0b\n\x04\x05\x01\x02\x03\x12\
-    \x03'\x02\x08\n\x0c\n\x05\x05\x01\x02\x03\x01\x12\x03'\x02\x03\n\x0c\n\
-    \x05\x05\x01\x02\x03\x02\x12\x03'\x06\x07\n\x0b\n\x04\x05\x01\x02\x04\
+    \x01(\tR\x05value:\x028\x01B\x08\n\x06_error\"\x89\x01\n\x13AuditModules\
+    Request\x12\x1c\n\tcheckfile\x18\x01\x20\x01(\x0cR\tcheckfile\x12'\n\x07\
+    outcome\x18\x02\x20\x01(\x0e2\r.AuditOutcomeR\x07outcome\x12+\n\npaginat\
+    ion\x18\x03\x20\x01(\x0b2\x0b.PaginationR\npagination\"\xb2\x02\n\x14Aud\
+    itModulesResponse\x12b\n\x15invalid_module_report\x18\x01\x20\x03(\x0b2.\
+    .AuditModulesResponse.InvalidModuleReportEntryR\x13invalidModuleReport\
+    \x12+\n\npagination\x18\x02\x20\x01(\x0b2\x0b.PaginationR\npagination\
+    \x12\x14\n\x05total\x18\x03\x20\x01(\x04R\x05total\x12!\n\x05error\x18\
+    \x04\x20\x01(\x0b2\x06.ErrorH\0R\x05error\x88\x01\x01\x1aF\n\x18InvalidM\
+    oduleReportEntry\x12\x10\n\x03key\x18\x01\x20\x01(\x03R\x03key\x12\x14\n\
+    \x05value\x18\x02\x20\x01(\x0cR\x05value:\x028\x01B\x08\n\x06_error*S\n\
+    \x07ValType\x12\x07\n\x03I32\x10\0\x12\x07\n\x03I64\x10\x01\x12\x07\n\
+    \x03F32\x10\x02\x12\x07\n\x03F64\x10\x03\x12\x08\n\x04V128\x10\x04\x12\
+    \x0b\n\x07FuncRef\x10\x05\x12\r\n\tExternRef\x10\x06*S\n\x0eSourceLangua\
+    ge\x12\x0b\n\x07Unknown\x10\0\x12\x08\n\x04Rust\x10\x01\x12\x06\n\x02Go\
+    \x10\x02\x12\x05\n\x01C\x10\x03\x12\x07\n\x03Cpp\x10\x04\x12\x12\n\x0eAs\
+    semblyScript\x10\x05*\x1e\n\tDirection\x12\x08\n\x04Desc\x10\0\x12\x07\n\
+    \x03Asc\x10\x01*h\n\x05Field\x12\r\n\tCreatedAt\x10\0\x12\x08\n\x04Name\
+    \x10\x01\x12\x08\n\x04Size\x10\x02\x12\x0c\n\x08Language\x10\x03\x12\x10\
+    \n\x0cImportsCount\x10\x04\x12\x10\n\x0cExportsCount\x10\x05\x12\n\n\x06\
+    Sha256\x10\x06*\"\n\x0cAuditOutcome\x12\x08\n\x04PASS\x10\0\x12\x08\n\
+    \x04FAIL\x10\x01J\xc3R\n\x07\x12\x05\0\0\xf5\x01\x01\n\x08\n\x01\x0c\x12\
+    \x03\0\0\x12\n\t\n\x02\x03\0\x12\x03\x02\0)\nr\n\x02\x05\0\x12\x04\x06\0\
+    \x0e\x01\x1af\x20Used\x20to\x20type\x20the\x20arguments\x20and\x20return\
+    \x20types\x20from\x20wasm\x20elements\x20such\x20as\x20import\n\x20and\
+    \x20export\x20functions.\n\n\n\n\x03\x05\0\x01\x12\x03\x06\x05\x0c\n\x0b\
+    \n\x04\x05\0\x02\0\x12\x03\x07\x02\n\n\x0c\n\x05\x05\0\x02\0\x01\x12\x03\
+    \x07\x02\x05\n\x0c\n\x05\x05\0\x02\0\x02\x12\x03\x07\x08\t\n\x0b\n\x04\
+    \x05\0\x02\x01\x12\x03\x08\x02\n\n\x0c\n\x05\x05\0\x02\x01\x01\x12\x03\
+    \x08\x02\x05\n\x0c\n\x05\x05\0\x02\x01\x02\x12\x03\x08\x08\t\n\x0b\n\x04\
+    \x05\0\x02\x02\x12\x03\t\x02\n\n\x0c\n\x05\x05\0\x02\x02\x01\x12\x03\t\
+    \x02\x05\n\x0c\n\x05\x05\0\x02\x02\x02\x12\x03\t\x08\t\n\x0b\n\x04\x05\0\
+    \x02\x03\x12\x03\n\x02\n\n\x0c\n\x05\x05\0\x02\x03\x01\x12\x03\n\x02\x05\
+    \n\x0c\n\x05\x05\0\x02\x03\x02\x12\x03\n\x08\t\n\x0b\n\x04\x05\0\x02\x04\
+    \x12\x03\x0b\x02\x0b\n\x0c\n\x05\x05\0\x02\x04\x01\x12\x03\x0b\x02\x06\n\
+    \x0c\n\x05\x05\0\x02\x04\x02\x12\x03\x0b\t\n\n\x0b\n\x04\x05\0\x02\x05\
+    \x12\x03\x0c\x02\x0e\n\x0c\n\x05\x05\0\x02\x05\x01\x12\x03\x0c\x02\t\n\
+    \x0c\n\x05\x05\0\x02\x05\x02\x12\x03\x0c\x0c\r\n\x0b\n\x04\x05\0\x02\x06\
+    \x12\x03\r\x02\x10\n\x0c\n\x05\x05\0\x02\x06\x01\x12\x03\r\x02\x0b\n\x0c\
+    \n\x05\x05\0\x02\x06\x02\x12\x03\r\x0e\x0f\nL\n\x02\x04\0\x12\x04\x11\0\
+    \x15\x01\x1a@\x20Contained\x20by\x20an\x20import\x20or\x20export\x20elem\
+    ent\x20within\x20a\x20wasm\x20binary.\n\n\n\n\x03\x04\0\x01\x12\x03\x11\
+    \x08\x10\n\x0b\n\x04\x04\0\x02\0\x12\x03\x12\x02\x1c\n\x0c\n\x05\x04\0\
+    \x02\0\x04\x12\x03\x12\x02\n\n\x0c\n\x05\x04\0\x02\0\x06\x12\x03\x12\x0b\
+    \x12\n\x0c\n\x05\x04\0\x02\0\x01\x12\x03\x12\x13\x17\n\x0c\n\x05\x04\0\
+    \x02\0\x03\x12\x03\x12\x1a\x1b\n\x0b\n\x04\x04\0\x02\x01\x12\x03\x13\x02\
+    \x1f\n\x0c\n\x05\x04\0\x02\x01\x04\x12\x03\x13\x02\n\n\x0c\n\x05\x04\0\
+    \x02\x01\x06\x12\x03\x13\x0b\x12\n\x0c\n\x05\x04\0\x02\x01\x01\x12\x03\
+    \x13\x13\x1a\n\x0c\n\x05\x04\0\x02\x01\x03\x12\x03\x13\x1d\x1e\n\x0b\n\
+    \x04\x04\0\x02\x02\x12\x03\x14\x02\x12\n\x0c\n\x05\x04\0\x02\x02\x05\x12\
+    \x03\x14\x02\x08\n\x0c\n\x05\x04\0\x02\x02\x01\x12\x03\x14\t\r\n\x0c\n\
+    \x05\x04\0\x02\x02\x03\x12\x03\x14\x10\x11\n\x8d\x01\n\x02\x04\x01\x12\
+    \x04\x19\0\x1c\x01\x1a\x80\x01\x20A\x20function\x20and\x20module\x20name\
+    space\x20that\x20is\x20defined\x20outside\x20of\x20the\x20current\n\x20m\
+    odule,\x20and\x20referenced\x20&\x20called\x20by\x20the\x20current\x20mo\
+    dule.\n\n\n\n\x03\x04\x01\x01\x12\x03\x19\x08\x0e\n\x0b\n\x04\x04\x01\
+    \x02\0\x12\x03\x1a\x02\x19\n\x0c\n\x05\x04\x01\x02\0\x05\x12\x03\x1a\x02\
+    \x08\n\x0c\n\x05\x04\x01\x02\0\x01\x12\x03\x1a\t\x14\n\x0c\n\x05\x04\x01\
+    \x02\0\x03\x12\x03\x1a\x17\x18\n\x0b\n\x04\x04\x01\x02\x01\x12\x03\x1b\
+    \x02\x14\n\x0c\n\x05\x04\x01\x02\x01\x06\x12\x03\x1b\x02\n\n\x0c\n\x05\
+    \x04\x01\x02\x01\x01\x12\x03\x1b\x0b\x0f\n\x0c\n\x05\x04\x01\x02\x01\x03\
+    \x12\x03\x1b\x12\x13\nu\n\x02\x04\x02\x12\x03\x20\0%\x1aj\x20A\x20functi\
+    on\x20that\x20is\x20defined\x20inside\x20the\x20current\x20module,\x20ma\
+    de\x20available\x20to\n\x20outside\x20modules\x20/\x20environments.\n\n\
+    \n\n\x03\x04\x02\x01\x12\x03\x20\x08\x0e\n\x0b\n\x04\x04\x02\x02\0\x12\
+    \x03\x20\x11#\n\x0c\n\x05\x04\x02\x02\0\x06\x12\x03\x20\x11\x19\n\x0c\n\
+    \x05\x04\x02\x02\0\x01\x12\x03\x20\x1a\x1e\n\x0c\n\x05\x04\x02\x02\0\x03\
+    \x12\x03\x20!\"\nQ\n\x02\x05\x01\x12\x04#\0*\x01\x1aE\x20The\x20language\
+    \x20(or\x20most\x20similar\x20match)\x20used\x20to\x20produce\x20a\x20wa\
+    sm\x20module.\n\n\n\n\x03\x05\x01\x01\x12\x03#\x05\x13\n\x0b\n\x04\x05\
+    \x01\x02\0\x12\x03$\x02\x0e\n\x0c\n\x05\x05\x01\x02\0\x01\x12\x03$\x02\t\
+    \n\x0c\n\x05\x05\x01\x02\0\x02\x12\x03$\x0c\r\n\x0b\n\x04\x05\x01\x02\
+    \x01\x12\x03%\x02\x0b\n\x0c\n\x05\x05\x01\x02\x01\x01\x12\x03%\x02\x06\n\
+    \x0c\n\x05\x05\x01\x02\x01\x02\x12\x03%\t\n\n\x0b\n\x04\x05\x01\x02\x02\
+    \x12\x03&\x02\t\n\x0c\n\x05\x05\x01\x02\x02\x01\x12\x03&\x02\x04\n\x0c\n\
+    \x05\x05\x01\x02\x02\x02\x12\x03&\x07\x08\n\x0b\n\x04\x05\x01\x02\x03\
+    \x12\x03'\x02\x08\n\x0c\n\x05\x05\x01\x02\x03\x01\x12\x03'\x02\x03\n\x0c\
+    \n\x05\x05\x01\x02\x03\x02\x12\x03'\x06\x07\n\x0b\n\x04\x05\x01\x02\x04\
     \x12\x03(\x02\n\n\x0c\n\x05\x05\x01\x02\x04\x01\x12\x03(\x02\x05\n\x0c\n\
     \x05\x05\x01\x02\x04\x02\x12\x03(\x08\t\n\x0b\n\x04\x05\x01\x02\x05\x12\
     \x03)\x02\x15\n\x0c\n\x05\x05\x01\x02\x05\x01\x12\x03)\x02\x10\n\x0c\n\
@@ -3624,13 +4052,13 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     .g.\x20`s3://`,\x20`file://`,\x20`https://`\n\n\x0c\n\x05\x04\x07\x02\
     \x02\x04\x12\x03v\x02\n\n\x0c\n\x05\x04\x07\x02\x02\x05\x12\x03v\x0b\x11\
     \n\x0c\n\x05\x04\x07\x02\x02\x01\x12\x03v\x12\x1a\n\x0c\n\x05\x04\x07\
-    \x02\x02\x03\x12\x03v\x1d\x1e\nI\n\x02\x04\x08\x12\x04z\0~\x01\x1a=\x20T\
-    he\x20message\x20returned\x20in\x20reponse\x20to\x20a\x20`CreateModuleRe\
-    quest`.\n\n\n\n\x03\x04\x08\x01\x12\x03z\x08\x1c\n\x0b\n\x04\x04\x08\x02\
-    \0\x12\x03{\x02\x16\n\x0c\n\x05\x04\x08\x02\0\x05\x12\x03{\x02\x07\n\x0c\
-    \n\x05\x04\x08\x02\0\x01\x12\x03{\x08\x11\n\x0c\n\x05\x04\x08\x02\0\x03\
-    \x12\x03{\x14\x15\n\x0b\n\x04\x04\x08\x02\x01\x12\x03|\x02\x12\n\x0c\n\
-    \x05\x04\x08\x02\x01\x05\x12\x03|\x02\x08\n\x0c\n\x05\x04\x08\x02\x01\
+    \x02\x02\x03\x12\x03v\x1d\x1e\nJ\n\x02\x04\x08\x12\x04z\0~\x01\x1a>\x20T\
+    he\x20message\x20returned\x20in\x20response\x20to\x20a\x20`CreateModuleR\
+    equest`.\n\n\n\n\x03\x04\x08\x01\x12\x03z\x08\x1c\n\x0b\n\x04\x04\x08\
+    \x02\0\x12\x03{\x02\x16\n\x0c\n\x05\x04\x08\x02\0\x05\x12\x03{\x02\x07\n\
+    \x0c\n\x05\x04\x08\x02\0\x01\x12\x03{\x08\x11\n\x0c\n\x05\x04\x08\x02\0\
+    \x03\x12\x03{\x14\x15\n\x0b\n\x04\x04\x08\x02\x01\x12\x03|\x02\x12\n\x0c\
+    \n\x05\x04\x08\x02\x01\x05\x12\x03|\x02\x08\n\x0c\n\x05\x04\x08\x02\x01\
     \x01\x12\x03|\t\r\n\x0c\n\x05\x04\x08\x02\x01\x03\x12\x03|\x10\x11\n\x0b\
     \n\x04\x04\x08\x02\x02\x12\x03}\x02\x1b\n\x0c\n\x05\x04\x08\x02\x02\x04\
     \x12\x03}\x02\n\n\x0c\n\x05\x04\x08\x02\x02\x06\x12\x03}\x0b\x10\n\x0c\n\
@@ -3640,8 +4068,8 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x04\t\x01\x12\x04\x82\x01\x08\x18\n\x0c\n\x04\x04\t\x02\0\x12\x04\x82\
     \x01\x1b/\n\r\n\x05\x04\t\x02\0\x05\x12\x04\x82\x01\x1b\x20\n\r\n\x05\
     \x04\t\x02\0\x01\x12\x04\x82\x01!*\n\r\n\x05\x04\t\x02\0\x03\x12\x04\x82\
-    \x01-.\nH\n\x02\x04\n\x12\x06\x85\x01\0\x88\x01\x01\x1a:\x20The\x20messa\
-    ge\x20returned\x20in\x20reponse\x20to\x20a\x20`GetModuleRequest`.\n\n\
+    \x01-.\nI\n\x02\x04\n\x12\x06\x85\x01\0\x88\x01\x01\x1a;\x20The\x20messa\
+    ge\x20returned\x20in\x20response\x20to\x20a\x20`GetModuleRequest`.\n\n\
     \x0b\n\x03\x04\n\x01\x12\x04\x85\x01\x08\x19\n\x0c\n\x04\x04\n\x02\0\x12\
     \x04\x86\x01\x02\x14\n\r\n\x05\x04\n\x02\0\x06\x12\x04\x86\x01\x02\x08\n\
     \r\n\x05\x04\n\x02\0\x01\x12\x04\x86\x01\t\x0f\n\r\n\x05\x04\n\x02\0\x03\
@@ -3657,8 +4085,8 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x02\0\x03\x12\x04\x8d\x01\x1a\x1b\n\x0c\n\x04\x04\x0b\x02\x01\x12\x04\
     \x8e\x01\x02\x10\n\r\n\x05\x04\x0b\x02\x01\x06\x12\x04\x8e\x01\x02\x06\n\
     \r\n\x05\x04\x0b\x02\x01\x01\x12\x04\x8e\x01\x07\x0b\n\r\n\x05\x04\x0b\
-    \x02\x01\x03\x12\x04\x8e\x01\x0e\x0f\nJ\n\x02\x04\x0c\x12\x06\x92\x01\0\
-    \x9a\x01\x01\x1a<\x20The\x20message\x20returned\x20in\x20reponse\x20to\
+    \x02\x01\x03\x12\x04\x8e\x01\x0e\x0f\nK\n\x02\x04\x0c\x12\x06\x92\x01\0\
+    \x9a\x01\x01\x1a=\x20The\x20message\x20returned\x20in\x20response\x20to\
     \x20a\x20`ListModulesRequest`.\n\n\x0b\n\x03\x04\x0c\x01\x12\x04\x92\x01\
     \x08\x1b\n\x0c\n\x04\x04\x0c\x02\0\x12\x04\x93\x01\x02\x1e\n\r\n\x05\x04\
     \x0c\x02\0\x04\x12\x04\x93\x01\x02\n\n\r\n\x05\x04\x0c\x02\0\x06\x12\x04\
@@ -3757,8 +4185,8 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x01\x1a\x1c\n\x0c\n\x04\x04\r\x02\x0f\x12\x04\xc2\x01\x02\x11\n\r\n\x05\
     \x04\r\x02\x0f\x06\x12\x04\xc2\x01\x02\x06\n\r\n\x05\x04\r\x02\x0f\x01\
     \x12\x04\xc2\x01\x07\x0b\n\r\n\x05\x04\r\x02\x0f\x03\x12\x04\xc2\x01\x0e\
-    \x10\nL\n\x02\x04\x0e\x12\x06\xc6\x01\0\xce\x01\x01\x1a>\x20The\x20messa\
-    ge\x20returned\x20in\x20reponse\x20to\x20a\x20`SearchModulesRequest`.\n\
+    \x10\nM\n\x02\x04\x0e\x12\x06\xc6\x01\0\xce\x01\x01\x1a?\x20The\x20messa\
+    ge\x20returned\x20in\x20response\x20to\x20a\x20`SearchModulesRequest`.\n\
     \n\x0b\n\x03\x04\x0e\x01\x12\x04\xc6\x01\x08\x1d\n\x0c\n\x04\x04\x0e\x02\
     \0\x12\x04\xc7\x01\x02\x1e\n\r\n\x05\x04\x0e\x02\0\x04\x12\x04\xc7\x01\
     \x02\n\n\r\n\x05\x04\x0e\x02\0\x06\x12\x04\xc7\x01\x0b\x11\n\r\n\x05\x04\
@@ -3784,16 +4212,62 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x01\x12\x04\xd2\x01\x08\x1c\n\x0c\n\x04\x04\x0f\x02\0\x12\x04\xd2\x01\
     \x1f=\n\r\n\x05\x04\x0f\x02\0\x04\x12\x04\xd2\x01\x1f'\n\r\n\x05\x04\x0f\
     \x02\0\x05\x12\x04\xd2\x01(-\n\r\n\x05\x04\x0f\x02\0\x01\x12\x04\xd2\x01\
-    .8\n\r\n\x05\x04\x0f\x02\0\x03\x12\x04\xd2\x01;<\nL\n\x02\x04\x10\x12\
-    \x06\xd5\x01\0\xd8\x01\x01\x1a>\x20The\x20message\x20returned\x20in\x20r\
-    eponse\x20to\x20a\x20`DeleteModulesRequest`.\n\n\x0b\n\x03\x04\x10\x01\
+    .8\n\r\n\x05\x04\x0f\x02\0\x03\x12\x04\xd2\x01;<\nM\n\x02\x04\x10\x12\
+    \x06\xd5\x01\0\xd8\x01\x01\x1a?\x20The\x20message\x20returned\x20in\x20r\
+    esponse\x20to\x20a\x20`DeleteModulesRequest`.\n\n\x0b\n\x03\x04\x10\x01\
     \x12\x04\xd5\x01\x08\x1d\n\x0c\n\x04\x04\x10\x02\0\x12\x04\xd6\x01\x02(\
     \n\r\n\x05\x04\x10\x02\0\x06\x12\x04\xd6\x01\x02\x14\n\r\n\x05\x04\x10\
     \x02\0\x01\x12\x04\xd6\x01\x15#\n\r\n\x05\x04\x10\x02\0\x03\x12\x04\xd6\
     \x01&'\n\x0c\n\x04\x04\x10\x02\x01\x12\x04\xd7\x01\x02\x1b\n\r\n\x05\x04\
     \x10\x02\x01\x04\x12\x04\xd7\x01\x02\n\n\r\n\x05\x04\x10\x02\x01\x06\x12\
     \x04\xd7\x01\x0b\x10\n\r\n\x05\x04\x10\x02\x01\x01\x12\x04\xd7\x01\x11\
-    \x16\n\r\n\x05\x04\x10\x02\x01\x03\x12\x04\xd7\x01\x19\x1ab\x06proto3\
+    \x16\n\r\n\x05\x04\x10\x02\x01\x03\x12\x04\xd7\x01\x19\x1a\n\xfc\x01\n\
+    \x02\x05\x04\x12\x06\xdd\x01\0\xe0\x01\x01\x1a\xed\x01\x20Represents\x20\
+    the\x20expected\x20outcome\x20of\x20an\x20AuditModulesRequest.\x20If\x20\
+    PASS\x20is\x20provided,\x20then\n\x20the\x20audit\x20returns\x20modules\
+    \x20which\x20conform\x20to\x20the\x20checkfile.\x20If\x20FAIL\x20is\x20p\
+    rovided,\x20then\n\x20the\x20audit\x20returns\x20modules\x20which\x20do\
+    \x20not\x20conform\x20to\x20the\x20checkfile.\n\n\x0b\n\x03\x05\x04\x01\
+    \x12\x04\xdd\x01\x05\x11\n\x0c\n\x04\x05\x04\x02\0\x12\x04\xde\x01\x02\
+    \x0b\n\r\n\x05\x05\x04\x02\0\x01\x12\x04\xde\x01\x02\x06\n\r\n\x05\x05\
+    \x04\x02\0\x02\x12\x04\xde\x01\t\n\n\x0c\n\x04\x05\x04\x02\x01\x12\x04\
+    \xdf\x01\x02\x0b\n\r\n\x05\x05\x04\x02\x01\x01\x12\x04\xdf\x01\x02\x06\n\
+    \r\n\x05\x05\x04\x02\x01\x02\x12\x04\xdf\x01\t\n\n\x82\x01\n\x02\x04\x11\
+    \x12\x06\xe4\x01\0\xe9\x01\x01\x1at\x20`POST\x20/api/v1/audit:`\n\x20Ret\
+    urn\x20a\x20list\x20of\x20modules\x20which\x20match\x20the\x20outcome\
+    \x20requirements\x20using\x20the\x20provided\x20checkfile.\n\n\x0b\n\x03\
+    \x04\x11\x01\x12\x04\xe4\x01\x08\x1b\n8\n\x04\x04\x11\x02\0\x12\x04\xe6\
+    \x01\x02\x16\x1a*\x20the\x20YAML\x20checkfile\x20(e.g.\x20mod.yaml)\x20b\
+    ytes\n\n\r\n\x05\x04\x11\x02\0\x05\x12\x04\xe6\x01\x02\x07\n\r\n\x05\x04\
+    \x11\x02\0\x01\x12\x04\xe6\x01\x08\x11\n\r\n\x05\x04\x11\x02\0\x03\x12\
+    \x04\xe6\x01\x14\x15\n\x0c\n\x04\x04\x11\x02\x01\x12\x04\xe7\x01\x02\x1b\
+    \n\r\n\x05\x04\x11\x02\x01\x06\x12\x04\xe7\x01\x02\x0e\n\r\n\x05\x04\x11\
+    \x02\x01\x01\x12\x04\xe7\x01\x0f\x16\n\r\n\x05\x04\x11\x02\x01\x03\x12\
+    \x04\xe7\x01\x19\x1a\n\x0c\n\x04\x04\x11\x02\x02\x12\x04\xe8\x01\x02\x1c\
+    \n\r\n\x05\x04\x11\x02\x02\x06\x12\x04\xe8\x01\x02\x0c\n\r\n\x05\x04\x11\
+    \x02\x02\x01\x12\x04\xe8\x01\r\x17\n\r\n\x05\x04\x11\x02\x02\x03\x12\x04\
+    \xe8\x01\x1a\x1b\nL\n\x02\x04\x12\x12\x06\xec\x01\0\xf5\x01\x01\x1a>\x20\
+    The\x20message\x20returned\x20in\x20response\x20to\x20a\x20`AuditModules\
+    Request`.\n\n\x0b\n\x03\x04\x12\x01\x12\x04\xec\x01\x08\x1c\n\xad\x01\n\
+    \x04\x04\x12\x02\0\x12\x04\xef\x01\x02.\x1a\x9e\x01\x20each\x20record\
+    \x20contains\x20the\x20ID\x20of\x20the\x20invalid\x20Module\x20which\x20\
+    failed\x20the\x20audit,\x20as\x20well\x20as\x20the\x20failure\x20\n\x20r\
+    eport\x20produced\x20by\x20the\x20validation\x20check\x20(encoded\x20in\
+    \x20JSON)\n\n\r\n\x05\x04\x12\x02\0\x06\x12\x04\xef\x01\x02\x13\n\r\n\
+    \x05\x04\x12\x02\0\x01\x12\x04\xef\x01\x14)\n\r\n\x05\x04\x12\x02\0\x03\
+    \x12\x04\xef\x01,-\n\x0c\n\x04\x04\x12\x02\x01\x12\x04\xf0\x01\x02\x1c\n\
+    \r\n\x05\x04\x12\x02\x01\x06\x12\x04\xf0\x01\x02\x0c\n\r\n\x05\x04\x12\
+    \x02\x01\x01\x12\x04\xf0\x01\r\x17\n\r\n\x05\x04\x12\x02\x01\x03\x12\x04\
+    \xf0\x01\x1a\x1b\ng\n\x04\x04\x12\x02\x02\x12\x04\xf3\x01\x02\x13\x1aY\
+    \x20the\x20full\x20count\x20of\x20results\x20in\x20the\x20database\x20(n\
+    ot\x20the\x20count\x20of\x20this\x20message's\n\x20`modules`).\n\n\r\n\
+    \x05\x04\x12\x02\x02\x05\x12\x04\xf3\x01\x02\x08\n\r\n\x05\x04\x12\x02\
+    \x02\x01\x12\x04\xf3\x01\t\x0e\n\r\n\x05\x04\x12\x02\x02\x03\x12\x04\xf3\
+    \x01\x11\x12\n\x0c\n\x04\x04\x12\x02\x03\x12\x04\xf4\x01\x02\x1b\n\r\n\
+    \x05\x04\x12\x02\x03\x04\x12\x04\xf4\x01\x02\n\n\r\n\x05\x04\x12\x02\x03\
+    \x06\x12\x04\xf4\x01\x0b\x10\n\r\n\x05\x04\x12\x02\x03\x01\x12\x04\xf4\
+    \x01\x11\x16\n\r\n\x05\x04\x12\x02\x03\x03\x12\x04\xf4\x01\x19\x1ab\x06p\
+    roto3\
 ";
 
 /// `FileDescriptorProto` object which was a source for this generated file
@@ -3812,7 +4286,7 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
         let generated_file_descriptor = generated_file_descriptor_lazy.get(|| {
             let mut deps = ::std::vec::Vec::with_capacity(1);
             deps.push(::protobuf::well_known_types::timestamp::file_descriptor().clone());
-            let mut messages = ::std::vec::Vec::with_capacity(17);
+            let mut messages = ::std::vec::Vec::with_capacity(19);
             messages.push(Function::generated_message_descriptor_data());
             messages.push(Import::generated_message_descriptor_data());
             messages.push(Export::generated_message_descriptor_data());
@@ -3830,11 +4304,14 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
             messages.push(SearchModulesResponse::generated_message_descriptor_data());
             messages.push(DeleteModulesRequest::generated_message_descriptor_data());
             messages.push(DeleteModulesResponse::generated_message_descriptor_data());
-            let mut enums = ::std::vec::Vec::with_capacity(4);
+            messages.push(AuditModulesRequest::generated_message_descriptor_data());
+            messages.push(AuditModulesResponse::generated_message_descriptor_data());
+            let mut enums = ::std::vec::Vec::with_capacity(5);
             enums.push(ValType::generated_enum_descriptor_data());
             enums.push(SourceLanguage::generated_enum_descriptor_data());
             enums.push(Direction::generated_enum_descriptor_data());
             enums.push(Field::generated_enum_descriptor_data());
+            enums.push(AuditOutcome::generated_enum_descriptor_data());
             ::protobuf::reflect::GeneratedFileDescriptor::new_generated(
                 file_descriptor_proto(),
                 deps,

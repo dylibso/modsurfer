@@ -1,11 +1,13 @@
 [workspace]
-members = ["api", "cli", "module", "proto/v1"]
+members = ["api", "cli", "module", "plugins", "proto/v1", "validation"]
 
 [workspace.dependencies]
 anyhow = "1"
 chrono = { version = "0.4", features = ["serde"] }
 log = "0.4"
 modsurfer-api = { path = "api" }
+modsurfer-validation = { path = "validation" }
+modsurfer-plugins = { path = "plugins" }
 modsurfer-convert = { path = "convert", version = "0.1" }
 modsurfer-module = { path = "module", version = "0.1" }
 modsurfer-proto-v1 = { path = "proto/v1", package = "modsurfer-proto" }
