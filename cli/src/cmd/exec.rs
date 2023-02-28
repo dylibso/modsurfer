@@ -1,18 +1,19 @@
 #![allow(unused)]
+use std::io::Write;
 use std::process::ExitCode;
 use std::{collections::HashMap, ffi::OsString, path::PathBuf};
 
 use anyhow::Result;
 use human_bytes::human_bytes;
 use modsurfer_api::{ApiClient, Client, Persisted};
+use modsurfer_convert::{Audit, AuditOutcome, Pagination};
 use modsurfer_module::{Module, SourceLanguage};
+use modsurfer_validation::validate_module;
 use serde::Serialize;
 use url::Url;
 
-use crate::cmd::api_result::{ApiResult, ApiResults, SimpleApiResult, SimpleApiResults};
-
+use super::api_result::{ApiResult, ApiResults, SimpleApiResult, SimpleApiResults};
 use super::generate::checkfile_from_module;
-use super::validate::validate_module;
 
 pub type Id = i64;
 pub type Hash = String;
@@ -88,7 +89,7 @@ pub enum Subcommand<'a> {
     Generate(ModuleFile, CheckFile),
     Validate(ModuleFile, CheckFile, &'a OutputFormat),
     Yank(Id, Version, &'a OutputFormat),
-    Audit(CheckFile, &'a OutputFormat),
+    Audit(CheckFile, AuditOutcome, Offset, Limit, &'a OutputFormat),
 }
 
 impl Cli {
@@ -274,10 +275,35 @@ impl Cli {
 
                 Ok(ExitCode::FAILURE)
             }
-            Subcommand::Audit(_check, _output_format) => {
-                println!("`audit` is not yet supported. Reach out to support@dylib.so for more information!");
+            Subcommand::Audit(check, outcome, offset, limit, output_format) => {
+                let checkfile = tokio::fs::read(&check).await?;
+                let page = Pagination { offset, limit };
+                let audit = Audit {
+                    checkfile,
+                    page,
+                    outcome,
+                };
 
-                Ok(ExitCode::FAILURE)
+                let client = Client::new(self.host.as_str())?;
+                let reports = client.audit_modules(audit).await?;
+
+                match output_format {
+                    OutputFormat::Json => println!("{}", serde_json::to_string_pretty(&reports)?),
+                    OutputFormat::Table => {
+                        let mut buf = vec![];
+                        reports.iter().enumerate().for_each(|(i, (id, report))| {
+                            if i != 0 {
+                                writeln!(buf, "");
+                            }
+                            writeln!(buf, "Report for module: {id}");
+                            writeln!(buf, "{}", report);
+                        });
+
+                        print!("{}", String::from_utf8(buf)?);
+                    }
+                };
+
+                Ok(ExitCode::SUCCESS)
             }
         }
     }
@@ -399,12 +425,25 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                     .clone(),
                 output_format(args),
             ),
-            ("audit", args) => Subcommand::Audit(
-                args.get_one::<PathBuf>("check")
-                    .expect("valid checkfile path")
-                    .clone(),
-                output_format(args),
-            ),
+            ("audit", args) => {
+                let offset: Offset = *args
+                    .get_one("offset")
+                    .expect("offset should have default value");
+                let limit: Limit = *args
+                    .get_one("limit")
+                    .expect("limit should have default value");
+                Subcommand::Audit(
+                    args.get_one::<PathBuf>("check")
+                        .expect("valid checkfile path")
+                        .clone(),
+                    args.get_one::<AuditOutcome>("outcome")
+                        .expect("requires valid outcome ('pass' or 'fail')")
+                        .clone(),
+                    offset,
+                    limit,
+                    output_format(args),
+                )
+            }
             _ => Subcommand::Unknown,
         }
     }

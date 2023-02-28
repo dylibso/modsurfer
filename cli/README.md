@@ -25,7 +25,7 @@ Commands:
   yank
           Mark a module version as yanked (unavailable).
   audit
-          Return a list of modules which violate requirements in the provided checkfile.
+           Return a list of modules which violate requirements in the provided checkfile.
   generate
           Generate a starter checkfile from the given module.
   help
@@ -70,6 +70,8 @@ modsurfer list --offset 0 --limit 50 # (0 & 50 are defaults)
 modsurfer search --function-name _start --module-name env --source-language Rust --text "Help me"
 
 modsurfer generare -p spidermonkey.wasm -o mod.yaml
+
+modsurfer audit --outcome pass -c mod.yaml
 ```
 
 > **NOTE:** when using the `search` command along with the `--source-language` argument, the value is case-sensitive, being one of `{Rust, Go, C, C++, AssemblyScript}`.

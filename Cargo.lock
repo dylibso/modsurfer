@@ -1014,8 +1014,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c05aeb6a22b8f62540c194aac980f2115af067bfe15a0734d7277a768d396b31"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -1501,10 +1503,13 @@ dependencies = [
  "async-trait",
  "chrono",
  "lazy_static",
+ "log",
  "modsurfer-convert",
  "modsurfer-module",
+ "modsurfer-validation",
  "protobuf",
  "reqwest",
+ "serde_json",
  "url",
 ]
 
@@ -1523,6 +1528,7 @@ dependencies = [
  "modsurfer-convert",
  "modsurfer-module",
  "modsurfer-proto",
+ "modsurfer-validation",
  "parse-size",
  "protobuf",
  "reqwest",
@@ -1558,10 +1564,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "modsurfer-plugins"
+version = "0.1.0"
+
+[[package]]
 name = "modsurfer-proto"
 version = "0.1.0"
 dependencies = [
  "protobuf",
+]
+
+[[package]]
+name = "modsurfer-validation"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "comfy-table",
+ "extism",
+ "futures",
+ "getrandom",
+ "human_bytes",
+ "log",
+ "modsurfer-convert",
+ "modsurfer-module",
+ "modsurfer-plugins",
+ "modsurfer-proto",
+ "parse-size",
+ "protobuf",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "serde_with",
+ "serde_yaml 0.9.17",
+ "tokio",
+ "url",
 ]
 
 [[package]]

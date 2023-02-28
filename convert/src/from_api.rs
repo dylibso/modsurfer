@@ -1,4 +1,4 @@
-use crate::*;
+use crate::{types::Audit, *};
 use modsurfer_module::{Export, Function, FunctionType, Import, ValType};
 
 pub fn source_language(src: api::SourceLanguage) -> SourceLanguage {
@@ -120,5 +120,17 @@ pub fn search(mut req: api::SearchModulesRequest) -> Search {
             .map(|x| source_language(x.enum_value_or_default())),
         imports: imports(req.imports),
         exports: exports(req.exports),
+    }
+}
+
+pub fn audit(req: api::AuditModulesRequest) -> Audit {
+    Audit {
+        page: req
+            .pagination
+            .as_ref()
+            .map(Pagination::from)
+            .unwrap_or_default(),
+        outcome: types::AuditOutcome::from(req.outcome.enum_value_or_default()),
+        checkfile: req.checkfile,
     }
 }

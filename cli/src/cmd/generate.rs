@@ -7,7 +7,7 @@ use human_bytes::human_bytes;
 use modsurfer_module::Module;
 use serde_yaml;
 
-use crate::cmd::validate::{
+use modsurfer_validation::{
     Complexity, Exports, FunctionItem, ImportItem, Imports, Module as ModuleParser, Namespace,
     NamespaceItem, RiskLevel, Size, Validation,
 };

@@ -216,18 +216,31 @@ message DeleteModulesResponse {
   optional Error error = 2;
 }
 
+// Represents the expected outcome of an AuditModulesRequest. If PASS is provided, then
+// the audit returns modules which conform to the checkfile. If FAIL is provided, then
+// the audit returns modules which do not conform to the checkfile.
+enum AuditOutcome {
+  PASS = 0;
+  FAIL = 1;
+}
+
 // `POST /api/v1/audit:`
-// Return a list of modules which violate requirements in the provided checkfile.
+// Return a list of modules which match the outcome requirements using the provided checkfile.
 message AuditModulesRequest {
   // the YAML checkfile (e.g. mod.yaml) bytes
   bytes checkfile = 1;
+  AuditOutcome outcome = 2;
+  Pagination pagination = 3;
 }
 
 // The message returned in response to a `AuditModulesRequest`.
 message AuditModulesResponse {
-  repeated Module invalid_modules = 1;
   // each record contains the ID of the invalid Module which failed the audit, as well as the failure 
   // report produced by the validation check (encoded in JSON)
-  map<int64, bytes> invalid_module_report = 2;
-  optional Error error = 3;
+  map<int64, bytes> invalid_module_report = 1;
+  Pagination pagination = 2;
+  // the full count of results in the database (not the count of this message's
+  // `modules`).
+  uint64 total = 3;
+  optional Error error = 4;
 }

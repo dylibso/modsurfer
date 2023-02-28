@@ -2,10 +2,10 @@ use std::{env, path::PathBuf, process::ExitCode};
 
 use anyhow::Result;
 use clap::{Arg, ArgAction, Command};
+use modsurfer_convert::AuditOutcome;
 use url::Url;
 
 mod cmd;
-mod plugins;
 
 use cmd::{Cli, Hash, Id, Limit, MetadataEntry, Offset, OutputFormat, Version};
 
@@ -217,12 +217,33 @@ fn make_subcommands() -> Vec<Command> {
     let audit = clap::Command::new("audit")
         .about("Return a list of modules which violate requirements in the provided checkfile.")
         .arg(
+            Arg::new("outcome")
+                .value_parser(clap::value_parser!(AuditOutcome))
+                .long("outcome")
+                .default_value("fail")
+                .help("which type of expected outcome the audit should verify ('pass' or 'fail')"),
+        )
+        .arg(
             Arg::new("check")
                 .value_parser(clap::value_parser!(PathBuf))
                 .long("check")
                 .short('c')
                 .default_value("mod.yaml")
                 .help("a path on disk to a YAML file which declares validation requirements"),
+        )
+        .arg(
+            Arg::new("offset")
+                .value_parser(clap::value_parser!(Offset))
+                .long("offset")
+                .default_value("0")
+                .help("the pagination offset by which modules are listed"),
+        )
+        .arg(
+            Arg::new("limit")
+                .value_parser(clap::value_parser!(Limit))
+                .long("limit")
+                .default_value("50")
+                .help("the maximum number of modules in a list of results"),
         );
 
     [create, delete, get, list, search, validate, yank, audit]

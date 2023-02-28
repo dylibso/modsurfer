@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 use async_trait::async_trait;
-use modsurfer_convert::{api, to_api};
+use modsurfer_convert::{api, to_api, Audit};
 use modsurfer_module::{Export, Import, Module};
 use protobuf::{self, EnumOrUnknown, Message, MessageField};
 use reqwest;
@@ -16,6 +16,7 @@ enum ModserverCommand {
     ListModules(api::ListModulesRequest),
     SearchModules(api::SearchModulesRequest),
     DeleteModules(api::DeleteModulesRequest),
+    AuditModules(api::AuditModulesRequest),
 }
 
 /// The API Client implementation.
@@ -207,6 +208,41 @@ impl ApiClient for Client {
 
         Ok(res.module_id_hash)
     }
+
+    /// Audit the modules based on a provided checkfile and expected outcome.
+    async fn audit_modules(
+        &self,
+        audit: Audit,
+    ) -> Result<HashMap<i64, modsurfer_validation::Report>> {
+        let mut pagination: api::Pagination = Default::default();
+        pagination.limit = audit.page.limit;
+        pagination.offset = audit.page.offset;
+
+        let req = api::AuditModulesRequest {
+            outcome: EnumOrUnknown::new(api::AuditOutcome::from(audit.outcome)),
+            pagination: MessageField::some(pagination),
+            checkfile: audit.checkfile,
+            ..Default::default()
+        };
+
+        let res: api::AuditModulesResponse = self.send(ModserverCommand::AuditModules(req)).await?;
+        if res.error.is_some() {
+            return Err(api_error(res.error, "audit modules request failed"));
+        }
+
+        let mut id_reports: HashMap<i64, modsurfer_validation::Report> = Default::default();
+        res.invalid_module_report
+            .iter()
+            .for_each(|(id, json_report)| {
+                if let Ok(report) = serde_json::from_slice(json_report) {
+                    let _ = id_reports.insert(*id, report);
+                } else {
+                    log::error!("failed to decode validation report for module {}", id);
+                }
+            });
+
+        Ok(id_reports)
+    }
 }
 
 impl Client {
@@ -264,6 +300,18 @@ impl Client {
                 let resp = self
                     .inner
                     .delete(&self.make_endpoint("/api/v1/modules"))
+                    .body(req.write_to_bytes()?)
+                    .send()
+                    .await?;
+                let data = resp.bytes().await?;
+                let val = protobuf::Message::parse_from_bytes(&data)?;
+
+                return Ok(val);
+            }
+            ModserverCommand::AuditModules(req) => {
+                let resp = self
+                    .inner
+                    .post(&self.make_endpoint("/api/v1/audit"))
                     .body(req.write_to_bytes()?)
                     .send()
                     .await?;
