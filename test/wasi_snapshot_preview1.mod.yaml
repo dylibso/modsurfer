@@ -1,0 +1,11 @@
+# This checkfile is meant to demonstrate the use of an `audit` command:
+# $  modsurfer audit --outcome fail -c test/wasi_snapshot_preview1.mod.yaml
+# The system will report back all modules that fail this validation check
+# which expects modules to not import from the `wasi_snapshot_preview1` namespace.
+validate:
+  allow_wasi: false
+
+  imports:
+    namespace:
+      exclude: 
+      - wasi_snapshot_preview1
