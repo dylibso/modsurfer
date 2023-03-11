@@ -72,7 +72,7 @@ impl Display for ApiResults<'_> {
         self.results.iter().for_each(|m| {
             table.add_row(Row::from(vec![
                 m.module_id.to_string(),
-                m.hash.clone(),
+                m.hash[0..6].to_string(),
                 m.file_name.clone(),
                 m.exports.to_string(),
                 m.imports.to_string(),
