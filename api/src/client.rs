@@ -19,13 +19,17 @@ enum ModserverCommand {
     AuditModules(api::AuditModulesRequest),
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Debug)]
 pub enum SortDirection {
     Asc,
     Desc,
 }
 
 impl SortDirection {
+    pub fn default() -> SortDirection {
+        SortDirection::Desc
+    }
+
     pub fn from_str(f: &str) -> Option<SortDirection> {
         match f.to_lowercase().as_str() {
             "asc" => Some(SortDirection::Asc),
@@ -41,22 +45,37 @@ impl SortDirection {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Debug)]
 pub enum SortField {
     Size,
+    Name,
+    CreatedAt,
+    Language,
+    ImportsCount,
+    ExportsCount,
 }
 
 impl SortField {
     pub fn from_str(f: &str) -> Option<SortField> {
         match f.to_lowercase().as_str() {
             "size" => Some(SortField::Size),
+            "name" => Some(SortField::Name),
+            "created_at" => Some(SortField::CreatedAt),
+            "language" => Some(SortField::Language),
+            "imports_count" => Some(SortField::ImportsCount),
+            "exports_count" => Some(SortField::ExportsCount),
             _ => None,
         }
     }
 
     fn to_proto(self) -> Field {
         match self {
-            SortField::Size => Field::Size
+            SortField::Size => Field::Size,
+            SortField::Name => Field::Name,
+            SortField::CreatedAt => Field::CreatedAt,
+            SortField::Language => Field::Language,
+            SortField::ImportsCount => Field::ImportsCount,
+            SortField::ExportsCount => Field::CreatedAt,
         }
     }
 }
@@ -203,7 +222,7 @@ impl ApiClient for Client {
             Some(f) => {
                 MessageField::some(
                     Sort {
-                        direction: EnumOrUnknown::new(sort_direction.unwrap().to_proto()),
+                        direction: EnumOrUnknown::new(sort_direction.unwrap_or(SortDirection::default()).to_proto()),
                         field: EnumOrUnknown::new(f.to_proto()),
                         special_fields: SpecialFields::default(),
                     }
