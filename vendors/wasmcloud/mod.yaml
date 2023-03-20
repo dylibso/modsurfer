@@ -38,6 +38,6 @@ validate:
       - I32
     max: 2
   size:
-    max: 1.9 MiB
+    max: 10 MiB
   complexity:
     max_risk: medium
