@@ -235,6 +235,8 @@ impl Cli {
                         text_search.map(|s| vec![s.clone()]),
                         offset,
                         limit,
+                        None,
+                        None,
                     )
                     .await?;
 

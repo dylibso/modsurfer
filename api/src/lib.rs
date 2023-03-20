@@ -15,6 +15,7 @@ pub use mock_client::Client;
 pub use client::Client;
 
 pub use interop::{List, Persisted};
+pub use client::{SortDirection, SortField};
 
 pub use anyhow::Result;
 use async_trait::async_trait;
@@ -55,6 +56,8 @@ pub trait ApiClient {
         strings: Option<Vec<String>>,
         offset: u32,
         limit: u32,
+        sort_field: Option<SortField>,
+        sort_direction: Option<SortDirection>,
     ) -> Result<List<Persisted<Module>>>;
     async fn delete_modules(&self, _module_ids: Vec<i64>) -> Result<HashMap<i64, String>> {
         anyhow::bail!("Delete operation unimplemented.")
