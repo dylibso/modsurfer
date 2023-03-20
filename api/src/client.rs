@@ -53,6 +53,7 @@ pub enum SortField {
     Language,
     ImportsCount,
     ExportsCount,
+    Sha256,
 }
 
 impl SortField {
@@ -64,6 +65,7 @@ impl SortField {
             "language" => Some(SortField::Language),
             "imports_count" => Some(SortField::ImportsCount),
             "exports_count" => Some(SortField::ExportsCount),
+            "sha256" => Some(SortField::Sha256),
             _ => None,
         }
     }
@@ -76,6 +78,7 @@ impl SortField {
             SortField::Language => Field::Language,
             SortField::ImportsCount => Field::ImportsCount,
             SortField::ExportsCount => Field::CreatedAt,
+            SortField::Sha256 => Field::Sha256,
         }
     }
 }
