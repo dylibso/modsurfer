@@ -2,9 +2,12 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 use async_trait::async_trait;
-use modsurfer_convert::{api, to_api, Audit};
+use modsurfer_convert::{
+    api::{self, Direction, Field, Sort},
+    to_api, Audit,
+};
 use modsurfer_module::{Export, Import, Module};
-use protobuf::{self, EnumOrUnknown, Message, MessageField};
+use protobuf::{self, EnumOrUnknown, Message, MessageField, SpecialFields};
 use reqwest;
 use url::Url;
 
@@ -17,6 +20,70 @@ enum ModserverCommand {
     SearchModules(api::SearchModulesRequest),
     DeleteModules(api::DeleteModulesRequest),
     AuditModules(api::AuditModulesRequest),
+}
+
+#[derive(PartialEq, Clone, Debug)]
+pub enum SortDirection {
+    Asc,
+    Desc,
+}
+
+impl SortDirection {
+    pub fn default() -> SortDirection {
+        SortDirection::Desc
+    }
+
+    pub fn from_str(f: &str) -> Option<SortDirection> {
+        match f.to_lowercase().as_str() {
+            "asc" => Some(SortDirection::Asc),
+            "desc" => Some(SortDirection::Desc),
+            _ => None,
+        }
+    }
+    fn to_proto(self) -> Direction {
+        match self {
+            SortDirection::Asc => Direction::Asc,
+            SortDirection::Desc => Direction::Desc,
+        }
+    }
+}
+
+#[derive(PartialEq, Clone, Debug)]
+pub enum SortField {
+    Size,
+    Name,
+    CreatedAt,
+    Language,
+    ImportsCount,
+    ExportsCount,
+    Sha256,
+}
+
+impl SortField {
+    pub fn from_str(f: &str) -> Option<SortField> {
+        match f.to_lowercase().as_str() {
+            "size" => Some(SortField::Size),
+            "name" => Some(SortField::Name),
+            "created_at" => Some(SortField::CreatedAt),
+            "language" => Some(SortField::Language),
+            "imports_count" => Some(SortField::ImportsCount),
+            "exports_count" => Some(SortField::ExportsCount),
+            "sha256" => Some(SortField::Sha256),
+            _ => None,
+        }
+    }
+
+    fn to_proto(self) -> Field {
+        match self {
+            SortField::Size => Field::Size,
+            SortField::Name => Field::Name,
+            SortField::CreatedAt => Field::CreatedAt,
+            SortField::Language => Field::Language,
+            SortField::ImportsCount => Field::ImportsCount,
+            SortField::ExportsCount => Field::ExportsCount,
+            SortField::Sha256 => Field::Sha256,
+        }
+    }
 }
 
 /// The API Client implementation.
@@ -105,7 +172,7 @@ impl ApiClient for Client {
     }
 
     /// Search for modules based on input parameters. The query will combine these inputs using
-    /// `AND` condintions.
+    /// `AND` conditions.
     async fn search_modules(
         &self,
         module_id: Option<i64>,
@@ -124,6 +191,8 @@ impl ApiClient for Client {
         strings: Option<Vec<String>>,
         offset: u32,
         limit: u32,
+        sort_field: Option<SortField>,
+        sort_direction: Option<SortDirection>,
     ) -> Result<List<Persisted<Module>>> {
         let mut pagination: api::Pagination = Default::default();
         pagination.limit = limit;
@@ -155,6 +224,19 @@ impl ApiClient for Client {
             protobuf::MessageField::none()
         };
 
+        let sort = match sort_field {
+            Some(f) => MessageField::some(Sort {
+                direction: EnumOrUnknown::new(
+                    sort_direction
+                        .unwrap_or(SortDirection::default())
+                        .to_proto(),
+                ),
+                field: EnumOrUnknown::new(f.to_proto()),
+                special_fields: SpecialFields::default(),
+            }),
+            _ => MessageField::none(),
+        };
+
         let req = api::SearchModulesRequest {
             id: module_id,
             hash,
@@ -165,6 +247,7 @@ impl ApiClient for Client {
             min_size,
             max_size,
             location,
+            sort,
             source_language: source_language
                 .map(From::from)
                 .map(to_api::source_language)

@@ -122,6 +122,8 @@ impl ApiClient for Client {
         strings: Option<Vec<String>>,
         offset: u32,
         limit: u32,
+        sort_field: Option<SortField>,
+        sort_direction: Option<SortDirection>,
     ) -> Result<List<Persisted<Module>>> {
         let modules = MOCK_CLIENT_DATA.lock().unwrap();
 
