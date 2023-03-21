@@ -2,7 +2,10 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 use async_trait::async_trait;
-use modsurfer_convert::{api::{self, Sort, Direction, Field}, to_api, Audit};
+use modsurfer_convert::{
+    api::{self, Direction, Field, Sort},
+    to_api, Audit,
+};
 use modsurfer_module::{Export, Import, Module};
 use protobuf::{self, EnumOrUnknown, Message, MessageField, SpecialFields};
 use reqwest;
@@ -77,7 +80,7 @@ impl SortField {
             SortField::CreatedAt => Field::CreatedAt,
             SortField::Language => Field::Language,
             SortField::ImportsCount => Field::ImportsCount,
-            SortField::ExportsCount => Field::CreatedAt,
+            SortField::ExportsCount => Field::ExportsCount,
             SortField::Sha256 => Field::Sha256,
         }
     }
@@ -222,15 +225,15 @@ impl ApiClient for Client {
         };
 
         let sort = match sort_field {
-            Some(f) => {
-                MessageField::some(
-                    Sort {
-                        direction: EnumOrUnknown::new(sort_direction.unwrap_or(SortDirection::default()).to_proto()),
-                        field: EnumOrUnknown::new(f.to_proto()),
-                        special_fields: SpecialFields::default(),
-                    }
-                )
-            },
+            Some(f) => MessageField::some(Sort {
+                direction: EnumOrUnknown::new(
+                    sort_direction
+                        .unwrap_or(SortDirection::default())
+                        .to_proto(),
+                ),
+                field: EnumOrUnknown::new(f.to_proto()),
+                special_fields: SpecialFields::default(),
+            }),
             _ => MessageField::none(),
         };
 
