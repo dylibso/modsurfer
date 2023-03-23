@@ -44,6 +44,7 @@ pub fn sort(sort: api::Sort) -> Sort {
             api::Field::Name => SortField::Name,
             api::Field::Sha256 => SortField::Sha256,
             api::Field::Size => SortField::Size,
+            api::Field::Complexity => SortField::Complexity,
         },
     }
 }

@@ -42,6 +42,7 @@ pub enum SortField {
     ImportsCount,
     ExportsCount,
     Sha256,
+    Complexity,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
