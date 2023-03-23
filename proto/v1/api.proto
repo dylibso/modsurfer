@@ -108,6 +108,7 @@ enum Field {
   ImportsCount = 4;
   ExportsCount = 5;
   Sha256 = 6;
+  Complexity = 7;
 }
 
 // `PUT /api/v1/module:`

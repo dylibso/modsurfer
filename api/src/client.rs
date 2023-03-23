@@ -57,6 +57,7 @@ pub enum SortField {
     ImportsCount,
     ExportsCount,
     Sha256,
+    Complexity,
 }
 
 impl SortField {
@@ -69,6 +70,7 @@ impl SortField {
             "imports_count" => Some(SortField::ImportsCount),
             "exports_count" => Some(SortField::ExportsCount),
             "sha256" => Some(SortField::Sha256),
+            "complexity" => Some(SortField::Complexity),
             _ => None,
         }
     }
@@ -82,6 +84,7 @@ impl SortField {
             SortField::ImportsCount => Field::ImportsCount,
             SortField::ExportsCount => Field::ExportsCount,
             SortField::Sha256 => Field::Sha256,
+            SortField::Complexity => Field::Complexity,
         }
     }
 }
