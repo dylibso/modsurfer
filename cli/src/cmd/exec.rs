@@ -369,7 +369,7 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                 output_format(args),
             ),
             ("get", args) => Subcommand::Get(
-                *args.get_one("id").expect("valid moudle ID"),
+                *args.get_one("id").expect("valid module ID"),
                 output_format(args),
             ),
             ("list", args) => Subcommand::List(
