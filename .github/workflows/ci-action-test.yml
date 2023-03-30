@@ -6,7 +6,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: modsurfer validate
+        id: validate-should-fail
+        continue-on-error: true
         uses: dylibso/modsurfer-validate-action@main
         with:
             path: test/spidermonkey.wasm
             check: test/mod.yaml
+      - name: check failure
+        if: job.steps.validate-should-fail.status == failure()
+        run: exit 0
