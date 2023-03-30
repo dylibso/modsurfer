@@ -12,6 +12,9 @@ jobs:
         with:
             path: test/spidermonkey.wasm
             check: test/mod.yaml
-      - name: check failure
+      - name: check failure (expected)
         if: job.steps.validate-should-fail.status == failure()
         run: exit 0
+      - name: check success (unexpected)
+        if: job.steps.validate-should-fail.status == success()
+        run: exit 1
