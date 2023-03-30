@@ -1,0 +1,15 @@
+name: Modsurfer Action - Suborbital
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  check-validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        wasm: [fetch-test, helloworld-rs, log-it, return-err]
+    steps:
+      - uses: actions/checkout@v3
+      - name: modsurfer validate
+        uses: dylibso/modsurfer-validate-action@main
+        with:
+            path: vendors/suborbital/${{ matrix.wasm }}/${{ matrix.wasm }}.wasm
+            check: vendors/suborbital/${{ matrix.wasm }}/mod.yaml
