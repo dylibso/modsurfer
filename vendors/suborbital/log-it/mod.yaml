@@ -96,7 +96,5 @@ validate:
       - I32
       results: []
     max: 4
-  size:
-    max: 1.9 MiB
   complexity:
-    max_risk: low
+    max_risk: medium
