@@ -7,7 +7,9 @@ COPY . .
 
 RUN cargo build --release
 
-FROM gcr.io/distroless/cc
+FROM alpine
+
+RUN apk update && apk add bash
 
 LABEL org.opencontainers.image.source=https://github.com/dylibso/modsurfer
 LABEL org.opencontainers.image.description="Modsurfer CLI image, learn more at https://dev.dylib.so/docs/modsurfer/cli"
