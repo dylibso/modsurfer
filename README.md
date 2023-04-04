@@ -14,17 +14,13 @@ Use Modsurfer for:
 
 ### Modsurfer Desktop Application
 
-The desktop application is **free** and available to download from [Dylibso](https://dylib.so) (_COMING SOON_! For insider build, email us: [hello@dylib.so](mailto:hello@dylib.so)), and is a useful debugging, visibility, and diagnostics tool for anyone working with WebAssembly. You can try a [demo version](https://demo.modsurfer.app) before downloading Modsurfer desktop. 
+The desktop application is **free** and available to download from [Dylibso](https://dylibso.com/downloads/modsurfer), and is a useful debugging, visibility, and diagnostics tool for anyone working with WebAssembly.
 
-The demo is fully in-memory and has no HTTP API - don't rely on storing modules, or try to use it with the [Modsurfer CLI](https://github.com/dylibso/modsurfer#cli).
-
-Download the desktop application if you want module persistence and would like to use the HTTP API.
-
-![Modsurfer](.github/img/modsurfer-desktop.png)
+![Modsurfer](https://dylibso.com/assets/modsurfer-product-desktop.png)
 
 ### Enterprise
 
-If you're running WebAssmebly code in production, you may be interested in using the Enterprise version of Modsurfer. Please reach out to us at [hello@dylib.so](mailto:hello@dylib.so) and we'll be happy to get you more information about licensing and self-managed deployment requirements.
+If you're running WebAssmebly code in production, you may be interested in using the Enterprise version of Modsurfer. Please reach out to us at [hello@dylibso.com](mailto:hello@dylibso.com) and we'll be happy to get you more information about licensing and self-managed deployment requirements.
 
 --- 
 
