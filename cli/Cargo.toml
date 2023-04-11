@@ -26,7 +26,7 @@ modsurfer-proto-v1 = { workspace = true }
 modsurfer-convert = { workspace = true }
 modsurfer-validation = { workspace = true }
 comfy-table = "6.1.3"
-extism = "0.2.0"
+extism = "0.3.0"
 
 [[bin]]
 name = "modsurfer"
