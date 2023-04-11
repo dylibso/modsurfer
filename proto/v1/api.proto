@@ -245,3 +245,17 @@ message AuditModulesResponse {
   uint64 total = 3;
   optional Error error = 4;
 }
+
+// `POST /api/v1/diff:`
+// Return the diff of two modules
+message DiffRequest {
+  int64 module1 = 1;
+  int64 module2 = 2; 
+}
+
+// The message returned in response to `DiffRequest`, contains a text representation of the difference
+// between the two specified modules.
+message DiffResponse {
+  string diff = 1;
+  optional Error error = 2;
+}

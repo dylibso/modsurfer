@@ -3447,6 +3447,291 @@ impl ::protobuf::reflect::ProtobufValue for AuditModulesResponse {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
+///  `POST /api/v1/diff:`
+///  Return the diff of two modules
+#[derive(PartialEq,Clone,Default,Debug)]
+// @@protoc_insertion_point(message:DiffRequest)
+pub struct DiffRequest {
+    // message fields
+    // @@protoc_insertion_point(field:DiffRequest.module1)
+    pub module1: i64,
+    // @@protoc_insertion_point(field:DiffRequest.module2)
+    pub module2: i64,
+    // special fields
+    // @@protoc_insertion_point(special_field:DiffRequest.special_fields)
+    pub special_fields: ::protobuf::SpecialFields,
+}
+
+impl<'a> ::std::default::Default for &'a DiffRequest {
+    fn default() -> &'a DiffRequest {
+        <DiffRequest as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl DiffRequest {
+    pub fn new() -> DiffRequest {
+        ::std::default::Default::default()
+    }
+
+    fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
+        let mut fields = ::std::vec::Vec::with_capacity(2);
+        let mut oneofs = ::std::vec::Vec::with_capacity(0);
+        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
+            "module1",
+            |m: &DiffRequest| { &m.module1 },
+            |m: &mut DiffRequest| { &mut m.module1 },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
+            "module2",
+            |m: &DiffRequest| { &m.module2 },
+            |m: &mut DiffRequest| { &mut m.module2 },
+        ));
+        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<DiffRequest>(
+            "DiffRequest",
+            fields,
+            oneofs,
+        )
+    }
+}
+
+impl ::protobuf::Message for DiffRequest {
+    const NAME: &'static str = "DiffRequest";
+
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
+        while let Some(tag) = is.read_raw_tag_or_eof()? {
+            match tag {
+                8 => {
+                    self.module1 = is.read_int64()?;
+                },
+                16 => {
+                    self.module2 = is.read_int64()?;
+                },
+                tag => {
+                    ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u64 {
+        let mut my_size = 0;
+        if self.module1 != 0 {
+            my_size += ::protobuf::rt::int64_size(1, self.module1);
+        }
+        if self.module2 != 0 {
+            my_size += ::protobuf::rt::int64_size(2, self.module2);
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
+        self.special_fields.cached_size().set(my_size as u32);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
+        if self.module1 != 0 {
+            os.write_int64(1, self.module1)?;
+        }
+        if self.module2 != 0 {
+            os.write_int64(2, self.module2)?;
+        }
+        os.write_unknown_fields(self.special_fields.unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn special_fields(&self) -> &::protobuf::SpecialFields {
+        &self.special_fields
+    }
+
+    fn mut_special_fields(&mut self) -> &mut ::protobuf::SpecialFields {
+        &mut self.special_fields
+    }
+
+    fn new() -> DiffRequest {
+        DiffRequest::new()
+    }
+
+    fn clear(&mut self) {
+        self.module1 = 0;
+        self.module2 = 0;
+        self.special_fields.clear();
+    }
+
+    fn default_instance() -> &'static DiffRequest {
+        static instance: DiffRequest = DiffRequest {
+            module1: 0,
+            module2: 0,
+            special_fields: ::protobuf::SpecialFields::new(),
+        };
+        &instance
+    }
+}
+
+impl ::protobuf::MessageFull for DiffRequest {
+    fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
+        static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
+        descriptor.get(|| file_descriptor().message_by_package_relative_name("DiffRequest").unwrap()).clone()
+    }
+}
+
+impl ::std::fmt::Display for DiffRequest {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for DiffRequest {
+    type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
+}
+
+///  The message returned in response to `DiffRequest`, contains a text representation of the difference
+///  between the two specified modules.
+#[derive(PartialEq,Clone,Default,Debug)]
+// @@protoc_insertion_point(message:DiffResponse)
+pub struct DiffResponse {
+    // message fields
+    // @@protoc_insertion_point(field:DiffResponse.diff)
+    pub diff: ::std::string::String,
+    // @@protoc_insertion_point(field:DiffResponse.error)
+    pub error: ::protobuf::MessageField<Error>,
+    // special fields
+    // @@protoc_insertion_point(special_field:DiffResponse.special_fields)
+    pub special_fields: ::protobuf::SpecialFields,
+}
+
+impl<'a> ::std::default::Default for &'a DiffResponse {
+    fn default() -> &'a DiffResponse {
+        <DiffResponse as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl DiffResponse {
+    pub fn new() -> DiffResponse {
+        ::std::default::Default::default()
+    }
+
+    fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
+        let mut fields = ::std::vec::Vec::with_capacity(2);
+        let mut oneofs = ::std::vec::Vec::with_capacity(0);
+        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
+            "diff",
+            |m: &DiffResponse| { &m.diff },
+            |m: &mut DiffResponse| { &mut m.diff },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, Error>(
+            "error",
+            |m: &DiffResponse| { &m.error },
+            |m: &mut DiffResponse| { &mut m.error },
+        ));
+        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<DiffResponse>(
+            "DiffResponse",
+            fields,
+            oneofs,
+        )
+    }
+}
+
+impl ::protobuf::Message for DiffResponse {
+    const NAME: &'static str = "DiffResponse";
+
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
+        while let Some(tag) = is.read_raw_tag_or_eof()? {
+            match tag {
+                10 => {
+                    self.diff = is.read_string()?;
+                },
+                18 => {
+                    ::protobuf::rt::read_singular_message_into_field(is, &mut self.error)?;
+                },
+                tag => {
+                    ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u64 {
+        let mut my_size = 0;
+        if !self.diff.is_empty() {
+            my_size += ::protobuf::rt::string_size(1, &self.diff);
+        }
+        if let Some(v) = self.error.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
+        self.special_fields.cached_size().set(my_size as u32);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
+        if !self.diff.is_empty() {
+            os.write_string(1, &self.diff)?;
+        }
+        if let Some(v) = self.error.as_ref() {
+            ::protobuf::rt::write_message_field_with_cached_size(2, v, os)?;
+        }
+        os.write_unknown_fields(self.special_fields.unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn special_fields(&self) -> &::protobuf::SpecialFields {
+        &self.special_fields
+    }
+
+    fn mut_special_fields(&mut self) -> &mut ::protobuf::SpecialFields {
+        &mut self.special_fields
+    }
+
+    fn new() -> DiffResponse {
+        DiffResponse::new()
+    }
+
+    fn clear(&mut self) {
+        self.diff.clear();
+        self.error.clear();
+        self.special_fields.clear();
+    }
+
+    fn default_instance() -> &'static DiffResponse {
+        static instance: DiffResponse = DiffResponse {
+            diff: ::std::string::String::new(),
+            error: ::protobuf::MessageField::none(),
+            special_fields: ::protobuf::SpecialFields::new(),
+        };
+        &instance
+    }
+}
+
+impl ::protobuf::MessageFull for DiffResponse {
+    fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
+        static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
+        descriptor.get(|| file_descriptor().message_by_package_relative_name("DiffResponse").unwrap()).clone()
+    }
+}
+
+impl ::std::fmt::Display for DiffResponse {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for DiffResponse {
+    type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
+}
+
 ///  Used to type the arguments and return types from wasm elements such as import
 ///  and export functions.
 #[derive(Clone,Copy,PartialEq,Eq,Debug,Hash)]
@@ -3873,8 +4158,12 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x12\x14\n\x05total\x18\x03\x20\x01(\x04R\x05total\x12!\n\x05error\x18\
     \x04\x20\x01(\x0b2\x06.ErrorH\0R\x05error\x88\x01\x01\x1aF\n\x18InvalidM\
     oduleReportEntry\x12\x10\n\x03key\x18\x01\x20\x01(\x03R\x03key\x12\x14\n\
-    \x05value\x18\x02\x20\x01(\x0cR\x05value:\x028\x01B\x08\n\x06_error*S\n\
-    \x07ValType\x12\x07\n\x03I32\x10\0\x12\x07\n\x03I64\x10\x01\x12\x07\n\
+    \x05value\x18\x02\x20\x01(\x0cR\x05value:\x028\x01B\x08\n\x06_error\"A\n\
+    \x0bDiffRequest\x12\x18\n\x07module1\x18\x01\x20\x01(\x03R\x07module1\
+    \x12\x18\n\x07module2\x18\x02\x20\x01(\x03R\x07module2\"O\n\x0cDiffRespo\
+    nse\x12\x12\n\x04diff\x18\x01\x20\x01(\tR\x04diff\x12!\n\x05error\x18\
+    \x02\x20\x01(\x0b2\x06.ErrorH\0R\x05error\x88\x01\x01B\x08\n\x06_error*S\
+    \n\x07ValType\x12\x07\n\x03I32\x10\0\x12\x07\n\x03I64\x10\x01\x12\x07\n\
     \x03F32\x10\x02\x12\x07\n\x03F64\x10\x03\x12\x08\n\x04V128\x10\x04\x12\
     \x0b\n\x07FuncRef\x10\x05\x12\r\n\tExternRef\x10\x06*S\n\x0eSourceLangua\
     ge\x12\x0b\n\x07Unknown\x10\0\x12\x08\n\x04Rust\x10\x01\x12\x06\n\x02Go\
@@ -3884,8 +4173,8 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x10\x01\x12\x08\n\x04Size\x10\x02\x12\x0c\n\x08Language\x10\x03\x12\x10\
     \n\x0cImportsCount\x10\x04\x12\x10\n\x0cExportsCount\x10\x05\x12\n\n\x06\
     Sha256\x10\x06\x12\x0e\n\nComplexity\x10\x07*\"\n\x0cAuditOutcome\x12\
-    \x08\n\x04PASS\x10\0\x12\x08\n\x04FAIL\x10\x01J\xecR\n\x07\x12\x05\0\0\
-    \xf6\x01\x01\n\x08\n\x01\x0c\x12\x03\0\0\x12\n\t\n\x02\x03\0\x12\x03\x02\
+    \x08\n\x04PASS\x10\0\x12\x08\n\x04FAIL\x10\x01J\xe2V\n\x07\x12\x05\0\0\
+    \x84\x02\x01\n\x08\n\x01\x0c\x12\x03\0\0\x12\n\t\n\x02\x03\0\x12\x03\x02\
     \0)\nr\n\x02\x05\0\x12\x04\x06\0\x0e\x01\x1af\x20Used\x20to\x20type\x20t\
     he\x20arguments\x20and\x20return\x20types\x20from\x20wasm\x20elements\
     \x20such\x20as\x20import\n\x20and\x20export\x20functions.\n\n\n\n\x03\
@@ -4273,8 +4562,27 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x01\x11\x12\n\x0c\n\x04\x04\x12\x02\x03\x12\x04\xf5\x01\x02\x1b\n\r\n\
     \x05\x04\x12\x02\x03\x04\x12\x04\xf5\x01\x02\n\n\r\n\x05\x04\x12\x02\x03\
     \x06\x12\x04\xf5\x01\x0b\x10\n\r\n\x05\x04\x12\x02\x03\x01\x12\x04\xf5\
-    \x01\x11\x16\n\r\n\x05\x04\x12\x02\x03\x03\x12\x04\xf5\x01\x19\x1ab\x06p\
-    roto3\
+    \x01\x11\x16\n\r\n\x05\x04\x12\x02\x03\x03\x12\x04\xf5\x01\x19\x1a\nD\n\
+    \x02\x04\x13\x12\x06\xfa\x01\0\xfd\x01\x01\x1a6\x20`POST\x20/api/v1/diff\
+    :`\n\x20Return\x20the\x20diff\x20of\x20two\x20modules\n\n\x0b\n\x03\x04\
+    \x13\x01\x12\x04\xfa\x01\x08\x13\n\x0c\n\x04\x04\x13\x02\0\x12\x04\xfb\
+    \x01\x02\x14\n\r\n\x05\x04\x13\x02\0\x05\x12\x04\xfb\x01\x02\x07\n\r\n\
+    \x05\x04\x13\x02\0\x01\x12\x04\xfb\x01\x08\x0f\n\r\n\x05\x04\x13\x02\0\
+    \x03\x12\x04\xfb\x01\x12\x13\n\x0c\n\x04\x04\x13\x02\x01\x12\x04\xfc\x01\
+    \x02\x14\n\r\n\x05\x04\x13\x02\x01\x05\x12\x04\xfc\x01\x02\x07\n\r\n\x05\
+    \x04\x13\x02\x01\x01\x12\x04\xfc\x01\x08\x0f\n\r\n\x05\x04\x13\x02\x01\
+    \x03\x12\x04\xfc\x01\x12\x13\n\x98\x01\n\x02\x04\x14\x12\x06\x81\x02\0\
+    \x84\x02\x01\x1a\x89\x01\x20The\x20message\x20returned\x20in\x20response\
+    \x20to\x20`DiffRequest`,\x20contains\x20a\x20text\x20representation\x20o\
+    f\x20the\x20difference\n\x20between\x20the\x20two\x20specified\x20module\
+    s.\n\n\x0b\n\x03\x04\x14\x01\x12\x04\x81\x02\x08\x14\n\x0c\n\x04\x04\x14\
+    \x02\0\x12\x04\x82\x02\x02\x12\n\r\n\x05\x04\x14\x02\0\x05\x12\x04\x82\
+    \x02\x02\x08\n\r\n\x05\x04\x14\x02\0\x01\x12\x04\x82\x02\t\r\n\r\n\x05\
+    \x04\x14\x02\0\x03\x12\x04\x82\x02\x10\x11\n\x0c\n\x04\x04\x14\x02\x01\
+    \x12\x04\x83\x02\x02\x1b\n\r\n\x05\x04\x14\x02\x01\x04\x12\x04\x83\x02\
+    \x02\n\n\r\n\x05\x04\x14\x02\x01\x06\x12\x04\x83\x02\x0b\x10\n\r\n\x05\
+    \x04\x14\x02\x01\x01\x12\x04\x83\x02\x11\x16\n\r\n\x05\x04\x14\x02\x01\
+    \x03\x12\x04\x83\x02\x19\x1ab\x06proto3\
 ";
 
 /// `FileDescriptorProto` object which was a source for this generated file
@@ -4293,7 +4601,7 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
         let generated_file_descriptor = generated_file_descriptor_lazy.get(|| {
             let mut deps = ::std::vec::Vec::with_capacity(1);
             deps.push(::protobuf::well_known_types::timestamp::file_descriptor().clone());
-            let mut messages = ::std::vec::Vec::with_capacity(19);
+            let mut messages = ::std::vec::Vec::with_capacity(21);
             messages.push(Function::generated_message_descriptor_data());
             messages.push(Import::generated_message_descriptor_data());
             messages.push(Export::generated_message_descriptor_data());
@@ -4313,6 +4621,8 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
             messages.push(DeleteModulesResponse::generated_message_descriptor_data());
             messages.push(AuditModulesRequest::generated_message_descriptor_data());
             messages.push(AuditModulesResponse::generated_message_descriptor_data());
+            messages.push(DiffRequest::generated_message_descriptor_data());
+            messages.push(DiffResponse::generated_message_descriptor_data());
             let mut enums = ::std::vec::Vec::with_capacity(5);
             enums.push(ValType::generated_enum_descriptor_data());
             enums.push(SourceLanguage::generated_enum_descriptor_data());

@@ -90,6 +90,7 @@ pub enum Subcommand<'a> {
     Validate(ModuleFile, CheckFile, &'a OutputFormat),
     Yank(Id, Version, &'a OutputFormat),
     Audit(CheckFile, AuditOutcome, Offset, Limit, &'a OutputFormat),
+    Diff(Id, Id),
 }
 
 impl Cli {
@@ -307,6 +308,12 @@ impl Cli {
 
                 Ok(ExitCode::SUCCESS)
             }
+            Subcommand::Diff(module1, module2) => {
+                let client = Client::new(self.host.as_str())?;
+                let diff = client.diff_modules(module1, module2).await?;
+                print!("{}", diff);
+                Ok(ExitCode::SUCCESS)
+            }
         }
     }
 }
@@ -445,6 +452,11 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                     limit,
                     output_format(args),
                 )
+            }
+            ("diff", args) => {
+                let module1 = *args.get_one::<Id>("module1").expect("id is required");
+                let module2 = *args.get_one::<Id>("module2").expect("id is required");
+                Subcommand::Diff(module1, module2)
             }
             _ => Subcommand::Unknown,
         }

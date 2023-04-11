@@ -14,8 +14,8 @@ pub use mock_client::Client;
 #[cfg(not(feature = "mock"))]
 pub use client::Client;
 
-pub use interop::{List, Persisted};
 pub use client::{SortDirection, SortField};
+pub use interop::{List, Persisted};
 
 pub use anyhow::Result;
 use async_trait::async_trait;
@@ -65,4 +65,5 @@ pub trait ApiClient {
     async fn audit_modules(&self, _audit: Audit) -> Result<HashMap<i64, Report>> {
         anyhow::bail!("Audit operation unimplemented.")
     }
+    async fn diff_modules(&self, _module1: i64, module2: i64) -> Result<String>;
 }

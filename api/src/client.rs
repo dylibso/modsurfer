@@ -20,6 +20,7 @@ enum ModserverCommand {
     SearchModules(api::SearchModulesRequest),
     DeleteModules(api::DeleteModulesRequest),
     AuditModules(api::AuditModulesRequest),
+    DiffModules(api::DiffRequest),
 }
 
 #[derive(PartialEq, Clone, Debug)]
@@ -329,6 +330,20 @@ impl ApiClient for Client {
 
         Ok(id_reports)
     }
+
+    async fn diff_modules(&self, module1: i64, module2: i64) -> Result<String> {
+        let req = api::DiffRequest {
+            module1,
+            module2,
+            ..Default::default()
+        };
+
+        let res: api::DiffResponse = self.send(ModserverCommand::DiffModules(req)).await?;
+        if res.error.is_some() {
+            return Err(api_error(res.error, "diff request failed"));
+        }
+        Ok(res.diff)
+    }
 }
 
 impl Client {
@@ -404,6 +419,17 @@ impl Client {
                 let data = resp.bytes().await?;
                 let val = protobuf::Message::parse_from_bytes(&data)?;
 
+                return Ok(val);
+            }
+            ModserverCommand::DiffModules(req) => {
+                let resp = self
+                    .inner
+                    .post(&self.make_endpoint("/api/v1/diff"))
+                    .body(req.write_to_bytes()?)
+                    .send()
+                    .await?;
+                let data = resp.bytes().await?;
+                let val = protobuf::Message::parse_from_bytes(&data)?;
                 return Ok(val);
             }
         }
