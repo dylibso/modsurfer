@@ -65,5 +65,10 @@ pub trait ApiClient {
     async fn audit_modules(&self, _audit: Audit) -> Result<HashMap<i64, Report>> {
         anyhow::bail!("Audit operation unimplemented.")
     }
-    async fn diff_modules(&self, _module1: i64, module2: i64) -> Result<String>;
+    async fn diff_modules(
+        &self,
+        module1: i64,
+        module2: i64,
+        color_terminal: bool,
+    ) -> Result<String>;
 }

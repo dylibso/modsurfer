@@ -310,7 +310,7 @@ impl Cli {
             }
             Subcommand::Diff(module1, module2) => {
                 let client = Client::new(self.host.as_str())?;
-                let diff = client.diff_modules(module1, module2).await?;
+                let diff = client.diff_modules(module1, module2, true).await?;
                 print!("{}", diff);
                 Ok(ExitCode::SUCCESS)
             }

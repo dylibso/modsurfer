@@ -331,10 +331,16 @@ impl ApiClient for Client {
         Ok(id_reports)
     }
 
-    async fn diff_modules(&self, module1: i64, module2: i64) -> Result<String> {
+    async fn diff_modules(
+        &self,
+        module1: i64,
+        module2: i64,
+        color_terminal: bool,
+    ) -> Result<String> {
         let req = api::DiffRequest {
             module1,
             module2,
+            color_terminal,
             ..Default::default()
         };
 

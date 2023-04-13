@@ -251,6 +251,7 @@ message AuditModulesResponse {
 message DiffRequest {
   int64 module1 = 1;
   int64 module2 = 2; 
+  bool color_terminal = 3;
 }
 
 // The message returned in response to `DiffRequest`, contains a text representation of the difference
