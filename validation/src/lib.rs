@@ -16,6 +16,10 @@ use parse_size::parse_size;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
+mod diff;
+
+pub use diff::Diff;
+
 #[derive(Debug, Deserialize, Default, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Validation {

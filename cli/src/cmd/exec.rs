@@ -62,6 +62,33 @@ impl From<OsString> for OutputFormat {
     }
 }
 
+#[derive(Clone, Debug)]
+pub enum IdOrFilename {
+    Id(Id),
+    Filename(String),
+}
+
+impl IdOrFilename {
+    fn parse(s: impl Into<String>) -> Self {
+        let s = s.into();
+        if let Ok(x) = s.parse::<Id>() {
+            return IdOrFilename::Id(x);
+        }
+
+        IdOrFilename::Filename(s)
+    }
+
+    async fn fetch(&self, client: &Client) -> Result<Module, anyhow::Error> {
+        match self {
+            IdOrFilename::Id(id) => client.get_module(*id).await.map(|x| x.into_inner()),
+            IdOrFilename::Filename(filename) => {
+                let data = std::fs::read(filename)?;
+                modsurfer_validation::Module::parse(data)
+            }
+        }
+    }
+}
+
 #[derive(Debug, Default)]
 pub enum Subcommand<'a> {
     #[default]
@@ -90,7 +117,7 @@ pub enum Subcommand<'a> {
     Validate(ModuleFile, CheckFile, &'a OutputFormat),
     Yank(Id, Version, &'a OutputFormat),
     Audit(CheckFile, AuditOutcome, Offset, Limit, &'a OutputFormat),
-    Diff(Id, Id),
+    Diff(IdOrFilename, IdOrFilename),
 }
 
 impl Cli {
@@ -310,7 +337,9 @@ impl Cli {
             }
             Subcommand::Diff(module1, module2) => {
                 let client = Client::new(self.host.as_str())?;
-                let diff = client.diff_modules(module1, module2, true).await?;
+                let module1 = module1.fetch(&client).await?;
+                let module2 = module2.fetch(&client).await?;
+                let diff = modsurfer_validation::Diff::new(&module1, &module2, true)?.to_string();
                 print!("{}", diff);
                 Ok(ExitCode::SUCCESS)
             }
@@ -454,9 +483,9 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                 )
             }
             ("diff", args) => {
-                let module1 = *args.get_one::<Id>("module1").expect("id is required");
-                let module2 = *args.get_one::<Id>("module2").expect("id is required");
-                Subcommand::Diff(module1, module2)
+                let module1 = args.get_one::<String>("module1").expect("id is required");
+                let module2 = args.get_one::<String>("module2").expect("id is required");
+                Subcommand::Diff(IdOrFilename::parse(module1), IdOrFilename::parse(module2))
             }
             _ => Subcommand::Unknown,
         }

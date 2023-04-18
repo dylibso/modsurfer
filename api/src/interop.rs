@@ -56,6 +56,11 @@ impl<T> Persisted<T> {
     pub fn get_inner(&self) -> &T {
         &self.inner
     }
+
+    /// Return the actual persisted object, dropping the ID
+    pub fn into_inner(self) -> T {
+        self.inner
+    }
 }
 
 impl<T> AsRef<T> for Persisted<T> {

@@ -22,6 +22,8 @@ modsurfer-module = { workspace = true }
 modsurfer-proto-v1 = { workspace = true }
 modsurfer-convert = { workspace = true }
 getrandom = { version = "*", features = ["js"] }
+similar = "2.2.1"
+colored = "2.0"
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
 extism = "0.3.0"

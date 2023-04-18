@@ -248,16 +248,8 @@ fn make_subcommands() -> Vec<Command> {
 
     let diff = clap::Command::new("diff")
         .about("Compare two modules")
-        .arg(
-            Arg::new("module1")
-                .value_parser(clap::value_parser!(Id))
-                .help("first module ID"),
-        )
-        .arg(
-            Arg::new("module2")
-                .value_parser(clap::value_parser!(Id))
-                .help("second module ID"),
-        );
+        .arg(Arg::new("module1").help("first module ID"))
+        .arg(Arg::new("module2").help("second module ID"));
 
     [
         create, delete, get, list, search, validate, yank, audit, diff,
