@@ -336,11 +336,13 @@ impl ApiClient for Client {
         module1: i64,
         module2: i64,
         color_terminal: bool,
+        with_context: bool,
     ) -> Result<String> {
         let req = api::DiffRequest {
             module1,
             module2,
             color_terminal,
+            with_context,
             ..Default::default()
         };
 

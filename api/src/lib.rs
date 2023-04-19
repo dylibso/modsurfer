@@ -70,5 +70,6 @@ pub trait ApiClient {
         module1: i64,
         module2: i64,
         color_terminal: bool,
+        with_context: bool,
     ) -> Result<String>;
 }
