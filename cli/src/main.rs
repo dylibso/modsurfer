@@ -246,9 +246,22 @@ fn make_subcommands() -> Vec<Command> {
                 .help("the maximum number of modules in a list of results"),
         );
 
+    let diff = clap::Command::new("diff")
+        .about("Compare two modules")
+        .arg(
+            Arg::new("with-context")
+                .value_parser(clap::value_parser!(bool))
+                .long("with-context")
+                .default_value("false")
+                .action(clap::ArgAction::SetTrue)
+                .help("retain the surrounding unchnaged lines in the diff as context"),
+        )
+        .arg(Arg::new("module1").help("first module ID or path to .wasm"))
+        .arg(Arg::new("module2").help("second module ID or path to .wasm"));
+
     [create, delete, get, list, search, validate, yank, audit]
         .into_iter()
         .map(add_output_arg)
-        .chain(vec![generate])
+        .chain(vec![generate, diff])
         .collect()
 }

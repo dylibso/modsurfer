@@ -26,6 +26,7 @@ pub type Version = String;
 pub type ModuleFile = PathBuf;
 pub type CheckFile = PathBuf;
 pub type MetadataEntry = String;
+pub type WithContext = bool;
 
 #[derive(Debug)]
 pub struct Cli {
@@ -62,6 +63,33 @@ impl From<OsString> for OutputFormat {
     }
 }
 
+#[derive(Clone, Debug)]
+pub enum IdOrFilename {
+    Id(Id),
+    Filename(String),
+}
+
+impl IdOrFilename {
+    fn parse(s: impl Into<String>) -> Self {
+        let s = s.into();
+        if let Ok(x) = s.parse::<Id>() {
+            return IdOrFilename::Id(x);
+        }
+
+        IdOrFilename::Filename(s)
+    }
+
+    async fn fetch(&self, client: &Client) -> Result<Module, anyhow::Error> {
+        match self {
+            IdOrFilename::Id(id) => client.get_module(*id).await.map(|x| x.into_inner()),
+            IdOrFilename::Filename(filename) => {
+                let data = std::fs::read(filename)?;
+                modsurfer_validation::Module::parse(data)
+            }
+        }
+    }
+}
+
 #[derive(Debug, Default)]
 pub enum Subcommand<'a> {
     #[default]
@@ -90,6 +118,7 @@ pub enum Subcommand<'a> {
     Validate(ModuleFile, CheckFile, &'a OutputFormat),
     Yank(Id, Version, &'a OutputFormat),
     Audit(CheckFile, AuditOutcome, Offset, Limit, &'a OutputFormat),
+    Diff(IdOrFilename, IdOrFilename, WithContext),
 }
 
 impl Cli {
@@ -307,6 +336,20 @@ impl Cli {
 
                 Ok(ExitCode::SUCCESS)
             }
+            Subcommand::Diff(module1, module2, with_context) => {
+                let client = Client::new(self.host.as_str())?;
+                let module1 = module1.fetch(&client).await?;
+                let module2 = module2.fetch(&client).await?;
+                let diff = modsurfer_validation::Diff::new(
+                    &module1,
+                    &module2,
+                    colored::control::SHOULD_COLORIZE.should_colorize(),
+                    with_context,
+                )?
+                .to_string();
+                print!("{}", diff);
+                Ok(ExitCode::SUCCESS)
+            }
         }
     }
 }
@@ -444,6 +487,18 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                     offset,
                     limit,
                     output_format(args),
+                )
+            }
+            ("diff", args) => {
+                let module1 = args.get_one::<String>("module1").expect("id is required");
+                let module2 = args.get_one::<String>("module2").expect("id is required");
+                let with_context = *args
+                    .get_one::<WithContext>("with-context")
+                    .unwrap_or_else(|| &false);
+                Subcommand::Diff(
+                    IdOrFilename::parse(module1),
+                    IdOrFilename::parse(module2),
+                    with_context,
                 )
             }
             _ => Subcommand::Unknown,

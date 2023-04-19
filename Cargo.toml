@@ -18,3 +18,4 @@ serde_yaml = "0.9.14"
 serde_with = "2.2.0"
 tokio = { version = "1", features = ["full"] }
 url = "2"
+colored = "2.0"

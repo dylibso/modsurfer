@@ -48,8 +48,9 @@ impl From<wasmparser::ValType> for ValType {
             V::F32 => ValType::F32,
             V::F64 => ValType::F64,
             V::V128 => ValType::V128,
-            V::FuncRef => ValType::FuncRef,
-            V::ExternRef => ValType::ExternRef,
+            V::Ref(wasmparser::RefType::FUNCREF) => ValType::FuncRef,
+            V::Ref(wasmparser::RefType::EXTERNREF) => ValType::FuncRef,
+            V::Ref(r) => panic!("Unknown ref type: {:?}", r),
         }
     }
 }
@@ -63,8 +64,8 @@ impl From<ValType> for wasmparser::ValType {
             ValType::F32 => V::F32,
             ValType::F64 => V::F64,
             ValType::V128 => V::V128,
-            ValType::FuncRef => V::FuncRef,
-            ValType::ExternRef => V::ExternRef,
+            ValType::FuncRef => V::FUNCREF,
+            ValType::ExternRef => V::EXTERNREF,
         }
     }
 }

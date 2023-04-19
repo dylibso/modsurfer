@@ -22,9 +22,11 @@ modsurfer-module = { workspace = true }
 modsurfer-proto-v1 = { workspace = true }
 modsurfer-convert = { workspace = true }
 getrandom = { version = "*", features = ["js"] }
+similar = "2.2.1"
+colored = { workspace = true }
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
-extism = "0.2.0"
+extism = "0.3.0"
 tokio = { workspace = true }
 modsurfer-plugins = { workspace = true }
 comfy-table = "6.1.3"
