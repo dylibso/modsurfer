@@ -26,6 +26,7 @@ pub type Version = String;
 pub type ModuleFile = PathBuf;
 pub type CheckFile = PathBuf;
 pub type MetadataEntry = String;
+pub type WithContext = bool;
 
 #[derive(Debug)]
 pub struct Cli {
@@ -117,7 +118,7 @@ pub enum Subcommand<'a> {
     Validate(ModuleFile, CheckFile, &'a OutputFormat),
     Yank(Id, Version, &'a OutputFormat),
     Audit(CheckFile, AuditOutcome, Offset, Limit, &'a OutputFormat),
-    Diff(IdOrFilename, IdOrFilename),
+    Diff(IdOrFilename, IdOrFilename, WithContext),
 }
 
 impl Cli {
@@ -335,7 +336,7 @@ impl Cli {
 
                 Ok(ExitCode::SUCCESS)
             }
-            Subcommand::Diff(module1, module2) => {
+            Subcommand::Diff(module1, module2, with_context) => {
                 let client = Client::new(self.host.as_str())?;
                 let module1 = module1.fetch(&client).await?;
                 let module2 = module2.fetch(&client).await?;
@@ -343,6 +344,7 @@ impl Cli {
                     &module1,
                     &module2,
                     colored::control::SHOULD_COLORIZE.should_colorize(),
+                    with_context,
                 )?
                 .to_string();
                 print!("{}", diff);
@@ -490,7 +492,14 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
             ("diff", args) => {
                 let module1 = args.get_one::<String>("module1").expect("id is required");
                 let module2 = args.get_one::<String>("module2").expect("id is required");
-                Subcommand::Diff(IdOrFilename::parse(module1), IdOrFilename::parse(module2))
+                let with_context = *args
+                    .get_one::<WithContext>("with-context")
+                    .unwrap_or_else(|| &false);
+                Subcommand::Diff(
+                    IdOrFilename::parse(module1),
+                    IdOrFilename::parse(module2),
+                    with_context,
+                )
             }
             _ => Subcommand::Unknown,
         }

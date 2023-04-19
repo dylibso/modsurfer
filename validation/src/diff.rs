@@ -19,6 +19,7 @@ impl Diff {
         a: &modsurfer_module::Module,
         b: &modsurfer_module::Module,
         color_term: bool,
+        with_context: bool,
     ) -> Result<Self, Error> {
         let a_string = serde_yaml::to_string(&crate::generate_checkfile(a)?.validate)?;
         let b_string = serde_yaml::to_string(&crate::generate_checkfile(b)?.validate)?;
@@ -36,11 +37,17 @@ impl Diff {
                     changes += 1;
                     ("+ ", "green")
                 }
-                similar::ChangeTag::Equal => ("  ", ""),
+                similar::ChangeTag::Equal if with_context => ("  ", ""),
+                _ => continue,
             };
 
             if color_term {
-                write!(&mut output, "{}{}", sign.color(color), change)?;
+                write!(
+                    &mut output,
+                    "{}{}",
+                    sign.color(color),
+                    change.as_str().unwrap_or_default().color(color)
+                )?;
             } else {
                 write!(&mut output, "{}{}", sign, change)?;
             }
