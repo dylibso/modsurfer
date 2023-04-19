@@ -339,7 +339,12 @@ impl Cli {
                 let client = Client::new(self.host.as_str())?;
                 let module1 = module1.fetch(&client).await?;
                 let module2 = module2.fetch(&client).await?;
-                let diff = modsurfer_validation::Diff::new(&module1, &module2, true)?.to_string();
+                let diff = modsurfer_validation::Diff::new(
+                    &module1,
+                    &module2,
+                    colored::control::SHOULD_COLORIZE.should_colorize(),
+                )?
+                .to_string();
                 print!("{}", diff);
                 Ok(ExitCode::SUCCESS)
             }
