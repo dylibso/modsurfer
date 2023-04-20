@@ -31,7 +31,7 @@ pub fn val_type(v: ValType) -> api::ValType {
     }
 }
 
-#[cfg(feature = "api")]
+#[cfg(not(target_arch = "wasm32"))]
 pub fn module(module: Module, id: i64) -> api::Module {
     let mut dest = api::Module::new();
     dest.id = id;
@@ -55,7 +55,7 @@ pub fn module(module: Module, id: i64) -> api::Module {
     dest
 }
 
-#[cfg(not(feature = "api"))]
+#[cfg(target_arch = "wasm32")]
 pub fn module(module: Module, id: i64) -> api::Module {
     let mut dest = api::Module::new();
     dest.id = id;
