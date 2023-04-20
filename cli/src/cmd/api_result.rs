@@ -2,14 +2,13 @@ use std::fmt::Display;
 
 use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
 use modsurfer_module::SourceLanguage;
-use serde::Serialize;
+use serde::{ser::SerializeStruct, Serialize};
 
 #[derive(Serialize)]
 pub struct ApiResults<'a> {
     pub results: Vec<ApiResult<'a>>,
 }
 
-#[derive(Serialize)]
 pub struct ApiResult<'a> {
     pub module_id: i64,
     pub hash: String,
@@ -26,10 +25,39 @@ pub struct SimpleApiResults {
     pub results: Vec<SimpleApiResult>,
 }
 
-#[derive(Serialize)]
 pub struct SimpleApiResult {
     pub module_id: i64,
     pub hash: String,
+}
+
+impl<'a> Serialize for ApiResult<'a> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut state = serializer.serialize_struct("ApiResult", 8)?;
+        state.serialize_field("module_id", &self.module_id.to_string())?;
+        state.serialize_field("hash", &self.hash)?;
+        state.serialize_field("file_name", &self.file_name)?;
+        state.serialize_field("exports", &self.exports)?;
+        state.serialize_field("imports", &self.imports)?;
+        state.serialize_field("namespaces", &self.namespaces)?;
+        state.serialize_field("source_language", &self.source_language)?;
+        state.serialize_field("size", &self.size)?;
+        state.end()
+    }
+}
+
+impl Serialize for SimpleApiResult {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut state = serializer.serialize_struct("SimpleApiResult", 8)?;
+        state.serialize_field("module_id", &self.module_id.to_string())?;
+        state.serialize_field("hash", &self.hash)?;
+        state.end()
+    }
 }
 
 impl Display for SimpleApiResults {
