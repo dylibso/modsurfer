@@ -6,8 +6,8 @@ pub struct Function {
 
 #[derive(Debug, Default, Clone, Hash, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct FunctionType {
-    pub args: Vec<ValType>,
-    pub returns: Vec<ValType>,
+    pub params: Vec<ValType>,
+    pub results: Vec<ValType>,
 }
 
 /// Represents the types of values in a WebAssembly module.
@@ -73,8 +73,8 @@ impl From<ValType> for wasmparser::ValType {
 impl<'a> From<&'a wasmparser::FuncType> for FunctionType {
     fn from(ft: &'a wasmparser::FuncType) -> Self {
         Self {
-            args: ft.params().iter().cloned().map(ValType::from).collect(),
-            returns: ft.results().iter().cloned().map(ValType::from).collect(),
+            params: ft.params().iter().cloned().map(ValType::from).collect(),
+            results: ft.results().iter().cloned().map(ValType::from).collect(),
         }
     }
 }

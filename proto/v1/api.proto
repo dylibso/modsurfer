@@ -16,8 +16,8 @@ enum ValType {
 
 // Contained by an import or export element within a wasm binary.
 message Function {
-  repeated ValType args = 1;
-  repeated ValType returns = 2;
+  repeated ValType params = 1;
+  repeated ValType results = 2;
   string name = 3;
 }
 
