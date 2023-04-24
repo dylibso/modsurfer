@@ -70,7 +70,7 @@ message Module {
   // the cyclomatic complexity
   // (<https://en.wikipedia.org/wiki/Cyclomatic_complexity>) of the instructions
   optional uint32 complexity = 13;
-  // the grah in Dot format
+  // the serialized graph in json format
   optional bytes graph = 14;
 }
 
