@@ -43,7 +43,7 @@ pub struct Module {
     /// cyclomatic complexity of the module
     pub complexity: Option<u32>,
     /// the graph in Dot format
-    pub graph: Option<String>,
+    pub graph: Option<Vec<u8>>,
 }
 
 impl Module {
