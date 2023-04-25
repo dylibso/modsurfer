@@ -30,10 +30,10 @@ const _PROTOBUF_VERSION_CHECK: () = ::protobuf::VERSION_3_2_0;
 // @@protoc_insertion_point(message:Function)
 pub struct Function {
     // message fields
-    // @@protoc_insertion_point(field:Function.args)
-    pub args: ::std::vec::Vec<::protobuf::EnumOrUnknown<ValType>>,
-    // @@protoc_insertion_point(field:Function.returns)
-    pub returns: ::std::vec::Vec<::protobuf::EnumOrUnknown<ValType>>,
+    // @@protoc_insertion_point(field:Function.params)
+    pub params: ::std::vec::Vec<::protobuf::EnumOrUnknown<ValType>>,
+    // @@protoc_insertion_point(field:Function.results)
+    pub results: ::std::vec::Vec<::protobuf::EnumOrUnknown<ValType>>,
     // @@protoc_insertion_point(field:Function.name)
     pub name: ::std::string::String,
     // special fields
@@ -56,14 +56,14 @@ impl Function {
         let mut fields = ::std::vec::Vec::with_capacity(3);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
         fields.push(::protobuf::reflect::rt::v2::make_vec_simpler_accessor::<_, _>(
-            "args",
-            |m: &Function| { &m.args },
-            |m: &mut Function| { &mut m.args },
+            "params",
+            |m: &Function| { &m.params },
+            |m: &mut Function| { &mut m.params },
         ));
         fields.push(::protobuf::reflect::rt::v2::make_vec_simpler_accessor::<_, _>(
-            "returns",
-            |m: &Function| { &m.returns },
-            |m: &mut Function| { &mut m.returns },
+            "results",
+            |m: &Function| { &m.results },
+            |m: &mut Function| { &mut m.results },
         ));
         fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
             "name",
@@ -89,16 +89,16 @@ impl ::protobuf::Message for Function {
         while let Some(tag) = is.read_raw_tag_or_eof()? {
             match tag {
                 8 => {
-                    self.args.push(is.read_enum_or_unknown()?);
+                    self.params.push(is.read_enum_or_unknown()?);
                 },
                 10 => {
-                    ::protobuf::rt::read_repeated_packed_enum_or_unknown_into(is, &mut self.args)?
+                    ::protobuf::rt::read_repeated_packed_enum_or_unknown_into(is, &mut self.params)?
                 },
                 16 => {
-                    self.returns.push(is.read_enum_or_unknown()?);
+                    self.results.push(is.read_enum_or_unknown()?);
                 },
                 18 => {
-                    ::protobuf::rt::read_repeated_packed_enum_or_unknown_into(is, &mut self.returns)?
+                    ::protobuf::rt::read_repeated_packed_enum_or_unknown_into(is, &mut self.results)?
                 },
                 26 => {
                     self.name = is.read_string()?;
@@ -115,10 +115,10 @@ impl ::protobuf::Message for Function {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u64 {
         let mut my_size = 0;
-        for value in &self.args {
+        for value in &self.params {
             my_size += ::protobuf::rt::int32_size(1, value.value());
         };
-        for value in &self.returns {
+        for value in &self.results {
             my_size += ::protobuf::rt::int32_size(2, value.value());
         };
         if !self.name.is_empty() {
@@ -130,10 +130,10 @@ impl ::protobuf::Message for Function {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
-        for v in &self.args {
+        for v in &self.params {
             os.write_enum(1, ::protobuf::EnumOrUnknown::value(v))?;
         };
-        for v in &self.returns {
+        for v in &self.results {
             os.write_enum(2, ::protobuf::EnumOrUnknown::value(v))?;
         };
         if !self.name.is_empty() {
@@ -156,16 +156,16 @@ impl ::protobuf::Message for Function {
     }
 
     fn clear(&mut self) {
-        self.args.clear();
-        self.returns.clear();
+        self.params.clear();
+        self.results.clear();
         self.name.clear();
         self.special_fields.clear();
     }
 
     fn default_instance() -> &'static Function {
         static instance: Function = Function {
-            args: ::std::vec::Vec::new(),
-            returns: ::std::vec::Vec::new(),
+            params: ::std::vec::Vec::new(),
+            results: ::std::vec::Vec::new(),
             name: ::std::string::String::new(),
             special_fields: ::protobuf::SpecialFields::new(),
         };
@@ -4107,9 +4107,9 @@ impl AuditOutcome {
 }
 
 static file_descriptor_proto_data: &'static [u8] = b"\
-    \n\x12proto/v1/api.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"`\n\x08\
-    Function\x12\x1c\n\x04args\x18\x01\x20\x03(\x0e2\x08.ValTypeR\x04args\
-    \x12\"\n\x07returns\x18\x02\x20\x03(\x0e2\x08.ValTypeR\x07returns\x12\
+    \n\x12proto/v1/api.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"d\n\x08\
+    Function\x12\x20\n\x06params\x18\x01\x20\x03(\x0e2\x08.ValTypeR\x06param\
+    s\x12\"\n\x07results\x18\x02\x20\x03(\x0e2\x08.ValTypeR\x07results\x12\
     \x12\n\x04name\x18\x03\x20\x01(\tR\x04name\"H\n\x06Import\x12\x1f\n\x0bm\
     odule_name\x18\x01\x20\x01(\tR\nmoduleName\x12\x1d\n\x04func\x18\x02\x20\
     \x01(\x0b2\t.FunctionR\x04func\"'\n\x06Export\x12\x1d\n\x04func\x18\x01\
@@ -4233,9 +4233,9 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x03\r\x0e\x0f\nL\n\x02\x04\0\x12\x04\x11\0\x15\x01\x1a@\x20Contained\
     \x20by\x20an\x20import\x20or\x20export\x20element\x20within\x20a\x20wasm\
     \x20binary.\n\n\n\n\x03\x04\0\x01\x12\x03\x11\x08\x10\n\x0b\n\x04\x04\0\
-    \x02\0\x12\x03\x12\x02\x1c\n\x0c\n\x05\x04\0\x02\0\x04\x12\x03\x12\x02\n\
+    \x02\0\x12\x03\x12\x02\x1e\n\x0c\n\x05\x04\0\x02\0\x04\x12\x03\x12\x02\n\
     \n\x0c\n\x05\x04\0\x02\0\x06\x12\x03\x12\x0b\x12\n\x0c\n\x05\x04\0\x02\0\
-    \x01\x12\x03\x12\x13\x17\n\x0c\n\x05\x04\0\x02\0\x03\x12\x03\x12\x1a\x1b\
+    \x01\x12\x03\x12\x13\x19\n\x0c\n\x05\x04\0\x02\0\x03\x12\x03\x12\x1c\x1d\
     \n\x0b\n\x04\x04\0\x02\x01\x12\x03\x13\x02\x1f\n\x0c\n\x05\x04\0\x02\x01\
     \x04\x12\x03\x13\x02\n\n\x0c\n\x05\x04\0\x02\x01\x06\x12\x03\x13\x0b\x12\
     \n\x0c\n\x05\x04\0\x02\x01\x01\x12\x03\x13\x13\x1a\n\x0c\n\x05\x04\0\x02\

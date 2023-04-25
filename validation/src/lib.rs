@@ -387,11 +387,11 @@ impl Report {
         results: Option<&[modsurfer_module::ValType]>,
     ) {
         if let Some(params) = params {
-            let test_params = actual.args == params;
+            let test_params = actual.params == params;
             self.validate_fn(
                 &format!("{name}.params"),
                 format!("{:?}", params),
-                format!("{:?}", actual.args),
+                format!("{:?}", actual.params),
                 test_params,
                 8,
                 Classification::AbiCompatibilty,
@@ -399,11 +399,11 @@ impl Report {
         };
 
         if let Some(results) = results {
-            let test_results = actual.returns == results;
+            let test_results = actual.results == results;
             self.validate_fn(
                 &format!("{name}.results"),
                 format!("{:?}", results),
-                format!("{:?}", actual.returns),
+                format!("{:?}", actual.results),
                 test_results,
                 8,
                 Classification::AbiCompatibilty,
@@ -848,8 +848,8 @@ pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validatio
         include_imports.push(ImportItem::Item {
             namespace: Some(imp.module_name.clone()),
             name: imp.func.name.clone(),
-            params: Some(imp.func.ty.args.clone()),
-            results: Some(imp.func.ty.returns.clone()),
+            params: Some(imp.func.ty.params.clone()),
+            results: Some(imp.func.ty.results.clone()),
         });
     });
     imports.include = Some(include_imports);
@@ -872,8 +872,8 @@ pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validatio
     module.exports.iter().for_each(|exp| {
         include_exports.push(FunctionItem::Item {
             name: exp.func.name.clone(),
-            params: Some(exp.func.ty.args.clone()),
-            results: Some(exp.func.ty.returns.clone()),
+            params: Some(exp.func.ty.params.clone()),
+            results: Some(exp.func.ty.results.clone()),
         });
     });
     let export_count = include_exports.len();

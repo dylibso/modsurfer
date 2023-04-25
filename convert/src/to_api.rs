@@ -78,8 +78,8 @@ pub fn exports(exports: Vec<Export>) -> Vec<api::Export> {
         .map(|e| {
             let func = api::Function {
                 name: e.func.name,
-                args: to_api::val_types(e.func.ty.args),
-                returns: to_api::val_types(e.func.ty.returns),
+                params: to_api::val_types(e.func.ty.params),
+                results: to_api::val_types(e.func.ty.results),
                 ..Default::default()
             };
 
@@ -97,8 +97,8 @@ pub fn imports(imports: Vec<Import>) -> Vec<api::Import> {
         .map(|i| {
             let func = api::Function {
                 name: i.func.name,
-                args: to_api::val_types(i.func.ty.args),
-                returns: to_api::val_types(i.func.ty.returns),
+                params: to_api::val_types(i.func.ty.params),
+                results: to_api::val_types(i.func.ty.results),
                 ..Default::default()
             };
 

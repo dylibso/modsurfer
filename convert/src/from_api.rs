@@ -61,8 +61,8 @@ pub fn import(import: api::Import) -> Import {
         func: Function {
             name,
             ty: FunctionType {
-                args: val_types(f.args),
-                returns: val_types(f.returns),
+                params: val_types(f.params),
+                results: val_types(f.results),
             },
         },
     }
@@ -79,8 +79,8 @@ pub fn export(export: api::Export) -> Export {
         func: Function {
             name,
             ty: FunctionType {
-                args: val_types(f.args),
-                returns: val_types(f.returns),
+                params: val_types(f.params),
+                results: val_types(f.results),
             },
         },
     }
