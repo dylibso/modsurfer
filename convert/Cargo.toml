@@ -10,6 +10,8 @@ modsurfer-proto-v1 = { workspace = true }
 modsurfer-module = { workspace = true }
 protobuf = { workspace = true }
 url = { workspace = true }
+
+[target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
 chrono = { workspace = true, optional = true }
 
 [features]

@@ -12,7 +12,6 @@ human_bytes = "0.4"
 log = "0.4.17"
 parse-size = "1"
 protobuf = "3.2.0"
-reqwest = "0.11.12"
 serde = { workspace = true }
 serde_yaml = { workspace = true }
 serde_json = { workspace = true }
@@ -30,3 +29,4 @@ getrandom = { version = "*", features = ["js"] }
 tokio = { workspace = true }
 modsurfer-plugins = { workspace = true }
 comfy-table = "6.1.3"
+reqwest = "0.11.12"

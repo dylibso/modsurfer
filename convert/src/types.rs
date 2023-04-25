@@ -1,5 +1,7 @@
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 use chrono::Utc;
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 use modsurfer_module::{Export, Import, SourceLanguage};
 
@@ -51,6 +53,7 @@ pub struct Sort {
     pub field: SortField,
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 #[derive(Default)]
 pub struct Search {
@@ -68,6 +71,7 @@ pub struct Search {
     pub sort: Option<Sort>,
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 #[derive(Debug, Clone)]
 pub enum AuditOutcome {
@@ -75,6 +79,7 @@ pub enum AuditOutcome {
     Fail,
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 impl std::fmt::Display for AuditOutcome {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -85,6 +90,7 @@ impl std::fmt::Display for AuditOutcome {
     }
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 impl From<&std::ffi::OsStr> for AuditOutcome {
     fn from(value: &std::ffi::OsStr) -> Self {
@@ -92,6 +98,7 @@ impl From<&std::ffi::OsStr> for AuditOutcome {
     }
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 impl From<String> for AuditOutcome {
     fn from(value: String) -> Self {
@@ -102,6 +109,7 @@ impl From<String> for AuditOutcome {
     }
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 #[derive(Debug)]
 pub struct Audit {
@@ -110,6 +118,7 @@ pub struct Audit {
     pub checkfile: Vec<u8>,
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 impl Default for AuditOutcome {
     fn default() -> Self {
@@ -117,6 +126,7 @@ impl Default for AuditOutcome {
     }
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 impl From<modsurfer_proto_v1::api::AuditOutcome> for AuditOutcome {
     fn from(outcome: modsurfer_proto_v1::api::AuditOutcome) -> AuditOutcome {
@@ -127,6 +137,7 @@ impl From<modsurfer_proto_v1::api::AuditOutcome> for AuditOutcome {
     }
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 impl From<AuditOutcome> for modsurfer_proto_v1::api::AuditOutcome {
     fn from(outcome: AuditOutcome) -> Self {

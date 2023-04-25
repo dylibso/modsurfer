@@ -1,4 +1,8 @@
-use crate::{types::Audit, *};
+use crate::*;
+
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+use crate::types::Audit;
+
 use modsurfer_module::{Export, Function, FunctionType, Import, ValType};
 
 pub fn source_language(src: api::SourceLanguage) -> SourceLanguage {
@@ -86,6 +90,7 @@ pub fn exports(exports: Vec<api::Export>) -> Vec<Export> {
     exports.into_iter().map(export).collect()
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 pub fn search(mut req: api::SearchModulesRequest) -> Search {
     Search {
@@ -124,6 +129,7 @@ pub fn search(mut req: api::SearchModulesRequest) -> Search {
     }
 }
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 pub fn audit(req: api::AuditModulesRequest) -> Audit {
     Audit {
         page: req
