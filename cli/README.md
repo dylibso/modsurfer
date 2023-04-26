@@ -28,6 +28,8 @@ Commands:
            Return a list of modules which violate requirements in the provided checkfile.
   generate
           Generate a starter checkfile from the given module.
+  diff
+          Compare two modules
   help
           Print this message or the help of the given subcommand(s)
 
@@ -57,9 +59,9 @@ modsurfer get --id 4 | jq . | ...
 
 modsurfer create \
         -p my.wasm \
-        -c mod.yaml \
+        -c mod.yaml \ # optional - validate before creating an entry in Modsurfer
         -l file:///wasm/my.wasm \
-        -m userid=12234 -m app=33
+        -m userid=12234 -m app=33 # optional - associate searchable key-value metadata with a module
 
 modsurfer delete --id 3 --id 4 --id 5
 
@@ -70,6 +72,8 @@ modsurfer list --offset 0 --limit 50 # (0 & 50 are defaults)
 modsurfer search --function-name _start --module-name env --source-language Rust --text "Help me"
 
 modsurfer generare -p spidermonkey.wasm -o mod.yaml
+
+modsurfer diff a.wasm b.wasm # or diff using Modsurfer module IDs
 
 modsurfer audit --outcome pass -c mod.yaml
 ```
