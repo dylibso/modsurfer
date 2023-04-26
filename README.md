@@ -57,33 +57,47 @@ validate:
   # will run properly in any host environment
   imports:
     include:
-      - http_get
+      # ensure these named functions are in the imports of this module  
       - log_message
       - proc_exit
+      
+      # further specify the function beyond its name 
+      - namespace: env
+        name: http_get
+        params: [I32, I32]
+        results: [I32]
     exclude: 
       - fd_write
     namespace:
       include:
         - env
       exclude:
+        # phasing out old APIs? exclude these from acceptable namespaces/module names
         - some_future_deprecated_module_name
-        # phasing out old APIs? exclude the from acceptable namespaces/module names
         - wasi_snapshot_preview1
 
   exports: 
+    # only want exactly 2 functions exported: `_start` and `bar` for the host to call:
+    max: 2
     # secure your modules by ensuring that there is no superfluous functionality hidden inside a binary
-    max: 100
     include:
       - _start
-      - bar
+      - name: bar
+        params: []
+        results: [I32, I32, I32, I32]
+    # and/or ensuring no unwanted functions to be exported.
     exclude:
-      - main
+      - name: init
+        results: []
       - foo
 
   # use a human-readable module size to prevent overly large binaries from running in your environment
   size:
     max: 4MB
-  # our Cyclomatic Complexity analysis can help prevent risk of CPU exhaustion from deteriorating your user experience and slowing down your system
+
+  # our Cyclomatic Complexity analysis can help prevent risk of CPU exhaustion from deteriorating 
+  # your user experience and slowing down your system
+  # (override these low, medium, high optional values with environment variables $MODSURFER_RISK_{LOW,MEDIUM,HIGH})
   complexity:
     max_risk: low
 
@@ -92,18 +106,30 @@ validate:
 You can also point to a remote check file to track up-to-date requirements: 
 ```yaml
 validate:
-  url: https://raw.githubusercontent.com/extism/extism/main/mod.yaml
+  url: https://raw.githubusercontent.com/fermyon/spin/main/tools/modsurfer/http/mod.yaml
 ```
 
 ### Usage
 
-To run validation, you can use our [GitHub Action](https://github.com/dylibso/modsurfer-validate-action), or call the `validate` command directly: 
+Modsurfer runs validation tests on compiled .wasm binaries. It uses a "checkfile" to compare with the 
+contents of a .wasm binary. The `modsurfer` CLI provides [a number of commands](https://dev.dylib.so/docs/modsurfer/cli#commands) 
+to create and use a checkfile, as well as to interact as a client to a remote service that stores 
+and organizes your WebAssembly modules available over HTTP (via [this `protobuf` API](./proto/v1/api.proto)).
+
+##### To create a "checkfile" (passed to `-c`), run the `generate` command:
+
+```
+modsurfer generate -p path/to/my.wasm -o mod.yaml
+```
+> **NOTE:** this checkfile will be very restrictive, and you likely want to edit it to fit less (or more) restricted environments.
+
+##### To run validation, you can use our [GitHub Action](https://github.com/dylibso/modsurfer-validate-action), or call the `validate` command directly: 
 
 ```
 modsurfer validate -p path/to/my.wasm -c path/to/mod.yaml
 ```
 
-If any of the expectations declared in your checkfile are invalid, Modsurfer will report them: 
+If any of the restrictions or expectations declared in your checkfile are not satisfied, Modsurfer will report them: 
 
 ```
 ┌────────┬──────────────────────────────────────────────────┬──────────┬──────────┬───────────────────┬────────────┐
@@ -130,10 +156,17 @@ If any of the expectations declared in your checkfile are invalid, Modsurfer wil
 │ FAIL   │ size.max                                         │ <= 4MB   │ 4.4 MiB  │ Resource Limit    │ |          │
 └────────┴──────────────────────────────────────────────────┴──────────┴──────────┴───────────────────┴────────────┘
 ```
+> **NOTE**: convert this table into JSON with the `--output-format json` option, supported by the `validate` command and many others.
 
 Find more information about the CLI in its dedicated [README](./cli/README.md), or download the tool and run `modsurfer -h`. 
 
-### Testing the CLI
+### Validating platform-specific compatibility
+
+Before running or integrating a WebAssembly module on your platform (Emscripten, Extism, Fastly, Shopify, Spin, Suborbital, wasmCloud, Workers)
+
+#### Contributing
+
+##### Testing the CLI
 
 From the root of the repo, run the following to see a basic validation report:
 - `make test-cli`
@@ -141,11 +174,10 @@ From the root of the repo, run the following to see a basic validation report:
 - `make unknown-cli`
 
 `test/` contains a `mod.yaml`, which declares expected properties of a WebAssembly module, as well as a `spidermonkey.wasm` file to use as example input to use for the validation.
-
 `wasm/` contains a set of WebAssembly binaries downloaded from the [`wapm`](https://wapm.io) package manager used for analysis and testing.
 
 ---
 
-## `proto`
+### `proto` Protobuf definitions and libraries
 
 This directory contains the Protobuf definitions for the types used in the API. Messages have various levels of documentation as well as endpoints if they are request types. Use the `api.proto` to generate a language client if you'd like to interact with Modsurfer API programmatically from your application.

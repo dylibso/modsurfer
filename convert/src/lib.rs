@@ -2,7 +2,6 @@ mod types;
 
 pub use types::{Order, Pagination, Sort, SortField};
 
-#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(feature = "api")]
 pub use types::{Audit, AuditOutcome, Search};
 
