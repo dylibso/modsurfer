@@ -152,7 +152,7 @@ impl NamespaceItem {
 }
 
 #[skip_serializing_none]
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(untagged)]
 #[serde(deny_unknown_fields)]
 pub enum ImportItem {
@@ -386,11 +386,11 @@ impl Report {
         params: Option<&[modsurfer_module::ValType]>,
         results: Option<&[modsurfer_module::ValType]>,
     ) {
-        if let Some(params) = params {
-            let test_params = actual.params == params;
+        if let Some(expected) = params {
+            let test_params = actual.params == expected;
             self.validate_fn(
                 &format!("{name}.params"),
-                format!("{:?}", params),
+                format!("{:?}", expected),
                 format!("{:?}", actual.params),
                 test_params,
                 8,
@@ -398,11 +398,11 @@ impl Report {
             );
         };
 
-        if let Some(results) = results {
-            let test_results = actual.results == results;
+        if let Some(expected) = results {
+            let test_results = actual.results == expected;
             self.validate_fn(
                 &format!("{name}.results"),
-                format!("{:?}", results),
+                format!("{:?}", expected),
                 format!("{:?}", actual.results),
                 test_results,
                 8,
@@ -506,7 +506,7 @@ pub async fn validate(validation: Validation, module: modsurfer_module::Module) 
 
     // Imports
     if let Some(imports) = validation.validate.imports {
-        let import_module_func_types = module
+        let actual_import_module_func_types = module
             .imports
             .iter()
             .map(|im| {
@@ -516,60 +516,72 @@ pub async fn validate(validation: Validation, module: modsurfer_module::Module) 
                 )
             })
             .collect::<std::collections::BTreeMap<_, _>>();
-        let import_func_types = import_module_func_types
+        let import_func_types = actual_import_module_func_types
             .iter()
             .map(|((_, k), ty)| (*k, ty.clone()))
             .collect::<BTreeMap<_, _>>();
 
         let import_module_names = module.get_import_namespaces();
 
+        // expect that all actual imports parsed from the module are within a subset of the import
+        // functions listed in the checkfile
         if let Some(include) = imports.include {
-            include.iter().for_each(|imp| {
-                let name = imp.name();
-                let test = if let Some(ns) = imp.namespace() {
-                    import_module_func_types.contains_key(&(ns, name))
-                } else {
-                    import_func_types.contains_key(&name.as_str())
-                };
+            actual_import_module_func_types.iter().for_each(
+                |((actual_namespace, actual_func_name), actual_func_ty)| {
+                    let actual_module_import = ImportItem::Item {
+                        namespace: Some(actual_namespace.to_string()),
+                        name: actual_func_name.to_string(),
+                        params: Some(actual_func_ty.params.clone()),
+                        results: Some(actual_func_ty.results.clone()),
+                    };
 
-                let ty = if let Some(ns) = imp.namespace() {
-                    import_module_func_types.get(&(ns, name))
-                } else {
-                    import_func_types.get(name.as_str())
-                };
-
-                if test {
-                    let ty = ty.unwrap();
-                    report.validate_fn_type(
-                        &format!("imports.include.{}", namespace_prefix(&imp, name)),
-                        *ty,
-                        imp.params(),
-                        imp.results(),
-                    );
-                }
-
-                report.validate_fn(
-                    &format!("imports.include.{}", namespace_prefix(&imp, name)),
-                    Exist(true).to_string(),
-                    Exist(test).to_string(),
-                    test,
-                    8,
-                    Classification::AbiCompatibilty,
-                );
-            });
+                    // check that we have at minimum a match for name and namespace, use this module
+                    // to further check the params and results
+                    let found = include.iter().find(|checkfile_import| {
+                        checkfile_import.name() == actual_module_import.name()
+                            && checkfile_import.namespace() == actual_module_import.namespace()
+                    });
+                    if found.is_none() {
+                        report.validate_fn(
+                            &format!(
+                                "imports.include.{}",
+                                namespace_prefix(&actual_module_import, actual_func_name)
+                            ),
+                            Exist(false).to_string(),
+                            Exist(true).to_string(),
+                            false,
+                            10,
+                            Classification::AbiCompatibilty,
+                        );
+                    } else {
+                        // if an import _is_ contained in the checkfile, also validate that the
+                        // function type is equivalent to the expected type in the checkfile
+                        let checkfile_import = found.expect("module import must exist");
+                        report.validate_fn_type(
+                            &format!(
+                                "imports.include.{}",
+                                namespace_prefix(&actual_module_import, actual_func_name)
+                            ),
+                            &actual_func_ty,
+                            checkfile_import.params(),
+                            checkfile_import.results(),
+                        );
+                    }
+                },
+            );
         }
 
         if let Some(exclude) = imports.exclude {
             exclude.iter().for_each(|imp| {
                 let name = imp.name();
                 let test = if let Some(ns) = imp.namespace() {
-                    import_module_func_types.contains_key(&(ns, name))
+                    actual_import_module_func_types.contains_key(&(ns, name))
                 } else {
                     import_func_types.contains_key(&name.as_str())
                 };
 
                 let ty = if let Some(ns) = imp.namespace() {
-                    import_module_func_types.get(&(ns, name))
+                    actual_import_module_func_types.get(&(ns, name))
                 } else {
                     import_func_types.get(name.as_str())
                 };
@@ -611,8 +623,8 @@ pub async fn validate(validation: Validation, module: modsurfer_module::Module) 
                     );
 
                     for f in functions.iter() {
-                        let test =
-                            import_module_func_types.contains_key(&(name, f.name().as_str()));
+                        let test = actual_import_module_func_types
+                            .contains_key(&(name, f.name().as_str()));
                         report.validate_fn(
                             &format!("imports.namespace.include.{name}::{}", f.name()),
                             Exist(true).to_string(),
@@ -623,7 +635,7 @@ pub async fn validate(validation: Validation, module: modsurfer_module::Module) 
                         );
 
                         if test {
-                            let ty = import_module_func_types
+                            let ty = actual_import_module_func_types
                                 .get(&(name, f.name().as_str()))
                                 .unwrap();
                             report.validate_fn_type(
@@ -653,11 +665,11 @@ pub async fn validate(validation: Validation, module: modsurfer_module::Module) 
                     );
 
                     for f in functions.iter() {
-                        let test =
-                            import_module_func_types.contains_key(&(name, f.name().as_str()));
+                        let test = actual_import_module_func_types
+                            .contains_key(&(name, f.name().as_str()));
 
                         if test {
-                            let ty = import_module_func_types
+                            let ty = actual_import_module_func_types
                                 .get(&(name, f.name().as_str()))
                                 .unwrap();
 
