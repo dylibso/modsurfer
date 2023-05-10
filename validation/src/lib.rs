@@ -473,6 +473,7 @@ impl Module {
             strings: a.strings,
             complexity: a.complexity,
             graph: a.graph,
+            function_hashes: a.function_hashes,
         };
 
         Ok(module)

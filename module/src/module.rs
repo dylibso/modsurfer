@@ -44,6 +44,8 @@ pub struct Module {
     pub complexity: Option<u32>,
     /// the graph in Dot format
     pub graph: Option<Vec<u8>>,
+    /// function hashes
+    pub function_hashes: HashMap<String, String>,
 }
 
 impl Module {
@@ -78,6 +80,7 @@ impl Default for Module {
             strings: vec![],
             complexity: None,
             graph: None,
+            function_hashes: HashMap::new(),
         }
     }
 }

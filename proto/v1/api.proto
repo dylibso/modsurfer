@@ -72,6 +72,8 @@ message Module {
   optional uint32 complexity = 13;
   // the serialized graph in json format
   optional bytes graph = 14;
+  // function hashes
+  map<string, string> function_hashes = 15;
 }
 
 // Details about a wasm module graph
