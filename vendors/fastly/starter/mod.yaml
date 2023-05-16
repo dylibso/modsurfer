@@ -3,38 +3,183 @@ validate:
   
   imports:
     include:
-      - name: init
-        namespace: fastly_abi
-        params: [I64]
-        results: [I32]
-      - name: close
-        namespace: fastly_http_body
-        params: [I32]
-        results: [I32]
-      - name: write
-        namespace: fastly_http_body
-        params: [I32, I32, I32, I32, I32]
-        results: [I32]
-      - name: close
-        namespace: fastly_http_resp
-        params: [I32]
-        results: [I32]
-      - name: new
-        namespace: fastly_http_resp
-        params: [I32]
-        results: [I32]
-      - name: status_set
-        namespace: fastly_http_resp
-        params: [I32, I32]
-        results: [I32]
-      - name: send_downstream
-        namespace: fastly_http_resp
-        params: [I32, I32, I32]
-        results: [I32]
-      - name: body_downstream_get
-        namespace: fastly_http_req
-        params: [I32, I32]
-        results: [I32]
+    - namespace: fastly_http_req
+      name: body_downstream_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_body
+      name: close
+      params:
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_resp
+      name: close
+      params:
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_req
+      name: close
+      params:
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: environ_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: environ_sizes_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_write
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_resp
+      name: framing_headers_mode_set
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_req
+      name: header_names_get
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_req
+      name: header_values_get
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_resp
+      name: header_values_set
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_abi
+      name: init
+      params:
+      - I64
+      results:
+      - I32
+    - namespace: fastly_http_req
+      name: method_get
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_resp
+      name: new
+      params:
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_body
+      name: new
+      params:
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: proc_exit
+      params:
+      - I32
+      results: []
+    - namespace: wasi_snapshot_preview1
+      name: random_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_resp
+      name: send_downstream
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_resp
+      name: status_set
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_req
+      name: uri_get
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_req
+      name: version_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_resp
+      name: version_set
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: fastly_http_body
+      name: write
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+      
     namespace:
       include:
         - fastly_http_body
