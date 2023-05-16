@@ -3,10 +3,96 @@ validate:
 
   imports:
     include:
-    - name: store_copy
-      namespace: smart_rollup_core
-      params: [I32, I32, I32, I32]
-      results: [I32]
+    - namespace: smart_rollup_core
+      name: read_input
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: smart_rollup_core
+      name: reveal_metadata
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: smart_rollup_core
+      name: reveal_preimage
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: smart_rollup_core
+      name: store_copy
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: smart_rollup_core
+      name: store_delete
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: smart_rollup_core
+      name: store_has
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: smart_rollup_core
+      name: store_move
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: smart_rollup_core
+      name: store_read
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: smart_rollup_core
+      name: store_write
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: smart_rollup_core
+      name: write_debug
+      params:
+      - I32
+      - I32
+      results: []
+    - namespace: smart_rollup_core
+      name: write_output
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+
     namespace:
       include:
       - smart_rollup_core
