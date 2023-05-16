@@ -261,3 +261,22 @@ message DiffResponse {
   string diff = 1;
   optional Error error = 2;
 }
+
+// `POST /api/v1/validate:`
+// Return the failure report (if applicable) of a wasm module validation against a given checkfile.
+message ValidateModuleRequest {
+  // the YAML checkfile (e.g. mod.yaml) bytes
+  bytes checkfile = 1;
+  // module_input is either an existing `module_id` that is known to the database, or the bytes of
+  // a raw wasm module. It is used to validate against the given checkfile.
+  oneof module_input {
+    bytes module = 2;
+    int64 module_id = 3;
+  }
+}
+
+// The failure report produced by the validation check (encoded in JSON).
+message ValidateModuleResponse {
+  bytes invalid_module_report = 1;
+  optional Error error = 2;
+}

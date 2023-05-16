@@ -486,7 +486,7 @@ fn namespace_prefix(import_item: &ImportItem, fn_name: &str) -> String {
     }
 }
 
-pub async fn validate(validation: Validation, module: modsurfer_module::Module) -> Result<Report> {
+pub fn validate(validation: Validation, module: modsurfer_module::Module) -> Result<Report> {
     let mut report = Report::new();
 
     // WASI
@@ -841,7 +841,7 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
         validation = serde_yaml::from_slice(&buf)?;
     }
 
-    validate(validation, module).await
+    validate(validation, module)
 }
 
 pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validation> {

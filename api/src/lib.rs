@@ -72,4 +72,11 @@ pub trait ApiClient {
         color_terminal: bool,
         with_context: bool,
     ) -> Result<String>;
+    async fn validate_module(
+        &self,
+        _wasm: impl AsRef<[u8]> + Send,
+        _checkfile: impl AsRef<[u8]> + Send,
+    ) -> Result<Report> {
+        anyhow::bail!("Validate operation unimplemented.")
+    }
 }

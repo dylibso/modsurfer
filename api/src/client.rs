@@ -7,6 +7,7 @@ use modsurfer_convert::{
     to_api, Audit,
 };
 use modsurfer_module::{Export, Import, Module};
+use modsurfer_validation::Report;
 use protobuf::{self, EnumOrUnknown, Message, MessageField, SpecialFields};
 use reqwest;
 use url::Url;
@@ -21,6 +22,7 @@ enum ModserverCommand {
     DeleteModules(api::DeleteModulesRequest),
     AuditModules(api::AuditModulesRequest),
     DiffModules(api::DiffRequest),
+    ValidateModule(api::ValidateModuleRequest),
 }
 
 #[derive(PartialEq, Clone, Debug)]
@@ -352,6 +354,26 @@ impl ApiClient for Client {
         }
         Ok(res.diff)
     }
+
+    async fn validate_module(
+        &self,
+        wasm: impl AsRef<[u8]> + Send,
+        checkfile: impl AsRef<[u8]> + Send,
+    ) -> Result<Report> {
+        let input = api::validate_module_request::Module_input::Module(wasm.as_ref().to_vec());
+        let req = api::ValidateModuleRequest {
+            checkfile: checkfile.as_ref().to_vec(),
+            module_input: Some(input),
+            ..Default::default()
+        };
+
+        let res: api::ValidateModuleResponse =
+            self.send(ModserverCommand::ValidateModule(req)).await?;
+        if res.error.is_some() {
+            return Err(api_error(res.error, "validate request failed"));
+        }
+        Ok(serde_json::from_slice(&res.invalid_module_report)?)
+    }
 }
 
 impl Client {
@@ -433,6 +455,17 @@ impl Client {
                 let resp = self
                     .inner
                     .post(&self.make_endpoint("/api/v1/diff"))
+                    .body(req.write_to_bytes()?)
+                    .send()
+                    .await?;
+                let data = resp.bytes().await?;
+                let val = protobuf::Message::parse_from_bytes(&data)?;
+                return Ok(val);
+            }
+            ModserverCommand::ValidateModule(req) => {
+                let resp = self
+                    .inner
+                    .post(&self.make_endpoint("/api/v1/validate"))
                     .body(req.write_to_bytes()?)
                     .send()
                     .await?;
