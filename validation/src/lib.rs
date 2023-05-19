@@ -205,6 +205,7 @@ pub enum FunctionItem {
         name: String,
         params: Option<Vec<modsurfer_module::ValType>>,
         results: Option<Vec<modsurfer_module::ValType>>,
+        hash: Option<String>,
     },
 }
 
@@ -213,6 +214,13 @@ impl FunctionItem {
         match self {
             FunctionItem::Name(name) => name,
             FunctionItem::Item { name, .. } => name,
+        }
+    }
+
+    fn hash(&self) -> Option<&str> {
+        match self {
+            FunctionItem::Name(_name) => None,
+            FunctionItem::Item { hash, .. } => hash.as_deref(),
         }
     }
 
@@ -379,6 +387,30 @@ impl Report {
         }
     }
 
+    fn validate_fn_hash(&mut self, name: &str, expected: String, actual: Option<String>) {
+        if let Some(actual) = actual.clone() {
+            let test = expected == actual;
+            self.validate_fn(
+                name,
+                expected,
+                actual,
+                test,
+                7,
+                Classification::AbiCompatibilty,
+            );
+        } else {
+            self.fails.insert(
+                name.to_string(),
+                FailureDetail {
+                    actual: actual.unwrap_or_else(|| String::from("<NONE>")),
+                    expected,
+                    severity: 7,
+                    classification: Classification::AbiCompatibilty,
+                },
+            );
+        }
+    }
+
     fn validate_fn_type(
         &mut self,
         name: &str,
@@ -450,6 +482,7 @@ impl Module {
         let mut plugin = Plugin::new(&ctx, modsurfer_plugins::MODSURFER_WASM, [], false)?;
         let data = plugin.call("parse_module", wasm)?;
         let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
+        println!("XXX: (a): {:?}", a.function_hashes);
         let metadata = if a.metadata.is_empty() {
             None
         } else {
@@ -742,6 +775,14 @@ pub fn validate(validation: Validation, module: modsurfer_module::Module) -> Res
                         f.results(),
                     );
                 }
+
+                if let Some(hash) = f.hash() {
+                    report.validate_fn_hash(
+                        &format!("exports.hash.{}", name),
+                        hash.to_string(),
+                        module.function_hashes.get(name).map(|x| x.clone()),
+                    );
+                }
             });
         }
 
@@ -882,11 +923,18 @@ pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validatio
     // exports (add all exports)
     let mut exports = Exports::default();
     let mut include_exports = vec![];
+    println!("{:?}", module.function_hashes);
     module.exports.iter().for_each(|exp| {
+        println!(
+            "{}::: {:?}",
+            &exp.func.name,
+            module.function_hashes.get(&exp.func.name).cloned()
+        );
         include_exports.push(FunctionItem::Item {
             name: exp.func.name.clone(),
             params: Some(exp.func.ty.params.clone()),
             results: Some(exp.func.ty.results.clone()),
+            hash: module.function_hashes.get(&exp.func.name).cloned(),
         });
     });
     let export_count = include_exports.len();

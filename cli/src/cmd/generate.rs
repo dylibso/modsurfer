@@ -10,7 +10,7 @@ use modsurfer_validation::{generate_checkfile, Module as ModuleParser};
 pub async fn checkfile_from_module(wasm: &PathBuf, output: &PathBuf) -> Result<()> {
     let module_data = tokio::fs::read(wasm).await?;
     let module = ModuleParser::parse(&module_data)?;
-
+    println!("{:?}", module);
     let validation = generate_checkfile(&module)?;
     let mut file = File::create(output)?;
     writeln!(
