@@ -23,6 +23,7 @@ enum ModserverCommand {
     AuditModules(api::AuditModulesRequest),
     DiffModules(api::DiffRequest),
     ValidateModule(api::ValidateModuleRequest),
+    GetModuleGraph(api::GetModuleGraphRequest),
 }
 
 #[derive(PartialEq, Clone, Debug)]
@@ -374,6 +375,25 @@ impl ApiClient for Client {
         }
         Ok(serde_json::from_slice(&res.invalid_module_report)?)
     }
+
+    /// Find a module graph by its ID.
+    async fn get_module_graph(&self, module_id: i64) -> Result<Vec<u8>> {
+        let req = api::GetModuleGraphRequest {
+            module_id,
+            ..Default::default()
+        };
+        let res: api::GetModuleGraphResponse =
+            self.send(ModserverCommand::GetModuleGraph(req)).await?;
+        if res.error.is_some() {
+            return Err(api_error(res.error, "get module request failed"));
+        }
+
+        if res.module_graph.is_some() {
+            Ok(res.module_graph.unwrap().json_bytes)
+        } else {
+            Err(anyhow::anyhow!("No module found."))
+        }
+    }
 }
 
 impl Client {
@@ -466,6 +486,17 @@ impl Client {
                 let resp = self
                     .inner
                     .post(&self.make_endpoint("/api/v1/validate"))
+                    .body(req.write_to_bytes()?)
+                    .send()
+                    .await?;
+                let data = resp.bytes().await?;
+                let val = protobuf::Message::parse_from_bytes(&data)?;
+                return Ok(val);
+            }
+            ModserverCommand::GetModuleGraph(req) => {
+                let resp = self
+                    .inner
+                    .post(&self.make_endpoint("/api/v1/module_graph"))
                     .body(req.write_to_bytes()?)
                     .send()
                     .await?;

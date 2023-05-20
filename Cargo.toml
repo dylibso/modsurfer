@@ -1,5 +1,5 @@
 [workspace]
-members = ["api", "cli", "module", "plugins", "proto/v1", "validation"]
+members = ["api", "cli", "demangle", "module", "plugins", "proto/v1", "validation"]
 
 [workspace.dependencies]
 anyhow = "1"
@@ -11,6 +11,7 @@ modsurfer-plugins = { path = "plugins" }
 modsurfer-convert = { path = "convert", version = "0.1" }
 modsurfer-module = { path = "module", version = "0.1" }
 modsurfer-proto-v1 = { path = "proto/v1", package = "modsurfer-proto" }
+modserver-demangle = { path = "demangle" }
 protobuf = "3.2.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

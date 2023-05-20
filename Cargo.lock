@@ -431,6 +431,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cpp_demangle"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2c76f98bdfc7f66172e6c7065f981ebb576ffc903fe4c0561d9f0c2509226dc6"
+dependencies = [
+ "cfg-if",
+]
+
+[[package]]
 name = "cpufeatures"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1638,6 +1647,14 @@ dependencies = [
  "modsurfer-proto",
  "protobuf",
  "url",
+]
+
+[[package]]
+name = "modsurfer-demangle"
+version = "0.1.0"
+dependencies = [
+ "cpp_demangle 0.4.1",
+ "rustc-demangle",
 ]
 
 [[package]]
@@ -3194,7 +3211,7 @@ dependencies = [
  "anyhow",
  "bincode",
  "cfg-if",
- "cpp_demangle",
+ "cpp_demangle 0.3.5",
  "gimli",
  "ittapi",
  "log",
