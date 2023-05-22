@@ -482,7 +482,6 @@ impl Module {
         let mut plugin = Plugin::new(&ctx, modsurfer_plugins::MODSURFER_WASM, [], false)?;
         let data = plugin.call("parse_module", wasm)?;
         let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
-        println!("XXX: (a): {:?}", a.function_hashes);
         let metadata = if a.metadata.is_empty() {
             None
         } else {
@@ -923,13 +922,7 @@ pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validatio
     // exports (add all exports)
     let mut exports = Exports::default();
     let mut include_exports = vec![];
-    println!("{:?}", module.function_hashes);
     module.exports.iter().for_each(|exp| {
-        println!(
-            "{}::: {:?}",
-            &exp.func.name,
-            module.function_hashes.get(&exp.func.name).cloned()
-        );
         include_exports.push(FunctionItem::Item {
             name: exp.func.name.clone(),
             params: Some(exp.func.ty.params.clone()),

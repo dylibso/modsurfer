@@ -51,6 +51,7 @@ pub fn module(module: Module, id: i64) -> api::Module {
     dest.imports = imports(module.imports);
     dest.strings = module.strings;
     dest.complexity = module.complexity;
+    dest.function_hashes = module.function_hashes;
 
     dest
 }
@@ -68,7 +69,7 @@ pub fn module(module: Module, id: i64) -> api::Module {
     dest.imports = imports(module.imports);
     dest.strings = module.strings;
     dest.complexity = module.complexity;
-
+    dest.function_hashes = module.function_hashes;
     dest
 }
 
