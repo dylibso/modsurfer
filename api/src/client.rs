@@ -384,14 +384,25 @@ impl ApiClient for Client {
         };
         let res: api::GetModuleGraphResponse =
             self.send(ModserverCommand::GetModuleGraph(req)).await?;
+
         if res.error.is_some() {
-            return Err(api_error(res.error, "get module request failed"));
+            return Err(api_error(
+                res.error,
+                format!(
+                    "get module graph request failed for module_id {}",
+                    module_id
+                )
+                .as_str(),
+            ));
         }
 
         if res.module_graph.is_some() {
             Ok(res.module_graph.unwrap().json_bytes)
         } else {
-            Err(anyhow::anyhow!("No module found."))
+            Err(anyhow::anyhow!(
+                "No module graph found for module id {}.",
+                module_id
+            ))
         }
     }
 }
