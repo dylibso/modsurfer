@@ -79,4 +79,7 @@ pub trait ApiClient {
     ) -> Result<Report> {
         anyhow::bail!("Validate operation unimplemented.")
     }
+    async fn get_module_graph(&self, _module_id: i64) -> Result<Vec<u8>> {
+        anyhow::bail!("ModuleGraph operation unimplemented.")
+    }
 }
