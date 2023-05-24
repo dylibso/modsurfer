@@ -9,7 +9,7 @@ edition = "2021"
 anyhow = { workspace = true }
 chrono = { workspace = true, optional = true }
 log = { workspace = true }
-wasmparser = "0.103.0"
+wasmparser = "0.105.0"
 serde = { workspace = true }
 url = { workspace = true }
 

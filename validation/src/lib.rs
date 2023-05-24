@@ -205,6 +205,7 @@ pub enum FunctionItem {
         name: String,
         params: Option<Vec<modsurfer_module::ValType>>,
         results: Option<Vec<modsurfer_module::ValType>>,
+        hash: Option<String>,
     },
 }
 
@@ -213,6 +214,13 @@ impl FunctionItem {
         match self {
             FunctionItem::Name(name) => name,
             FunctionItem::Item { name, .. } => name,
+        }
+    }
+
+    fn hash(&self) -> Option<&str> {
+        match self {
+            FunctionItem::Name(_name) => None,
+            FunctionItem::Item { hash, .. } => hash.as_deref(),
         }
     }
 
@@ -379,6 +387,30 @@ impl Report {
         }
     }
 
+    fn validate_fn_hash(&mut self, name: &str, expected: String, actual: Option<String>) {
+        if let Some(actual) = actual.clone() {
+            let test = expected == actual;
+            self.validate_fn(
+                name,
+                expected,
+                actual,
+                test,
+                7,
+                Classification::AbiCompatibilty,
+            );
+        } else {
+            self.fails.insert(
+                name.to_string(),
+                FailureDetail {
+                    actual: actual.unwrap_or_else(|| String::from("<NONE>")),
+                    expected,
+                    severity: 7,
+                    classification: Classification::AbiCompatibilty,
+                },
+            );
+        }
+    }
+
     fn validate_fn_type(
         &mut self,
         name: &str,
@@ -473,6 +505,7 @@ impl Module {
             strings: a.strings,
             complexity: a.complexity,
             graph: a.graph,
+            function_hashes: a.function_hashes,
         };
 
         Ok(module)
@@ -741,6 +774,14 @@ pub fn validate(validation: Validation, module: modsurfer_module::Module) -> Res
                         f.results(),
                     );
                 }
+
+                if let Some(hash) = f.hash() {
+                    report.validate_fn_hash(
+                        &format!("exports.hash.{}", name),
+                        hash.to_string(),
+                        module.function_hashes.get(name).map(|x| x.clone()),
+                    );
+                }
             });
         }
 
@@ -886,6 +927,7 @@ pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validatio
             name: exp.func.name.clone(),
             params: Some(exp.func.ty.params.clone()),
             results: Some(exp.func.ty.results.clone()),
+            hash: module.function_hashes.get(&exp.func.name).cloned(),
         });
     });
     let export_count = include_exports.len();

@@ -97,6 +97,7 @@ impl From<api::Module> for Persisted<Module> {
                 strings: a.strings,
                 complexity: a.complexity,
                 graph: a.graph,
+                function_hashes: a.function_hashes,
             },
             source_id: a.id,
         }
