@@ -8,14 +8,14 @@ use lazy_static::lazy_static;
 #[cfg(not(feature = "mock-empty"))]
 use modsurfer_convert::api::ListModulesResponse;
 
-use crate::{Export, Import, Module, SourceLanguage};
+use modsurfer_module::{Export, Import, Module, SourceLanguage};
 use url::Url;
 
-use crate::api::{ApiClient, List, Persisted};
+use crate::{ApiClient, List, Persisted, SortDirection, SortField};
 
 #[cfg(not(feature = "mock-empty"))]
 lazy_static! {
-    static ref MODULES: &'static [u8] = include_bytes!("ListModulesResponse.pb");
+    static ref MODULES: &'static [u8] = include_bytes!("../ListModulesResponse.pb");
     static ref PB_DATA: ListModulesResponse =
         protobuf::Message::parse_from_bytes(&MODULES).unwrap();
     static ref MOCK_CLIENT_DATA: Mutex<Vec<Persisted<Module>>> = Mutex::new(
@@ -85,12 +85,7 @@ impl ApiClient for Client {
         metadata: Option<HashMap<String, String>>,
         location: Option<Url>,
     ) -> Result<(i64, String)> {
-        let reader = wasm.as_ref();
-        let mut module = Module::new(
-            reader,
-            location.unwrap_or_else(|| Url::parse("file:///tmp/module.wasm").unwrap()),
-        )
-        .await?;
+        let mut module = Module::default();
 
         module.metadata = metadata;
 
@@ -190,5 +185,15 @@ impl ApiClient for Client {
 
         let total = filtered.len() as u32;
         Ok(List::new(filtered, total, offset, limit))
+    }
+
+    async fn diff_modules(
+        &self,
+        module1: i64,
+        module2: i64,
+        color_terminal: bool,
+        with_context: bool,
+    ) -> Result<String> {
+        anyhow::bail!("Diff operation unimplemented.")
     }
 }

@@ -1,12 +1,14 @@
+use std::collections::HashMap;
+
 #[cfg(not(feature = "mock"))]
 mod client;
 
 mod interop;
 
+mod sort;
+
 #[cfg(feature = "mock")]
 mod mock_client;
-
-use std::collections::HashMap;
 
 #[cfg(feature = "mock")]
 pub use mock_client::Client;
@@ -14,8 +16,8 @@ pub use mock_client::Client;
 #[cfg(not(feature = "mock"))]
 pub use client::Client;
 
-pub use client::{SortDirection, SortField};
 pub use interop::{List, Persisted};
+pub use sort::{SortDirection, SortField};
 
 pub use anyhow::Result;
 use async_trait::async_trait;
