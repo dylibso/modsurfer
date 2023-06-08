@@ -194,6 +194,6 @@ impl ApiClient for Client {
         color_terminal: bool,
         with_context: bool,
     ) -> Result<String> {
-        anyhow::bail!("Validate operation unimplemented.")
+        anyhow::bail!("Diff operation unimplemented.")
     }
 }
