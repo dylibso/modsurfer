@@ -71,7 +71,7 @@ modsurfer list --offset 0 --limit 50 # (0 & 50 are defaults)
 
 modsurfer search --function-name _start --module-name env --source-language Rust --text "Help me"
 
-modsurfer generare -p spidermonkey.wasm -o mod.yaml
+modsurfer generate -p spidermonkey.wasm -o mod.yaml
 
 modsurfer diff a.wasm b.wasm # or diff using Modsurfer module IDs
 
