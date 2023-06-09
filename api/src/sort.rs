@@ -1,7 +1,4 @@
-use modsurfer_convert::{
-    api::{self, Direction, Field, Sort},
-    to_api, Audit,
-};
+use modsurfer_convert::api::{Direction, Field};
 
 #[derive(PartialEq, Clone, Debug)]
 pub enum SortDirection {
