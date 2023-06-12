@@ -81,9 +81,9 @@ impl ApiClient for Client {
 
     async fn create_module(
         &self,
-        wasm: impl AsRef<[u8]> + Send,
+        _wasm: impl AsRef<[u8]> + Send,
         metadata: Option<HashMap<String, String>>,
-        location: Option<Url>,
+        _location: Option<Url>,
     ) -> Result<(i64, String)> {
         let mut module = Module::default();
 
@@ -117,8 +117,8 @@ impl ApiClient for Client {
         strings: Option<Vec<String>>,
         offset: u32,
         limit: u32,
-        sort_field: Option<SortField>,
-        sort_direction: Option<SortDirection>,
+        _sort_field: Option<SortField>,
+        _sort_direction: Option<SortDirection>,
     ) -> Result<List<Persisted<Module>>> {
         let modules = MOCK_CLIENT_DATA.lock().unwrap();
 
@@ -189,10 +189,10 @@ impl ApiClient for Client {
 
     async fn diff_modules(
         &self,
-        module1: i64,
-        module2: i64,
-        color_terminal: bool,
-        with_context: bool,
+        _module1: i64,
+        _module2: i64,
+        _color_terminal: bool,
+        _with_context: bool,
     ) -> Result<String> {
         anyhow::bail!("Diff operation unimplemented.")
     }
