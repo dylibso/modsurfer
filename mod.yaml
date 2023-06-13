@@ -1,0 +1,1009 @@
+# For more information about other checkfile options, see the documentation at https://dev.dylib.so/docs/modsurfer/cli#checkfile
+validate:
+  allow_wasi: true
+  imports:
+    include:
+    - namespace: wasi_snapshot_preview1
+      name: args_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: args_sizes_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: clock_res_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: clock_time_get
+      params:
+      - I32
+      - I64
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: environ_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: environ_sizes_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_advise
+      params:
+      - I32
+      - I64
+      - I64
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_allocate
+      params:
+      - I32
+      - I64
+      - I64
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_close
+      params:
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_datasync
+      params:
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_fdstat_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_fdstat_set_flags
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_fdstat_set_rights
+      params:
+      - I32
+      - I64
+      - I64
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_filestat_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_filestat_set_size
+      params:
+      - I32
+      - I64
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_filestat_set_times
+      params:
+      - I32
+      - I64
+      - I64
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_pread
+      params:
+      - I32
+      - I32
+      - I32
+      - I64
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_prestat_dir_name
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_prestat_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_pwrite
+      params:
+      - I32
+      - I32
+      - I32
+      - I64
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_read
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_readdir
+      params:
+      - I32
+      - I32
+      - I32
+      - I64
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_renumber
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_seek
+      params:
+      - I32
+      - I64
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_sync
+      params:
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_tell
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_write
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_create_directory
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_filestat_get
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_filestat_set_times
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I64
+      - I64
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_link
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_open
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I64
+      - I64
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_readlink
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_remove_directory
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_rename
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_symlink
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_unlink_file
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: poll_oneoff
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: proc_exit
+      params:
+      - I32
+      results: []
+    - namespace: wasi_snapshot_preview1
+      name: proc_raise
+      params:
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: random_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: sched_yield
+      params: []
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: sock_recv
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: sock_send
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: sock_shutdown
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: env
+      name: write_mem
+      params:
+      - I32
+      results:
+      - I32
+    namespace:
+      include:
+      - wasi_snapshot_preview1
+      - env
+  exports:
+    include:
+    - name: _Exit
+      params:
+      - I32
+      results: []
+    - name: __funcs_on_exit
+      params: []
+      results: []
+    - name: __fwritex
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __isatty
+      params:
+      - I32
+      results:
+      - I32
+    - name: __lctrans
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __lctrans_cur
+      params:
+      - I32
+      results:
+      - I32
+    - name: __lctrans_impl
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __lseek
+      params:
+      - I32
+      - I64
+      - I32
+      results:
+      - I64
+    - name: __ofl_lock
+      params: []
+      results:
+      - I32
+    - name: __ofl_unlock
+      params: []
+      results: []
+    - name: __small_printf
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __stdio_close
+      params:
+      - I32
+      results:
+      - I32
+    - name: __stdio_exit
+      params: []
+      results: []
+    - name: __stdio_exit_needed
+      params: []
+      results: []
+    - name: __stdio_seek
+      params:
+      - I32
+      - I64
+      - I32
+      results:
+      - I64
+    - name: __stdio_write
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __stdout_write
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __strerror_l
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __towrite
+      params:
+      - I32
+      results:
+      - I32
+    - name: __towrite_needs_stdio_exit
+      params: []
+      results: []
+    - name: __wasi_args_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 2c764b887c995157144ec844fec300eaf51eba718ee6e66e360c29df1491e83b
+    - name: __wasi_args_sizes_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: e8e868d3d05b06468951fe075b4488d99d6f46a07ee2564f8f5528a10ee19af2
+    - name: __wasi_clock_res_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 2075c6df72dbe5f9daac4aafbb4f2fa4f6ee2e8c8f264ea40cdafbdd59d6e630
+    - name: __wasi_clock_time_get
+      params:
+      - I32
+      - I64
+      - I32
+      results:
+      - I32
+      hash: 655f8934f3e6c876575bf5424bfc44db54ed02c675cca1cb88d185642ca2109d
+    - name: __wasi_environ_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: aee72f58d7184e97aadde3ce26702f31a5b21339614eb4bb3a7a5c708a5911e2
+    - name: __wasi_environ_sizes_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 406ddba8d3952cf25c1774c42b58952502e3c875ae648a8bf9e28d4a8a5944de
+    - name: __wasi_fd_advise
+      params:
+      - I32
+      - I64
+      - I64
+      - I32
+      results:
+      - I32
+      hash: 2dd392a94f4a53929515ee417bc8fbdf03772f912b30bc91dbdb3e3bf568ad4d
+    - name: __wasi_fd_allocate
+      params:
+      - I32
+      - I64
+      - I64
+      results:
+      - I32
+      hash: 1fd4fc851819349a41dc21cb5ef5698d8937cb276c64afe9b8c333bb3e034bb2
+    - name: __wasi_fd_close
+      params:
+      - I32
+      results:
+      - I32
+      hash: a8dc97a9696de6405fd6ef605fa24b811b9d65a413b1991ee043afa632e46a55
+    - name: __wasi_fd_datasync
+      params:
+      - I32
+      results:
+      - I32
+      hash: 16e256f90a95f8f50b391a7c6896e13c704b21631d1a1611cd7b3bc06c6e932f
+    - name: __wasi_fd_fdstat_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: a01a90583e8b44f625182311fb5a96e3e9d138eee6d1e903d5c273e4ee28857b
+    - name: __wasi_fd_fdstat_set_flags
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 245e248b9019a22e558746d894b8295a8f94bfd94da879569d324f12fa19481a
+    - name: __wasi_fd_fdstat_set_rights
+      params:
+      - I32
+      - I64
+      - I64
+      results:
+      - I32
+      hash: 1bf2c6ef198ba212fd592e729039f9213e805fbce13df35815683aa787d39aa7
+    - name: __wasi_fd_filestat_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: b16e028aafa4e39c326d4ab58391d649e45b4881ea6501c9b877cd365693709b
+    - name: __wasi_fd_filestat_set_size
+      params:
+      - I32
+      - I64
+      results:
+      - I32
+      hash: 5de2ce92d08e95f36797627d222d2883fca6c4b6b33248c11f334ced99e2ee29
+    - name: __wasi_fd_filestat_set_times
+      params:
+      - I32
+      - I64
+      - I64
+      - I32
+      results:
+      - I32
+      hash: dc7e91b7ea68a7dca8d6a54b6f3e84d2593e30389e4e49f3c48e6d73773de49a
+    - name: __wasi_fd_pread
+      params:
+      - I32
+      - I32
+      - I32
+      - I64
+      - I32
+      results:
+      - I32
+      hash: f32ef90c88fef77aaa46f10bacb7845a1de6d35ac514c98ade978ac7bdd61da1
+    - name: __wasi_fd_prestat_dir_name
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+      hash: c8ab80a492aee08bfee6f830545a9746289776df761df7f7bc93d6de508abf36
+    - name: __wasi_fd_prestat_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: ee2e88c7f251d3a2b8a69c6247ac9e9e60456a72601c9ebe39de7c238c16d0e5
+    - name: __wasi_fd_pwrite
+      params:
+      - I32
+      - I32
+      - I32
+      - I64
+      - I32
+      results:
+      - I32
+      hash: 7b5431c7dcde71c1d85b7ed168621daec8d9288e10d598acade01c3e8c73e748
+    - name: __wasi_fd_read
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 16e928c1898111c781c9c13c8312fa532949bfef78830b721e39f581058e0849
+    - name: __wasi_fd_readdir
+      params:
+      - I32
+      - I32
+      - I32
+      - I64
+      - I32
+      results:
+      - I32
+      hash: fc4b31b40179502d47a2ae24ae8ad228afa8f54571d93bf98886d6ad28310479
+    - name: __wasi_fd_renumber
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: aef68feb2f90cdc482ea7010cae40276b8e54cddc42b2b6c24ecdba329507d88
+    - name: __wasi_fd_seek
+      params:
+      - I32
+      - I64
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 159ea9e1a1d2fe5320c9525768b159f3050b1ff66a9d831d248942134dfc0254
+    - name: __wasi_fd_sync
+      params:
+      - I32
+      results:
+      - I32
+      hash: 1c2bdd2ba04dbff4eba4b8b77b483c8589f0be4e67ee1739075321b22fc7e820
+    - name: __wasi_fd_tell
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 0bd9a7606d054c7446ec064c2b3b3f902699f25c71df0de3e93efacf7c6d9440
+    - name: __wasi_fd_write
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+      hash: aa1fdc57ad3da3931e8c5372e9de85201684e4f978bd11831d6fa5ee30287e85
+    - name: __wasi_path_create_directory
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 90010808f2d858bac62d25d3231c54b61f7af486fe5b348b0b23d5d4a1a64a78
+    - name: __wasi_path_filestat_get
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 84e65bf803e2a1242cb5b3b8d88c669171267a912a881ef4802f3b9e2c548828
+    - name: __wasi_path_filestat_set_times
+      params:
+      - I32
+      - I32
+      - I32
+      - I64
+      - I64
+      - I32
+      results:
+      - I32
+      hash: e269182baed7edaaa3fafa48d993d9b21dd8a4e77f23ea6362e2efbb48c7cbc4
+    - name: __wasi_path_link
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 561d898a1806ab15a576afa13649cd972826df07339c85286fd0f8d675c8f1a8
+    - name: __wasi_path_open
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I64
+      - I64
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 83b09b98f16e6903de61609b3505909a554deca599d6ec6f3b9bc79e9a6e47ca
+    - name: __wasi_path_readlink
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+      hash: a0db60ddaaccf409c3fb6045a5032cf58afec0cd68cf25e2977ae3c9ddc7269c
+    - name: __wasi_path_remove_directory
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 3647d4cad737457a05f4c35a228d6c5712839a5001315c207cc33014143f5822
+    - name: __wasi_path_rename
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 4e266244864f918bd05d429fbda627b871434c6a79c7b5e9a4ed578ea52cd081
+    - name: __wasi_path_symlink
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+      hash: a8dc97a9696de6405fd6ef605fa24b811b9d65a413b1991ee043afa632e46a55
+    - name: __wasi_path_unlink_file
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: c3caf0ac6c825fc80aa4c9d1fe33fdfb935416e2d7555c007301bde5e0fa6c86
+    - name: __wasi_poll_oneoff
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+      hash: 656ed7c203cfc9534977043eb5fadd39c091a07d466c60042dce51c1089a35c0
+    - name: __wasi_proc_exit
+      params:
+      - I32
+      results: []
+    - name: __wasi_proc_raise
+      params:
+      - I32
+      results:
+      - I32
+    - name: __wasi_random_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __wasi_sched_yield
+      params: []
+      results:
+      - I32
+    - name: __wasi_sock_recv
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __wasi_sock_send
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __wasi_sock_shutdown
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: __wasm_call_ctors
+      params: []
+      results: []
+      hash: f75fa1ee655b1c3f8ebccfa5364d4e077eb0e187cc932bc2749fb8dc05c65d39
+    - name: __wasm_call_dtors
+      params: []
+      results: []
+    - name: _exit
+      params:
+      - I32
+      results: []
+    - name: _start
+      params: []
+      results: []
+    - name: abort
+      params: []
+      results: []
+    - name: close
+      params:
+      - I32
+      results:
+      - I32
+    - name: exit
+      params:
+      - I32
+      results: []
+    - name: fputs
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: fputs_unlocked
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: frexp
+      params:
+      - F64
+      - I32
+      results:
+      - F64
+    - name: fwrite
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: fwrite_unlocked
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: iprintf
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: isatty
+      params:
+      - I32
+      results:
+      - I32
+    - name: lseek
+      params:
+      - I32
+      - I64
+      - I32
+      results:
+      - I64
+    - name: memchr
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: memcpy
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: memset
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: print_hello
+      params: []
+      results: []
+      hash: ddbeb58b6b3b59bbe1b263a3c8d9bbee35d18c6f4d9b140376a5f26e1ff3ee94
+    - name: printf
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+      hash: f90faff25210293d55dfcdf907141ed252ef39ba67d4a1cc5eb355750eb91a4f
+    - name: strerror
+      params:
+      - I32
+      results:
+      - I32
+    - name: strerror_l
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: strlen
+      params:
+      - I32
+      results:
+      - I32
+    - name: strnlen
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: vfprintf
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: wcrtomb
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: wctomb
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: writev
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    max: 93
+  size:
+    max: 26.6 KiB
+  complexity:
+    max_risk: low

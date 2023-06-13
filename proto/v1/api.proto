@@ -300,3 +300,31 @@ message GetModuleGraphResponse {
   ModuleGraph module_graph = 1;
   optional Error error = 2;
 }
+
+// PUT /api/v1/plugin:
+message RegisterPluginRequest {
+  string identifier = 1;
+  bytes code = 2; // raw wasm to be stored
+  map<string, string> init_config = 3;
+}
+
+message RegisterPluginResponse { 
+  string hash = 1;
+  optional Error error = 2;
+  // ... 
+}
+
+// POST /api/v1/plugin:
+message CallPluginRequest {
+  string function_name = 1;
+  string identifier = 2; 
+  bytes input = 3;
+  map<string, string> config = 4; // maybe consider bytes as JSON instead
+  optional string hash = 5;
+}
+
+message CallPluginResponse {
+  bytes output = 1;
+  int32 return_code = 2;
+  optional Error error = 3;
+}
