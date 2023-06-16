@@ -12,6 +12,3 @@ log = { workspace = true }
 wasmparser = "0.107.0"
 serde = { workspace = true }
 url = { workspace = true }
-
-[features]
-web = []

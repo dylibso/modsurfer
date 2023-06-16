@@ -23,4 +23,3 @@ modsurfer-convert = { workspace = true }
 default = []
 mock = ["lazy_static"]
 mock-empty = ["mock"]
-web = []
