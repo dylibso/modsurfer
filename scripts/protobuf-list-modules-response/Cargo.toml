@@ -12,9 +12,7 @@ anyhow = "1"
 modsurfer = { path = "../../../private-modsurfer/modsurfer", features = [
     "api",
 ] }
-modsurfer-convert = { path = "../../convert", version = "0.1" }
-modsurfer-module = { path = "../../module", version = "0.1", features = [
-    "api",
-] }
+modsurfer-convert = { path = "../../convert" }
+modsurfer-module = { path = "../../module" }
 protobuf = "3.2.0"
 tokio = { version = "1", features = ["full"] }

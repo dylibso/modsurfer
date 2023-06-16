@@ -77,10 +77,14 @@ impl From<api::Module> for Persisted<Module> {
             Some(a.metadata)
         };
 
+        #[cfg(not(target_arch = "wasm32"))]
         let inserted_at: std::time::SystemTime = a
             .inserted_at
             .unwrap_or_else(|| protobuf::well_known_types::timestamp::Timestamp::new())
             .into();
+
+        #[cfg(target_arch = "wasm32")]
+        let inserted_at: u64 = a.inserted_at.seconds as u64;
 
         Persisted {
             inner: Module {
@@ -93,7 +97,10 @@ impl From<api::Module> for Persisted<Module> {
                     a.source_language.enum_value_or_default(),
                 ),
                 metadata,
+                #[cfg(not(target_arch = "wasm32"))]
                 inserted_at: inserted_at.into(),
+                #[cfg(target_arch = "wasm32")]
+                inserted_at: inserted_at,
                 strings: a.strings,
                 complexity: a.complexity,
                 graph: a.graph,
