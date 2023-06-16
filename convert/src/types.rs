@@ -1,5 +1,4 @@
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
-#[cfg(feature = "api")]
 use chrono::Utc;
 
 use modsurfer_module::{Export, Import, SourceLanguage};
@@ -52,7 +51,6 @@ pub struct Sort {
     pub field: SortField,
 }
 
-#[cfg(feature = "api")]
 #[derive(Default)]
 pub struct Search {
     pub page: Pagination,

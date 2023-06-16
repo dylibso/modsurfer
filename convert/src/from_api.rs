@@ -91,7 +91,6 @@ pub fn exports(exports: Vec<api::Export>) -> Vec<Export> {
 }
 
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
-#[cfg(feature = "api")]
 pub fn search(mut req: api::SearchModulesRequest) -> Search {
     Search {
         page: req

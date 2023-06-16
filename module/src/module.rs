@@ -34,9 +34,9 @@ pub struct Module {
     /// arbitrary metadata provided by the operator of this module
     pub metadata: Option<HashMap<String, String>>,
     /// timestamp when this module was loaded and stored
-    #[cfg(feature = "api")]
+    #[cfg(not(target_arch = "wasm32"))]
     pub inserted_at: chrono::DateTime<chrono::Utc>,
-    #[cfg(not(feature = "api"))]
+    #[cfg(target_arch = "wasm32")]
     pub inserted_at: u64,
     /// the interned strings stored in the wasm binary (panic/abort messages, etc.)
     pub strings: Vec<String>,
@@ -73,9 +73,9 @@ impl Default for Module {
             location: String::new(),
             source_language: SourceLanguage::Unknown,
             metadata: None,
-            #[cfg(feature = "chrono")]
+            #[cfg(not(target_arch = "wasm32"))]
             inserted_at: chrono::Utc::now(),
-            #[cfg(not(feature = "chrono"))]
+            #[cfg(target_arch = "wasm32")]
             inserted_at: 0,
             strings: vec![],
             complexity: None,
