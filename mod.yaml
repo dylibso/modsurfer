@@ -1,0 +1,877 @@
+# For more information about other checkfile options, see the documentation at https://dev.dylib.so/docs/modsurfer/cli#checkfile
+validate:
+  allow_wasi: true
+  imports:
+    include:
+    - namespace: wasi_snapshot_preview1
+      name: clock_res_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: clock_time_get
+      params:
+      - I32
+      - I64
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: environ_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: environ_sizes_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_close
+      params:
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_fdstat_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_fdstat_set_flags
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_prestat_dir_name
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_prestat_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_read
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_seek
+      params:
+      - I32
+      - I64
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: fd_write
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_open
+      params:
+      - I32
+      - I32
+      - I32
+      - I32
+      - I32
+      - I64
+      - I64
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_remove_directory
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: path_unlink_file
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - namespace: wasi_snapshot_preview1
+      name: proc_exit
+      params:
+      - I32
+      results: []
+    - namespace: wasi_snapshot_preview1
+      name: random_get
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    namespace:
+      include:
+      - wasi_snapshot_preview1
+  exports:
+    include:
+    - name: _start
+      params: []
+      results: []
+    - name: cxxbridge1$exception
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$bool$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$bool$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$bool$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$bool$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$bool$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$bool$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$bool$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$bool$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$char$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$char$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$char$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$char$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$char$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$char$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$char$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$char$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$f32$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$f32$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$f32$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$f32$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$f32$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$f32$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$f32$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$f32$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$f64$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$f64$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$f64$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$f64$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$f64$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$f64$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$f64$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$f64$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i16$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i16$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i16$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i16$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i16$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i16$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i16$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i16$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i32$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i32$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i32$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i32$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i32$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i32$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i32$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i32$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i64$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i64$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i64$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i64$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i64$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i64$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i64$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i64$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i8$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i8$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i8$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i8$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$i8$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i8$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i8$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$i8$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$isize$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$isize$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$isize$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$isize$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$isize$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$isize$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$isize$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$isize$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$str$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$str$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$str$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$str$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$str$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$str$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$str$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$str$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$string$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$string$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$string$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$string$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$string$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$string$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$string$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$string$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u16$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u16$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u16$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u16$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u16$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u16$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u16$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u16$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u32$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u32$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u32$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u32$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u32$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u32$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u32$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u32$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u64$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u64$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u64$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u64$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u64$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u64$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u64$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u64$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u8$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u8$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u8$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u8$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$u8$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u8$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u8$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$u8$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$usize$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$usize$data
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$usize$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$usize$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$rust_vec$usize$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$usize$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$usize$set_len
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$rust_vec$usize$truncate
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$slice$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$slice$new
+      params:
+      - I32
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$slice$ptr
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$str$from
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$str$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$str$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$str$ptr
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$str$ref
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$string$capacity
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$string$clone
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$string$drop
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$string$from_utf16
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$string$from_utf16_lossy
+      params:
+      - I32
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$string$from_utf8
+      params:
+      - I32
+      - I32
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$string$from_utf8_lossy
+      params:
+      - I32
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$string$len
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$string$new
+      params:
+      - I32
+      results: []
+    - name: cxxbridge1$string$ptr
+      params:
+      - I32
+      results:
+      - I32
+    - name: cxxbridge1$string$reserve_additional
+      params:
+      - I32
+      - I32
+      results: []
+    - name: cxxbridge1$string$reserve_total
+      params:
+      - I32
+      - I32
+      results: []
+    - name: main
+      params:
+      - I32
+      - I32
+      results:
+      - I32
+    max: 151
+  size:
+    max: 4.4 MiB
+  complexity:
+    max_risk: high
