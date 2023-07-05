@@ -259,9 +259,78 @@ fn make_subcommands() -> Vec<Command> {
         .arg(Arg::new("module1").help("first module ID or path to .wasm"))
         .arg(Arg::new("module2").help("second module ID or path to .wasm"));
 
-    [create, delete, get, list, search, validate, yank, audit]
-        .into_iter()
-        .map(add_output_arg)
-        .chain(vec![generate, diff])
-        .collect()
+    // TODO: handle plugins with multiple args
+    let call_plugin = clap::Command::new("call")
+        .about("Call a Modsurfer plugin.")
+        .arg(
+            Arg::new("identifier")
+                .long("id")
+                .help("The identifier of the registered plugin"),
+        )
+        .arg(
+            Arg::new("function-name")
+                .long("func-name")
+                .help("The function to be called"),
+        )
+        .arg(
+            Arg::new("function-input")
+                .long("func-input")
+                .help("A path on disk to the binary form of the input to the plugin being called"),
+        )
+        .arg(
+            Arg::new("output")
+                .value_parser(clap::value_parser!(PathBuf))
+                .long("output")
+                .help("A location on disk to write the output.  The output of the call will be written to stdout if not specified"),
+        );
+
+    // TODO: allow specification of plugin "config"
+    let install_plugin = clap::Command::new("install")
+        .about("Install a Modsurfer plugin.")
+        .arg(
+            Arg::new("identifier")
+                .long("id")
+                .help("The identifier of the plugin to be installed"),
+        )
+        .arg(
+            Arg::new("name")
+                .required(false)
+                .long("name")
+                .help("The human readable name of the plugin"),
+        )
+        .arg(
+            Arg::new("location")
+                .required_unless_present("wasm")
+                .long("loc")
+                .help("The remote location of the plugin"),
+        )
+        .arg(
+            Arg::new("wasm")
+                .required_unless_present("location")
+                .value_parser(clap::value_parser!(PathBuf))
+                .long("wasm")
+                .help("A path on disk to the plugin"),
+        );
+
+    let uninstall_plugin = clap::Command::new("uninstall")
+        .about("Uninstall a Modsurfer plugin.")
+        .arg(
+            Arg::new("identifier")
+                .long("id")
+                .help("The identifier of the plugin to uninstall"),
+        );
+
+    let plugin = clap::Command::new("plugin")
+        .about("Manage your Modsurfer plugins")
+        .subcommand(call_plugin)
+        .subcommand(install_plugin)
+        .subcommand(uninstall_plugin);
+
+    [
+        create, delete, get, list, search, validate, yank, audit, plugin,
+    ]
+    .into_iter()
+    .map(add_output_arg)
+    .chain(vec![generate, diff])
+    .collect()
 }

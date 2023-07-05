@@ -24,6 +24,9 @@ enum ModserverCommand {
     DiffModules(api::DiffRequest),
     ValidateModule(api::ValidateModuleRequest),
     GetModuleGraph(api::GetModuleGraphRequest),
+    CallPlugin(api::CallPluginRequest),
+    InstallPlugin(api::InstallPluginRequest),
+    UninstallPlugin(api::UninstallPluginRequest),
 }
 
 /// The API Client implementation.
@@ -338,6 +341,69 @@ impl ApiClient for Client {
             ))
         }
     }
+
+    /// Call a Modsurfer plugin.  This feature is only available in enterprise Modsurfer.
+    async fn call_plugin(
+        &self,
+        identifier: String,
+        function_name: String,
+        input: Vec<u8>,
+    ) -> Result<Vec<u8>, anyhow::Error> {
+        let req = api::CallPluginRequest {
+            identifier: identifier.clone(),
+            function_name,
+            input,
+            ..Default::default()
+        };
+
+        let res: api::CallPluginResponse = self.send(ModserverCommand::CallPlugin(req)).await?;
+        if res.error.is_some() {
+            return Err(api_error(res.error, "CallPlugin request failed"));
+        }
+
+        Ok(res.output)
+    }
+
+    /// Install a Modsurfer plugin.  This feature is only available in enterprise Modsurfer.
+    async fn install_plugin(
+        &self,
+        identifier: String,
+        name: String,
+        location: String,
+        wasm: Vec<u8>,
+    ) -> Result<(), anyhow::Error> {
+        let req = api::InstallPluginRequest {
+            identifier,
+            name,
+            location,
+            wasm: wasm.clone(),
+            ..Default::default()
+        };
+
+        let res: api::InstallPluginResponse =
+            self.send(ModserverCommand::InstallPlugin(req)).await?;
+        if res.error.is_some() {
+            return Err(api_error(res.error, "InstallPlugin request failed"));
+        }
+
+        Ok(())
+    }
+
+    /// Uninstall a Modsurfer plugin.  This feature is only available in enterprise Modsurfer.
+    async fn uninstall_plugin(&self, identifier: String) -> Result<(), anyhow::Error> {
+        let req = api::UninstallPluginRequest {
+            identifier,
+            ..Default::default()
+        };
+
+        let res: api::UninstallPluginResponse =
+            self.send(ModserverCommand::UninstallPlugin(req)).await?;
+        if res.error.is_some() {
+            return Err(api_error(res.error, "UninstallPlugin request failed"));
+        }
+
+        Ok(())
+    }
 }
 
 impl Client {
@@ -441,6 +507,39 @@ impl Client {
                 let resp = self
                     .inner
                     .post(&self.make_endpoint("/api/v1/module_graph"))
+                    .body(req.write_to_bytes()?)
+                    .send()
+                    .await?;
+                let data = resp.bytes().await?;
+                let val = protobuf::Message::parse_from_bytes(&data)?;
+                return Ok(val);
+            }
+            ModserverCommand::CallPlugin(req) => {
+                let resp = self
+                    .inner
+                    .post(&self.make_endpoint("/api/v1/plugin"))
+                    .body(req.write_to_bytes()?)
+                    .send()
+                    .await?;
+                let data = resp.bytes().await?;
+                let val = protobuf::Message::parse_from_bytes(&data)?;
+                return Ok(val);
+            }
+            ModserverCommand::InstallPlugin(req) => {
+                let resp = self
+                    .inner
+                    .put(&self.make_endpoint("/api/v1/plugin"))
+                    .body(req.write_to_bytes()?)
+                    .send()
+                    .await?;
+                let data = resp.bytes().await?;
+                let val = protobuf::Message::parse_from_bytes(&data)?;
+                return Ok(val);
+            }
+            ModserverCommand::UninstallPlugin(req) => {
+                let resp = self
+                    .inner
+                    .delete(&self.make_endpoint("/api/v1/plugin"))
                     .body(req.write_to_bytes()?)
                     .send()
                     .await?;

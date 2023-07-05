@@ -2,3 +2,4 @@
 **/*.pb
 wasm
 scripts/protobuf-list-modules-response/target
+.vscode

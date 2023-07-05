@@ -84,4 +84,24 @@ pub trait ApiClient {
     async fn get_module_graph(&self, _module_id: i64) -> Result<Vec<u8>> {
         anyhow::bail!("ModuleGraph operation unimplemented.")
     }
+    async fn call_plugin(
+        &self,
+        _identifier: String,
+        _function_name: String,
+        _function_input: Vec<u8>,
+    ) -> Result<Vec<u8>> {
+        anyhow::bail!("CallPlugin operation unimplemented.")
+    }
+    async fn install_plugin(
+        &self,
+        _identifier: String,
+        _name: String,
+        _location: String,
+        _wasm: Vec<u8>,
+    ) -> Result<()> {
+        anyhow::bail!("InstallPlugin operation unimplemented.")
+    }
+    async fn uninstall_plugin(&self, _identifier: String) -> Result<()> {
+        anyhow::bail!("UninstallPlugin operation unimplemented.")
+    }
 }

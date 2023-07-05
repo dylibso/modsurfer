@@ -1,9 +1,11 @@
 #![allow(unused)]
 use std::io::Write;
+use std::ops::Sub;
+use std::path::Path;
 use std::process::ExitCode;
 use std::{collections::HashMap, ffi::OsString, path::PathBuf};
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use human_bytes::human_bytes;
 use modsurfer_api::{ApiClient, Client, Persisted};
 use modsurfer_convert::{Audit, AuditOutcome, Pagination};
@@ -119,6 +121,14 @@ pub enum Subcommand<'a> {
     Yank(Id, Version, &'a OutputFormat),
     Audit(CheckFile, AuditOutcome, Offset, Limit, &'a OutputFormat),
     Diff(IdOrFilename, IdOrFilename, WithContext),
+    CallPlugin(String, String, String, Option<&'a PathBuf>), // identifier, function-name, function-input, output
+    InstallPlugin(
+        String,              // identifier
+        Option<&'a String>,  // name
+        Option<&'a String>,  // location
+        Option<&'a PathBuf>, // wasm
+    ),
+    UninstallPlugin(String), // identifier
 }
 
 impl Cli {
@@ -350,6 +360,49 @@ impl Cli {
                 print!("{}", diff);
                 Ok(ExitCode::SUCCESS)
             }
+            Subcommand::CallPlugin(identifier, function_name, function_input, output) => {
+                let mut input = function_input.as_bytes().to_vec();
+
+                // if the value is a path to a file
+                if function_input.to_owned().starts_with("@") {
+                    let path = function_input
+                        .chars()
+                        .skip(1)
+                        .take(function_input.len() - 1)
+                        .collect::<String>();
+                    input = tokio::fs::read(Path::new(&path)).await?;
+                }
+
+                let client = Client::new(self.host.as_str())?;
+                let res = client.call_plugin(identifier, function_name, input).await?;
+
+                if let Some(output) = output {
+                    tokio::fs::write(output, res).await?;
+                } else {
+                    std::io::stdout().write_all(&res);
+                }
+
+                Ok(ExitCode::SUCCESS)
+            }
+            Subcommand::InstallPlugin(identifier, name, location, wasm) => {
+                // TODO: implement location and name handling
+                if let Some(wasm) = wasm {
+                    let wasm = tokio::fs::read(wasm).await?;
+                    let name = "";
+                    let location = "";
+                    let client = Client::new(self.host.as_str())?;
+                    let res = client
+                        .install_plugin(identifier, name.to_string(), location.to_string(), wasm)
+                        .await?;
+                    return Ok(ExitCode::SUCCESS);
+                }
+                Err(anyhow!("No wasm provided.  TODO: Implement location"))
+            }
+            Subcommand::UninstallPlugin(identifier) => {
+                let client = Client::new(self.host.as_str())?;
+                let res = client.uninstall_plugin(identifier).await?;
+                Ok(ExitCode::SUCCESS)
+            }
         }
     }
 }
@@ -501,6 +554,37 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                     with_context,
                 )
             }
+            ("plugin", args) => match args.subcommand() {
+                Some(("call", args)) => {
+                    let identifier = args
+                        .get_one::<String>("identifier")
+                        .expect("identifier is required");
+                    let function_name = args
+                        .get_one::<String>("function-name")
+                        .expect("function-name is required");
+                    let function_input = args
+                        .get_one::<String>("function-input")
+                        .expect("function-input is required");
+                    let output = args.get_one::<PathBuf>("output");
+
+                    Subcommand::CallPlugin(
+                        identifier.to_string(),
+                        function_name.to_string(),
+                        function_input.to_string(),
+                        output,
+                    )
+                }
+                Some(("install", args)) => {
+                    let identifier = args
+                        .get_one::<String>("identifier")
+                        .expect("identifier is required");
+                    let name = args.get_one::<String>("name");
+                    let location = args.get_one::<String>("location");
+                    let wasm = args.get_one::<PathBuf>("wasm");
+                    Subcommand::InstallPlugin(identifier.to_string(), name, location, wasm)
+                }
+                _ => Subcommand::Unknown,
+            },
             _ => Subcommand::Unknown,
         }
     }

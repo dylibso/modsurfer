@@ -302,16 +302,28 @@ message GetModuleGraphResponse {
 }
 
 // PUT /api/v1/plugin:
-message RegisterPluginRequest {
+message InstallPluginRequest {
   string identifier = 1;
-  bytes code = 2; // raw wasm to be stored
-  map<string, string> init_config = 3;
+  string name = 2;
+  string location = 3;
+  bytes wasm = 4;
+  map<string, string> config = 5;
 }
 
-message RegisterPluginResponse { 
+message InstallPluginResponse { 
   string hash = 1;
   optional Error error = 2;
   // ... 
+}
+
+
+// PUT /api/v1/plugin:
+message UninstallPluginRequest {
+  string identifier = 1;
+}
+
+message UninstallPluginResponse { 
+  optional Error error = 2;
 }
 
 // POST /api/v1/plugin:
