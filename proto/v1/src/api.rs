@@ -4645,8 +4645,6 @@ pub struct InstallPluginRequest {
     pub location: ::std::string::String,
     // @@protoc_insertion_point(field:InstallPluginRequest.wasm)
     pub wasm: ::std::vec::Vec<u8>,
-    // @@protoc_insertion_point(field:InstallPluginRequest.config)
-    pub config: ::std::collections::HashMap<::std::string::String, ::std::string::String>,
     // special fields
     // @@protoc_insertion_point(special_field:InstallPluginRequest.special_fields)
     pub special_fields: ::protobuf::SpecialFields,
@@ -4664,7 +4662,7 @@ impl InstallPluginRequest {
     }
 
     fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-        let mut fields = ::std::vec::Vec::with_capacity(5);
+        let mut fields = ::std::vec::Vec::with_capacity(4);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
         fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
             "identifier",
@@ -4685,11 +4683,6 @@ impl InstallPluginRequest {
             "wasm",
             |m: &InstallPluginRequest| { &m.wasm },
             |m: &mut InstallPluginRequest| { &mut m.wasm },
-        ));
-        fields.push(::protobuf::reflect::rt::v2::make_map_simpler_accessor::<_, _, _>(
-            "config",
-            |m: &InstallPluginRequest| { &m.config },
-            |m: &mut InstallPluginRequest| { &mut m.config },
         ));
         ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<InstallPluginRequest>(
             "InstallPluginRequest",
@@ -4721,21 +4714,6 @@ impl ::protobuf::Message for InstallPluginRequest {
                 34 => {
                     self.wasm = is.read_bytes()?;
                 },
-                42 => {
-                    let len = is.read_raw_varint32()?;
-                    let old_limit = is.push_limit(len as u64)?;
-                    let mut key = ::std::default::Default::default();
-                    let mut value = ::std::default::Default::default();
-                    while let Some(tag) = is.read_raw_tag_or_eof()? {
-                        match tag {
-                            10 => key = is.read_string()?,
-                            18 => value = is.read_string()?,
-                            _ => ::protobuf::rt::skip_field_for_tag(tag, is)?,
-                        };
-                    }
-                    is.pop_limit(old_limit);
-                    self.config.insert(key, value);
-                },
                 tag => {
                     ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
                 },
@@ -4760,12 +4738,6 @@ impl ::protobuf::Message for InstallPluginRequest {
         if !self.wasm.is_empty() {
             my_size += ::protobuf::rt::bytes_size(4, &self.wasm);
         }
-        for (k, v) in &self.config {
-            let mut entry_size = 0;
-            entry_size += ::protobuf::rt::string_size(1, &k);
-            entry_size += ::protobuf::rt::string_size(2, &v);
-            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(entry_size) + entry_size
-        };
         my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
         self.special_fields.cached_size().set(my_size as u32);
         my_size
@@ -4784,15 +4756,6 @@ impl ::protobuf::Message for InstallPluginRequest {
         if !self.wasm.is_empty() {
             os.write_bytes(4, &self.wasm)?;
         }
-        for (k, v) in &self.config {
-            let mut entry_size = 0;
-            entry_size += ::protobuf::rt::string_size(1, &k);
-            entry_size += ::protobuf::rt::string_size(2, &v);
-            os.write_raw_varint32(42)?; // Tag.
-            os.write_raw_varint32(entry_size as u32)?;
-            os.write_string(1, &k)?;
-            os.write_string(2, &v)?;
-        };
         os.write_unknown_fields(self.special_fields.unknown_fields())?;
         ::std::result::Result::Ok(())
     }
@@ -4814,13 +4777,18 @@ impl ::protobuf::Message for InstallPluginRequest {
         self.name.clear();
         self.location.clear();
         self.wasm.clear();
-        self.config.clear();
         self.special_fields.clear();
     }
 
     fn default_instance() -> &'static InstallPluginRequest {
-        static instance: ::protobuf::rt::Lazy<InstallPluginRequest> = ::protobuf::rt::Lazy::new();
-        instance.get(InstallPluginRequest::new)
+        static instance: InstallPluginRequest = InstallPluginRequest {
+            identifier: ::std::string::String::new(),
+            name: ::std::string::String::new(),
+            location: ::std::string::String::new(),
+            wasm: ::std::vec::Vec::new(),
+            special_fields: ::protobuf::SpecialFields::new(),
+        };
+        &instance
     }
 }
 
@@ -5239,8 +5207,6 @@ pub struct CallPluginRequest {
     pub identifier: ::std::string::String,
     // @@protoc_insertion_point(field:CallPluginRequest.input)
     pub input: ::std::vec::Vec<u8>,
-    // @@protoc_insertion_point(field:CallPluginRequest.config)
-    pub config: ::std::collections::HashMap<::std::string::String, ::std::string::String>,
     // @@protoc_insertion_point(field:CallPluginRequest.hash)
     pub hash: ::std::option::Option<::std::string::String>,
     // special fields
@@ -5260,7 +5226,7 @@ impl CallPluginRequest {
     }
 
     fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-        let mut fields = ::std::vec::Vec::with_capacity(5);
+        let mut fields = ::std::vec::Vec::with_capacity(4);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
         fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
             "function_name",
@@ -5276,11 +5242,6 @@ impl CallPluginRequest {
             "input",
             |m: &CallPluginRequest| { &m.input },
             |m: &mut CallPluginRequest| { &mut m.input },
-        ));
-        fields.push(::protobuf::reflect::rt::v2::make_map_simpler_accessor::<_, _, _>(
-            "config",
-            |m: &CallPluginRequest| { &m.config },
-            |m: &mut CallPluginRequest| { &mut m.config },
         ));
         fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
             "hash",
@@ -5315,21 +5276,6 @@ impl ::protobuf::Message for CallPluginRequest {
                     self.input = is.read_bytes()?;
                 },
                 34 => {
-                    let len = is.read_raw_varint32()?;
-                    let old_limit = is.push_limit(len as u64)?;
-                    let mut key = ::std::default::Default::default();
-                    let mut value = ::std::default::Default::default();
-                    while let Some(tag) = is.read_raw_tag_or_eof()? {
-                        match tag {
-                            10 => key = is.read_string()?,
-                            18 => value = is.read_string()?,
-                            _ => ::protobuf::rt::skip_field_for_tag(tag, is)?,
-                        };
-                    }
-                    is.pop_limit(old_limit);
-                    self.config.insert(key, value);
-                },
-                42 => {
                     self.hash = ::std::option::Option::Some(is.read_string()?);
                 },
                 tag => {
@@ -5353,14 +5299,8 @@ impl ::protobuf::Message for CallPluginRequest {
         if !self.input.is_empty() {
             my_size += ::protobuf::rt::bytes_size(3, &self.input);
         }
-        for (k, v) in &self.config {
-            let mut entry_size = 0;
-            entry_size += ::protobuf::rt::string_size(1, &k);
-            entry_size += ::protobuf::rt::string_size(2, &v);
-            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(entry_size) + entry_size
-        };
         if let Some(v) = self.hash.as_ref() {
-            my_size += ::protobuf::rt::string_size(5, &v);
+            my_size += ::protobuf::rt::string_size(4, &v);
         }
         my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
         self.special_fields.cached_size().set(my_size as u32);
@@ -5377,17 +5317,8 @@ impl ::protobuf::Message for CallPluginRequest {
         if !self.input.is_empty() {
             os.write_bytes(3, &self.input)?;
         }
-        for (k, v) in &self.config {
-            let mut entry_size = 0;
-            entry_size += ::protobuf::rt::string_size(1, &k);
-            entry_size += ::protobuf::rt::string_size(2, &v);
-            os.write_raw_varint32(34)?; // Tag.
-            os.write_raw_varint32(entry_size as u32)?;
-            os.write_string(1, &k)?;
-            os.write_string(2, &v)?;
-        };
         if let Some(v) = self.hash.as_ref() {
-            os.write_string(5, v)?;
+            os.write_string(4, v)?;
         }
         os.write_unknown_fields(self.special_fields.unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -5409,14 +5340,19 @@ impl ::protobuf::Message for CallPluginRequest {
         self.function_name.clear();
         self.identifier.clear();
         self.input.clear();
-        self.config.clear();
         self.hash = ::std::option::Option::None;
         self.special_fields.clear();
     }
 
     fn default_instance() -> &'static CallPluginRequest {
-        static instance: ::protobuf::rt::Lazy<CallPluginRequest> = ::protobuf::rt::Lazy::new();
-        instance.get(CallPluginRequest::new)
+        static instance: CallPluginRequest = CallPluginRequest {
+            function_name: ::std::string::String::new(),
+            identifier: ::std::string::String::new(),
+            input: ::std::vec::Vec::new(),
+            hash: ::std::option::Option::None,
+            special_fields: ::protobuf::SpecialFields::new(),
+        };
+        &instance
     }
 }
 
@@ -6043,28 +5979,22 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     aphRequest\x12\x1b\n\tmodule_id\x18\x01\x20\x01(\x03R\x08moduleId\"v\n\
     \x16GetModuleGraphResponse\x12/\n\x0cmodule_graph\x18\x01\x20\x01(\x0b2\
     \x0c.ModuleGraphR\x0bmoduleGraph\x12!\n\x05error\x18\x02\x20\x01(\x0b2\
-    \x06.ErrorH\0R\x05error\x88\x01\x01B\x08\n\x06_error\"\xf0\x01\n\x14Inst\
-    allPluginRequest\x12\x1e\n\nidentifier\x18\x01\x20\x01(\tR\nidentifier\
-    \x12\x12\n\x04name\x18\x02\x20\x01(\tR\x04name\x12\x1a\n\x08location\x18\
-    \x03\x20\x01(\tR\x08location\x12\x12\n\x04wasm\x18\x04\x20\x01(\x0cR\x04\
-    wasm\x129\n\x06config\x18\x05\x20\x03(\x0b2!.InstallPluginRequest.Config\
-    EntryR\x06config\x1a9\n\x0bConfigEntry\x12\x10\n\x03key\x18\x01\x20\x01(\
-    \tR\x03key\x12\x14\n\x05value\x18\x02\x20\x01(\tR\x05value:\x028\x01\"X\
+    \x06.ErrorH\0R\x05error\x88\x01\x01B\x08\n\x06_error\"z\n\x14InstallPlug\
+    inRequest\x12\x1e\n\nidentifier\x18\x01\x20\x01(\tR\nidentifier\x12\x12\
+    \n\x04name\x18\x02\x20\x01(\tR\x04name\x12\x1a\n\x08location\x18\x03\x20\
+    \x01(\tR\x08location\x12\x12\n\x04wasm\x18\x04\x20\x01(\x0cR\x04wasm\"X\
     \n\x15InstallPluginResponse\x12\x12\n\x04hash\x18\x01\x20\x01(\tR\x04has\
     h\x12!\n\x05error\x18\x02\x20\x01(\x0b2\x06.ErrorH\0R\x05error\x88\x01\
     \x01B\x08\n\x06_error\"8\n\x16UninstallPluginRequest\x12\x1e\n\nidentifi\
     er\x18\x01\x20\x01(\tR\nidentifier\"F\n\x17UninstallPluginResponse\x12!\
     \n\x05error\x18\x02\x20\x01(\x0b2\x06.ErrorH\0R\x05error\x88\x01\x01B\
-    \x08\n\x06_error\"\x83\x02\n\x11CallPluginRequest\x12#\n\rfunction_name\
+    \x08\n\x06_error\"\x90\x01\n\x11CallPluginRequest\x12#\n\rfunction_name\
     \x18\x01\x20\x01(\tR\x0cfunctionName\x12\x1e\n\nidentifier\x18\x02\x20\
     \x01(\tR\nidentifier\x12\x14\n\x05input\x18\x03\x20\x01(\x0cR\x05input\
-    \x126\n\x06config\x18\x04\x20\x03(\x0b2\x1e.CallPluginRequest.ConfigEntr\
-    yR\x06config\x12\x17\n\x04hash\x18\x05\x20\x01(\tH\0R\x04hash\x88\x01\
-    \x01\x1a9\n\x0bConfigEntry\x12\x10\n\x03key\x18\x01\x20\x01(\tR\x03key\
-    \x12\x14\n\x05value\x18\x02\x20\x01(\tR\x05value:\x028\x01B\x07\n\x05_ha\
-    sh\"z\n\x12CallPluginResponse\x12\x16\n\x06output\x18\x01\x20\x01(\x0cR\
-    \x06output\x12\x1f\n\x0breturn_code\x18\x02\x20\x01(\x05R\nreturnCode\
-    \x12!\n\x05error\x18\x03\x20\x01(\x0b2\x06.ErrorH\0R\x05error\x88\x01\
+    \x12\x17\n\x04hash\x18\x04\x20\x01(\tH\0R\x04hash\x88\x01\x01B\x07\n\x05\
+    _hash\"z\n\x12CallPluginResponse\x12\x16\n\x06output\x18\x01\x20\x01(\
+    \x0cR\x06output\x12\x1f\n\x0breturn_code\x18\x02\x20\x01(\x05R\nreturnCo\
+    de\x12!\n\x05error\x18\x03\x20\x01(\x0b2\x06.ErrorH\0R\x05error\x88\x01\
     \x01B\x08\n\x06_error*S\n\x07ValType\x12\x07\n\x03I32\x10\0\x12\x07\n\
     \x03I64\x10\x01\x12\x07\n\x03F32\x10\x02\x12\x07\n\x03F64\x10\x03\x12\
     \x08\n\x04V128\x10\x04\x12\x0b\n\x07FuncRef\x10\x05\x12\r\n\tExternRef\
@@ -6076,7 +6006,7 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \n\x08Language\x10\x03\x12\x10\n\x0cImportsCount\x10\x04\x12\x10\n\x0cEx\
     portsCount\x10\x05\x12\n\n\x06Sha256\x10\x06\x12\x0e\n\nComplexity\x10\
     \x07*\"\n\x0cAuditOutcome\x12\x08\n\x04PASS\x10\0\x12\x08\n\x04FAIL\x10\
-    \x01J\xa8n\n\x07\x12\x05\0\0\xd5\x02\x01\n\x08\n\x01\x0c\x12\x03\0\0\x12\
+    \x01J\xb4m\n\x07\x12\x05\0\0\xd5\x02\x01\n\x08\n\x01\x0c\x12\x03\0\0\x12\
     \n\t\n\x02\x03\0\x12\x03\x02\0)\nr\n\x02\x05\0\x12\x04\x06\0\x0e\x01\x1a\
     f\x20Used\x20to\x20type\x20the\x20arguments\x20and\x20return\x20types\
     \x20from\x20wasm\x20elements\x20such\x20as\x20import\n\x20and\x20export\
@@ -6559,61 +6489,55 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x02\t\r\n\r\n\x05\x04\x1a\x02\x01\x03\x12\x04\xb2\x02\x10\x11\n\x0c\n\
     \x04\x04\x1a\x02\x02\x12\x04\xb3\x02\x02\x16\n\r\n\x05\x04\x1a\x02\x02\
     \x05\x12\x04\xb3\x02\x02\x08\n\r\n\x05\x04\x1a\x02\x02\x01\x12\x04\xb3\
-    \x02\t\x11\n\r\n\x05\x04\x1a\x02\x02\x03\x12\x04\xb3\x02\x14\x15\n\x0c\n\
-    \x04\x04\x1a\x02\x03\x12\x04\xb4\x02\x02\x11\n\r\n\x05\x04\x1a\x02\x03\
-    \x05\x12\x04\xb4\x02\x02\x07\n\r\n\x05\x04\x1a\x02\x03\x01\x12\x04\xb4\
-    \x02\x08\x0c\n\r\n\x05\x04\x1a\x02\x03\x03\x12\x04\xb4\x02\x0f\x10\n\x0c\
-    \n\x04\x04\x1a\x02\x04\x12\x04\xb5\x02\x02!\n\r\n\x05\x04\x1a\x02\x04\
-    \x06\x12\x04\xb5\x02\x02\x15\n\r\n\x05\x04\x1a\x02\x04\x01\x12\x04\xb5\
-    \x02\x16\x1c\n\r\n\x05\x04\x1a\x02\x04\x03\x12\x04\xb5\x02\x1f\x20\n\x0c\
-    \n\x02\x04\x1b\x12\x06\xb8\x02\0\xbc\x02\x01\n\x0b\n\x03\x04\x1b\x01\x12\
-    \x04\xb8\x02\x08\x1d\n\x0c\n\x04\x04\x1b\x02\0\x12\x04\xb9\x02\x02\x12\n\
-    \r\n\x05\x04\x1b\x02\0\x05\x12\x04\xb9\x02\x02\x08\n\r\n\x05\x04\x1b\x02\
-    \0\x01\x12\x04\xb9\x02\t\r\n\r\n\x05\x04\x1b\x02\0\x03\x12\x04\xb9\x02\
-    \x10\x11\n\x14\n\x04\x04\x1b\x02\x01\x12\x04\xba\x02\x02\x1b\"\x06\x20..\
-    .\x20\n\n\r\n\x05\x04\x1b\x02\x01\x04\x12\x04\xba\x02\x02\n\n\r\n\x05\
-    \x04\x1b\x02\x01\x06\x12\x04\xba\x02\x0b\x10\n\r\n\x05\x04\x1b\x02\x01\
-    \x01\x12\x04\xba\x02\x11\x16\n\r\n\x05\x04\x1b\x02\x01\x03\x12\x04\xba\
-    \x02\x19\x1a\n#\n\x02\x04\x1c\x12\x06\xc0\x02\0\xc2\x02\x01\x1a\x15\x20P\
-    UT\x20/api/v1/plugin:\n\n\x0b\n\x03\x04\x1c\x01\x12\x04\xc0\x02\x08\x1e\
-    \n\x0c\n\x04\x04\x1c\x02\0\x12\x04\xc1\x02\x02\x18\n\r\n\x05\x04\x1c\x02\
-    \0\x05\x12\x04\xc1\x02\x02\x08\n\r\n\x05\x04\x1c\x02\0\x01\x12\x04\xc1\
-    \x02\t\x13\n\r\n\x05\x04\x1c\x02\0\x03\x12\x04\xc1\x02\x16\x17\n\x0c\n\
-    \x02\x04\x1d\x12\x06\xc4\x02\0\xc6\x02\x01\n\x0b\n\x03\x04\x1d\x01\x12\
-    \x04\xc4\x02\x08\x1f\n\x0c\n\x04\x04\x1d\x02\0\x12\x04\xc5\x02\x02\x1b\n\
-    \r\n\x05\x04\x1d\x02\0\x04\x12\x04\xc5\x02\x02\n\n\r\n\x05\x04\x1d\x02\0\
-    \x06\x12\x04\xc5\x02\x0b\x10\n\r\n\x05\x04\x1d\x02\0\x01\x12\x04\xc5\x02\
-    \x11\x16\n\r\n\x05\x04\x1d\x02\0\x03\x12\x04\xc5\x02\x19\x1a\n$\n\x02\
-    \x04\x1e\x12\x06\xc9\x02\0\xcf\x02\x01\x1a\x16\x20POST\x20/api/v1/plugin\
-    :\n\n\x0b\n\x03\x04\x1e\x01\x12\x04\xc9\x02\x08\x19\n\x0c\n\x04\x04\x1e\
-    \x02\0\x12\x04\xca\x02\x02\x1b\n\r\n\x05\x04\x1e\x02\0\x05\x12\x04\xca\
-    \x02\x02\x08\n\r\n\x05\x04\x1e\x02\0\x01\x12\x04\xca\x02\t\x16\n\r\n\x05\
-    \x04\x1e\x02\0\x03\x12\x04\xca\x02\x19\x1a\n\x0c\n\x04\x04\x1e\x02\x01\
-    \x12\x04\xcb\x02\x02\x18\n\r\n\x05\x04\x1e\x02\x01\x05\x12\x04\xcb\x02\
-    \x02\x08\n\r\n\x05\x04\x1e\x02\x01\x01\x12\x04\xcb\x02\t\x13\n\r\n\x05\
-    \x04\x1e\x02\x01\x03\x12\x04\xcb\x02\x16\x17\n\x0c\n\x04\x04\x1e\x02\x02\
-    \x12\x04\xcc\x02\x02\x12\n\r\n\x05\x04\x1e\x02\x02\x05\x12\x04\xcc\x02\
-    \x02\x07\n\r\n\x05\x04\x1e\x02\x02\x01\x12\x04\xcc\x02\x08\r\n\r\n\x05\
-    \x04\x1e\x02\x02\x03\x12\x04\xcc\x02\x10\x11\n4\n\x04\x04\x1e\x02\x03\
-    \x12\x04\xcd\x02\x02!\"&\x20maybe\x20consider\x20bytes\x20as\x20JSON\x20\
-    instead\n\n\r\n\x05\x04\x1e\x02\x03\x06\x12\x04\xcd\x02\x02\x15\n\r\n\
-    \x05\x04\x1e\x02\x03\x01\x12\x04\xcd\x02\x16\x1c\n\r\n\x05\x04\x1e\x02\
-    \x03\x03\x12\x04\xcd\x02\x1f\x20\n\x0c\n\x04\x04\x1e\x02\x04\x12\x04\xce\
-    \x02\x02\x1b\n\r\n\x05\x04\x1e\x02\x04\x04\x12\x04\xce\x02\x02\n\n\r\n\
-    \x05\x04\x1e\x02\x04\x05\x12\x04\xce\x02\x0b\x11\n\r\n\x05\x04\x1e\x02\
-    \x04\x01\x12\x04\xce\x02\x12\x16\n\r\n\x05\x04\x1e\x02\x04\x03\x12\x04\
-    \xce\x02\x19\x1a\n\x0c\n\x02\x04\x1f\x12\x06\xd1\x02\0\xd5\x02\x01\n\x0b\
-    \n\x03\x04\x1f\x01\x12\x04\xd1\x02\x08\x1a\n\x0c\n\x04\x04\x1f\x02\0\x12\
-    \x04\xd2\x02\x02\x13\n\r\n\x05\x04\x1f\x02\0\x05\x12\x04\xd2\x02\x02\x07\
-    \n\r\n\x05\x04\x1f\x02\0\x01\x12\x04\xd2\x02\x08\x0e\n\r\n\x05\x04\x1f\
-    \x02\0\x03\x12\x04\xd2\x02\x11\x12\n\x0c\n\x04\x04\x1f\x02\x01\x12\x04\
-    \xd3\x02\x02\x18\n\r\n\x05\x04\x1f\x02\x01\x05\x12\x04\xd3\x02\x02\x07\n\
-    \r\n\x05\x04\x1f\x02\x01\x01\x12\x04\xd3\x02\x08\x13\n\r\n\x05\x04\x1f\
-    \x02\x01\x03\x12\x04\xd3\x02\x16\x17\n\x0c\n\x04\x04\x1f\x02\x02\x12\x04\
-    \xd4\x02\x02\x1b\n\r\n\x05\x04\x1f\x02\x02\x04\x12\x04\xd4\x02\x02\n\n\r\
-    \n\x05\x04\x1f\x02\x02\x06\x12\x04\xd4\x02\x0b\x10\n\r\n\x05\x04\x1f\x02\
-    \x02\x01\x12\x04\xd4\x02\x11\x16\n\r\n\x05\x04\x1f\x02\x02\x03\x12\x04\
-    \xd4\x02\x19\x1ab\x06proto3\
+    \x02\t\x11\n\r\n\x05\x04\x1a\x02\x02\x03\x12\x04\xb3\x02\x14\x15\n!\n\
+    \x04\x04\x1a\x02\x03\x12\x04\xb4\x02\x02\x11\"\x13\x20bytes\x20config\
+    \x20=\x205;\n\n\r\n\x05\x04\x1a\x02\x03\x05\x12\x04\xb4\x02\x02\x07\n\r\
+    \n\x05\x04\x1a\x02\x03\x01\x12\x04\xb4\x02\x08\x0c\n\r\n\x05\x04\x1a\x02\
+    \x03\x03\x12\x04\xb4\x02\x0f\x10\n\x0c\n\x02\x04\x1b\x12\x06\xb8\x02\0\
+    \xbc\x02\x01\n\x0b\n\x03\x04\x1b\x01\x12\x04\xb8\x02\x08\x1d\n\x0c\n\x04\
+    \x04\x1b\x02\0\x12\x04\xb9\x02\x02\x12\n\r\n\x05\x04\x1b\x02\0\x05\x12\
+    \x04\xb9\x02\x02\x08\n\r\n\x05\x04\x1b\x02\0\x01\x12\x04\xb9\x02\t\r\n\r\
+    \n\x05\x04\x1b\x02\0\x03\x12\x04\xb9\x02\x10\x11\n\x14\n\x04\x04\x1b\x02\
+    \x01\x12\x04\xba\x02\x02\x1b\"\x06\x20...\x20\n\n\r\n\x05\x04\x1b\x02\
+    \x01\x04\x12\x04\xba\x02\x02\n\n\r\n\x05\x04\x1b\x02\x01\x06\x12\x04\xba\
+    \x02\x0b\x10\n\r\n\x05\x04\x1b\x02\x01\x01\x12\x04\xba\x02\x11\x16\n\r\n\
+    \x05\x04\x1b\x02\x01\x03\x12\x04\xba\x02\x19\x1a\n#\n\x02\x04\x1c\x12\
+    \x06\xc0\x02\0\xc2\x02\x01\x1a\x15\x20PUT\x20/api/v1/plugin:\n\n\x0b\n\
+    \x03\x04\x1c\x01\x12\x04\xc0\x02\x08\x1e\n\x0c\n\x04\x04\x1c\x02\0\x12\
+    \x04\xc1\x02\x02\x18\n\r\n\x05\x04\x1c\x02\0\x05\x12\x04\xc1\x02\x02\x08\
+    \n\r\n\x05\x04\x1c\x02\0\x01\x12\x04\xc1\x02\t\x13\n\r\n\x05\x04\x1c\x02\
+    \0\x03\x12\x04\xc1\x02\x16\x17\n\x0c\n\x02\x04\x1d\x12\x06\xc4\x02\0\xc6\
+    \x02\x01\n\x0b\n\x03\x04\x1d\x01\x12\x04\xc4\x02\x08\x1f\n\x0c\n\x04\x04\
+    \x1d\x02\0\x12\x04\xc5\x02\x02\x1b\n\r\n\x05\x04\x1d\x02\0\x04\x12\x04\
+    \xc5\x02\x02\n\n\r\n\x05\x04\x1d\x02\0\x06\x12\x04\xc5\x02\x0b\x10\n\r\n\
+    \x05\x04\x1d\x02\0\x01\x12\x04\xc5\x02\x11\x16\n\r\n\x05\x04\x1d\x02\0\
+    \x03\x12\x04\xc5\x02\x19\x1a\n$\n\x02\x04\x1e\x12\x06\xc9\x02\0\xcf\x02\
+    \x01\x1a\x16\x20POST\x20/api/v1/plugin:\n\n\x0b\n\x03\x04\x1e\x01\x12\
+    \x04\xc9\x02\x08\x19\n\x0c\n\x04\x04\x1e\x02\0\x12\x04\xca\x02\x02\x1b\n\
+    \r\n\x05\x04\x1e\x02\0\x05\x12\x04\xca\x02\x02\x08\n\r\n\x05\x04\x1e\x02\
+    \0\x01\x12\x04\xca\x02\t\x16\n\r\n\x05\x04\x1e\x02\0\x03\x12\x04\xca\x02\
+    \x19\x1a\n\x0c\n\x04\x04\x1e\x02\x01\x12\x04\xcb\x02\x02\x18\n\r\n\x05\
+    \x04\x1e\x02\x01\x05\x12\x04\xcb\x02\x02\x08\n\r\n\x05\x04\x1e\x02\x01\
+    \x01\x12\x04\xcb\x02\t\x13\n\r\n\x05\x04\x1e\x02\x01\x03\x12\x04\xcb\x02\
+    \x16\x17\n\x0c\n\x04\x04\x1e\x02\x02\x12\x04\xcc\x02\x02\x12\n\r\n\x05\
+    \x04\x1e\x02\x02\x05\x12\x04\xcc\x02\x02\x07\n\r\n\x05\x04\x1e\x02\x02\
+    \x01\x12\x04\xcc\x02\x08\r\n\r\n\x05\x04\x1e\x02\x02\x03\x12\x04\xcc\x02\
+    \x10\x11\n!\n\x04\x04\x1e\x02\x03\x12\x04\xcd\x02\x02\x1b\"\x13\x20bytes\
+    \x20config\x20=\x205;\n\n\r\n\x05\x04\x1e\x02\x03\x04\x12\x04\xcd\x02\
+    \x02\n\n\r\n\x05\x04\x1e\x02\x03\x05\x12\x04\xcd\x02\x0b\x11\n\r\n\x05\
+    \x04\x1e\x02\x03\x01\x12\x04\xcd\x02\x12\x16\n\r\n\x05\x04\x1e\x02\x03\
+    \x03\x12\x04\xcd\x02\x19\x1a\n\x0c\n\x02\x04\x1f\x12\x06\xd1\x02\0\xd5\
+    \x02\x01\n\x0b\n\x03\x04\x1f\x01\x12\x04\xd1\x02\x08\x1a\n\x0c\n\x04\x04\
+    \x1f\x02\0\x12\x04\xd2\x02\x02\x13\n\r\n\x05\x04\x1f\x02\0\x05\x12\x04\
+    \xd2\x02\x02\x07\n\r\n\x05\x04\x1f\x02\0\x01\x12\x04\xd2\x02\x08\x0e\n\r\
+    \n\x05\x04\x1f\x02\0\x03\x12\x04\xd2\x02\x11\x12\n\x0c\n\x04\x04\x1f\x02\
+    \x01\x12\x04\xd3\x02\x02\x18\n\r\n\x05\x04\x1f\x02\x01\x05\x12\x04\xd3\
+    \x02\x02\x07\n\r\n\x05\x04\x1f\x02\x01\x01\x12\x04\xd3\x02\x08\x13\n\r\n\
+    \x05\x04\x1f\x02\x01\x03\x12\x04\xd3\x02\x16\x17\n\x0c\n\x04\x04\x1f\x02\
+    \x02\x12\x04\xd4\x02\x02\x1b\n\r\n\x05\x04\x1f\x02\x02\x04\x12\x04\xd4\
+    \x02\x02\n\n\r\n\x05\x04\x1f\x02\x02\x06\x12\x04\xd4\x02\x0b\x10\n\r\n\
+    \x05\x04\x1f\x02\x02\x01\x12\x04\xd4\x02\x11\x16\n\r\n\x05\x04\x1f\x02\
+    \x02\x03\x12\x04\xd4\x02\x19\x1ab\x06proto3\
 ";
 
 /// `FileDescriptorProto` object which was a source for this generated file

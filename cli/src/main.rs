@@ -259,29 +259,31 @@ fn make_subcommands() -> Vec<Command> {
         .arg(Arg::new("module1").help("first module ID or path to .wasm"))
         .arg(Arg::new("module2").help("second module ID or path to .wasm"));
 
-    // TODO: handle plugins with multiple args
     let call_plugin = clap::Command::new("call")
         .about("Call a Modsurfer plugin.")
         .arg(
             Arg::new("identifier")
                 .long("id")
-                .help("The identifier of the registered plugin"),
+                .help("the identifier of the registered plugin"),
         )
         .arg(
-            Arg::new("function-name")
-                .long("func-name")
-                .help("The function to be called"),
+            Arg::new("function")
+                .long("function")
+                .short('f')
+                .help("the function to be called"),
         )
         .arg(
-            Arg::new("function-input")
-                .long("func-input")
-                .help("A path on disk to the binary form of the input to the plugin being called"),
+            Arg::new("input")
+                .long("input")
+                .short('i')
+                .help("use @{path_to_file} to specify a file as input to your plugin's function. Otherwise, the value provided will used as input to your function as raw bytes"),
         )
         .arg(
             Arg::new("output")
                 .value_parser(clap::value_parser!(PathBuf))
                 .long("output")
-                .help("A location on disk to write the output.  The output of the call will be written to stdout if not specified"),
+                .short('o')
+                .help("a location on disk to write the output.  The output of the call will be written to stdout if not specified"),
         );
 
     // TODO: allow specification of plugin "config"
@@ -290,26 +292,29 @@ fn make_subcommands() -> Vec<Command> {
         .arg(
             Arg::new("identifier")
                 .long("id")
-                .help("The identifier of the plugin to be installed"),
+                .help("the identifier of the plugin to be installed"),
         )
         .arg(
             Arg::new("name")
                 .required(false)
                 .long("name")
-                .help("The human readable name of the plugin"),
+                .short('n')
+                .help("the human readable name of the plugin"),
         )
         .arg(
             Arg::new("location")
                 .required_unless_present("wasm")
                 .long("loc")
-                .help("The remote location of the plugin"),
+                .short('l')
+                .help("the location of the wasm to install as a plugin. Note: currently unimplemented, please use --wasm instead for now."),
         )
         .arg(
             Arg::new("wasm")
                 .required_unless_present("location")
                 .value_parser(clap::value_parser!(PathBuf))
                 .long("wasm")
-                .help("A path on disk to the plugin"),
+                .short('w')
+                .help("a path on disk to the plugin"),
         );
 
     let uninstall_plugin = clap::Command::new("uninstall")
@@ -317,7 +322,7 @@ fn make_subcommands() -> Vec<Command> {
         .arg(
             Arg::new("identifier")
                 .long("id")
-                .help("The identifier of the plugin to uninstall"),
+                .help("the identifier of the plugin to uninstall"),
         );
 
     let plugin = clap::Command::new("plugin")

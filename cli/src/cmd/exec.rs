@@ -21,6 +21,7 @@ pub type Id = i64;
 pub type Hash = String;
 pub type ModuleName = String;
 pub type FunctionName = String;
+pub type FunctionInput = String;
 pub type TextSearch = String;
 pub type Offset = u32;
 pub type Limit = u32;
@@ -29,6 +30,11 @@ pub type ModuleFile = PathBuf;
 pub type CheckFile = PathBuf;
 pub type MetadataEntry = String;
 pub type WithContext = bool;
+pub type Identifier = String;
+pub type PluginName = String;
+pub type Location = String;
+pub type WasmFile = PathBuf;
+pub type OutputFile = PathBuf;
 
 #[derive(Debug)]
 pub struct Cli {
@@ -121,14 +127,19 @@ pub enum Subcommand<'a> {
     Yank(Id, Version, &'a OutputFormat),
     Audit(CheckFile, AuditOutcome, Offset, Limit, &'a OutputFormat),
     Diff(IdOrFilename, IdOrFilename, WithContext),
-    CallPlugin(String, String, String, Option<&'a PathBuf>), // identifier, function-name, function-input, output
-    InstallPlugin(
-        String,              // identifier
-        Option<&'a String>,  // name
-        Option<&'a String>,  // location
-        Option<&'a PathBuf>, // wasm
+    CallPlugin(
+        Identifier,
+        FunctionName,
+        FunctionInput,
+        Option<&'a OutputFile>,
     ),
-    UninstallPlugin(String), // identifier
+    InstallPlugin(
+        Identifier,
+        Option<&'a PluginName>,
+        Option<&'a Location>,
+        Option<&'a WasmFile>,
+    ),
+    UninstallPlugin(Identifier),
 }
 
 impl Cli {
@@ -360,21 +371,21 @@ impl Cli {
                 print!("{}", diff);
                 Ok(ExitCode::SUCCESS)
             }
-            Subcommand::CallPlugin(identifier, function_name, function_input, output) => {
-                let mut input = function_input.as_bytes().to_vec();
+            Subcommand::CallPlugin(identifier, function, input_arg, output) => {
+                let mut input = input_arg.as_bytes().to_vec();
 
                 // if the value is a path to a file
-                if function_input.to_owned().starts_with("@") {
-                    let path = function_input
+                if input_arg.to_owned().starts_with("@") {
+                    let path = input_arg
                         .chars()
                         .skip(1)
-                        .take(function_input.len() - 1)
+                        .take(input_arg.len() - 1)
                         .collect::<String>();
                     input = tokio::fs::read(Path::new(&path)).await?;
                 }
 
                 let client = Client::new(self.host.as_str())?;
-                let res = client.call_plugin(identifier, function_name, input).await?;
+                let res = client.call_plugin(identifier, function, input).await?;
 
                 if let Some(output) = output {
                     tokio::fs::write(output, res).await?;
@@ -385,18 +396,24 @@ impl Cli {
                 Ok(ExitCode::SUCCESS)
             }
             Subcommand::InstallPlugin(identifier, name, location, wasm) => {
-                // TODO: implement location and name handling
+                // TODO: implement location handling
                 if let Some(wasm) = wasm {
                     let wasm = tokio::fs::read(wasm).await?;
-                    let name = "";
-                    let location = "";
+                    let name = match name {
+                        Some(v) => v,
+                        None => "",
+                    };
+                    let location = match location {
+                        Some(v) => v,
+                        None => "",
+                    };
                     let client = Client::new(self.host.as_str())?;
                     let res = client
                         .install_plugin(identifier, name.to_string(), location.to_string(), wasm)
                         .await?;
                     return Ok(ExitCode::SUCCESS);
                 }
-                Err(anyhow!("No wasm provided.  TODO: Implement location"))
+                Err(anyhow!("No wasm provided.  Note: the --location argument is currently not supported.  Please use --wasm instead for now."))
             }
             Subcommand::UninstallPlugin(identifier) => {
                 let client = Client::new(self.host.as_str())?;
@@ -557,15 +574,15 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
             ("plugin", args) => match args.subcommand() {
                 Some(("call", args)) => {
                     let identifier = args
-                        .get_one::<String>("identifier")
+                        .get_one::<Identifier>("identifier")
                         .expect("identifier is required");
                     let function_name = args
-                        .get_one::<String>("function-name")
-                        .expect("function-name is required");
+                        .get_one::<FunctionName>("function")
+                        .expect("function is required");
                     let function_input = args
-                        .get_one::<String>("function-input")
-                        .expect("function-input is required");
-                    let output = args.get_one::<PathBuf>("output");
+                        .get_one::<FunctionInput>("input")
+                        .expect("input is required");
+                    let output = args.get_one::<OutputFile>("output");
 
                     Subcommand::CallPlugin(
                         identifier.to_string(),
@@ -576,12 +593,18 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                 }
                 Some(("install", args)) => {
                     let identifier = args
-                        .get_one::<String>("identifier")
+                        .get_one::<Identifier>("identifier")
                         .expect("identifier is required");
-                    let name = args.get_one::<String>("name");
-                    let location = args.get_one::<String>("location");
-                    let wasm = args.get_one::<PathBuf>("wasm");
+                    let name = args.get_one::<PluginName>("name");
+                    let location = args.get_one::<Location>("location");
+                    let wasm = args.get_one::<WasmFile>("wasm");
                     Subcommand::InstallPlugin(identifier.to_string(), name, location, wasm)
+                }
+                Some(("uninstall", args)) => {
+                    let identifier = args
+                        .get_one::<Identifier>("identifier")
+                        .expect("identifier is required");
+                    Subcommand::UninstallPlugin(identifier.to_string())
                 }
                 _ => Subcommand::Unknown,
             },
