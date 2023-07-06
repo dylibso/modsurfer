@@ -430,15 +430,15 @@ impl Cli {
                     PathOrUrl::Path(v) => v.to_str().unwrap_or_else(|| ""),
                     PathOrUrl::Url(v) => v.as_str(),
                 };
-                let default_name = "".to_string();
-                let name = name.unwrap_or_else(|| &default_name);
-
+                let name = name.map(String::clone).unwrap_or_default();
                 let wasm = wasm.resolve().await?;
+
                 let client = Client::new(self.host.as_str())?;
                 let res = client
-                    .install_plugin(identifier, name.to_string(), location.to_string(), wasm)
+                    .install_plugin(identifier, name, location.to_string(), wasm)
                     .await?;
-                return Ok(ExitCode::SUCCESS);
+
+                Ok(ExitCode::SUCCESS)
             }
             Subcommand::UninstallPlugin(identifier) => {
                 let client = Client::new(self.host.as_str())?;
