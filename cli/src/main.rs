@@ -302,16 +302,7 @@ fn make_subcommands() -> Vec<Command> {
                 .help("the human readable name of the plugin"),
         )
         .arg(
-            Arg::new("location")
-                .required_unless_present("wasm")
-                .long("loc")
-                .short('l')
-                .help("the location of the wasm to install as a plugin. Note: currently unimplemented, please use --wasm instead for now."),
-        )
-        .arg(
             Arg::new("wasm")
-                .required_unless_present("location")
-                .value_parser(clap::value_parser!(PathBuf))
                 .long("wasm")
                 .short('w')
                 .help("a path on disk to the plugin"),
