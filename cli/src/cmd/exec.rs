@@ -430,10 +430,8 @@ impl Cli {
                     PathOrUrl::Path(v) => v.to_str().unwrap_or_else(|| ""),
                     PathOrUrl::Url(v) => v.as_str(),
                 };
-                let name = match name {
-                    Some(v) => v,
-                    None => "",
-                };
+                let default_name = "".to_string();
+                let name = name.unwrap_or_else(|| &default_name);
 
                 let wasm = wasm.resolve().await?;
                 let client = Client::new(self.host.as_str())?;
