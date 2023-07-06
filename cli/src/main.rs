@@ -322,6 +322,8 @@ fn make_subcommands() -> Vec<Command> {
         .subcommand(install_plugin)
         .subcommand(uninstall_plugin);
 
+    // This collection of commands should be exclusive to ones whose output can be formatted based on the --output-format arg, either `table` (default) or `json`. 
+    // If the command does not reliably support this kind of formatting, put the command within the "chained" vec below.
     [
         create, delete, get, list, search, validate, yank, audit, plugin,
     ]
