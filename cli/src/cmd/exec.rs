@@ -40,7 +40,7 @@ pub enum BytesOrPath {
 }
 
 impl BytesOrPath {
-    fn from(s: &String) -> Self {
+    fn from(s: &str) -> Self {
         if s.to_owned().starts_with("@") {
             let path = s.chars().skip(1).take(s.len() - 1).collect::<String>();
             return BytesOrPath::Path(PathBuf::from(path));
@@ -66,7 +66,7 @@ pub enum PathOrUrl {
 }
 
 impl PathOrUrl {
-    fn from(s: &String) -> Self {
+    fn from(s: &str) -> Self {
         match url::Url::parse(s) {
             Ok(v) => PathOrUrl::Url(v),
             Err(_) => PathOrUrl::Path(PathBuf::from(s)),
@@ -430,13 +430,12 @@ impl Cli {
                     PathOrUrl::Path(v) => v.to_str().unwrap_or_else(|| ""),
                     PathOrUrl::Url(v) => v.as_str(),
                 };
-                let default_name = "".to_string();
-                let name = name.unwrap_or_else(|| &default_name);
 
+                let name = name.cloned();
                 let wasm = wasm.resolve().await?;
                 let client = Client::new(self.host.as_str())?;
                 let res = client
-                    .install_plugin(identifier, name.to_string(), location.to_string(), wasm)
+                    .install_plugin(identifier, name, location.to_string(), wasm)
                     .await?;
                 return Ok(ExitCode::SUCCESS);
             }

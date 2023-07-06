@@ -304,7 +304,7 @@ message GetModuleGraphResponse {
 // PUT /api/v1/plugin:
 message InstallPluginRequest {
   string identifier = 1;
-  string name = 2;
+  optional string name = 2;
   string location = 3;
   bytes wasm = 4;
   // bytes config = 5;

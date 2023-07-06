@@ -287,26 +287,24 @@ fn make_subcommands() -> Vec<Command> {
         );
 
     // TODO: allow specification of plugin "config"
-    let install_plugin = clap::Command::new("install")
-        .about("Install a Modsurfer plugin.")
-        .arg(
-            Arg::new("identifier")
-                .long("id")
-                .help("the identifier of the plugin to be installed"),
-        )
-        .arg(
-            Arg::new("name")
-                .required(false)
-                .long("name")
-                .short('n')
-                .help("the human readable name of the plugin"),
-        )
-        .arg(
-            Arg::new("wasm")
-                .long("wasm")
-                .short('w')
-                .help("a path on disk to the plugin"),
-        );
+    let install_plugin =
+        clap::Command::new("install")
+            .about("Install a Modsurfer plugin.")
+            .arg(
+                Arg::new("identifier")
+                    .long("id")
+                    .help("the identifier of the plugin to be installed"),
+            )
+            .arg(
+                Arg::new("name")
+                    .required(false)
+                    .long("name")
+                    .short('n')
+                    .help("the human readable name of the plugin"),
+            )
+            .arg(Arg::new("wasm").long("wasm").short('w').help(
+                "a path on disk or a remote URL to the wasm you'd like to install as a plugin",
+            ));
 
     let uninstall_plugin = clap::Command::new("uninstall")
         .about("Uninstall a Modsurfer plugin.")
@@ -322,13 +320,11 @@ fn make_subcommands() -> Vec<Command> {
         .subcommand(install_plugin)
         .subcommand(uninstall_plugin);
 
-    // This collection of commands should be exclusive to ones whose output can be formatted based on the --output-format arg, either `table` (default) or `json`. 
+    // This collection of commands should be exclusive to ones whose output can be formatted based on the --output-format arg, either `table` (default) or `json`.
     // If the command does not reliably support this kind of formatting, put the command within the "chained" vec below.
-    [
-        create, delete, get, list, search, validate, yank, audit, plugin,
-    ]
-    .into_iter()
-    .map(add_output_arg)
-    .chain(vec![generate, diff])
-    .collect()
+    [create, delete, get, list, search, validate, yank, audit]
+        .into_iter()
+        .map(add_output_arg)
+        .chain(vec![generate, diff, plugin])
+        .collect()
 }

@@ -368,7 +368,7 @@ impl ApiClient for Client {
     async fn install_plugin(
         &self,
         identifier: String,
-        name: String,
+        name: Option<String>,
         location: String,
         wasm: Vec<u8>,
     ) -> Result<(), anyhow::Error> {

@@ -95,7 +95,7 @@ pub trait ApiClient {
     async fn install_plugin(
         &self,
         _identifier: String,
-        _name: String,
+        _name: Option<String>,
         _location: String,
         _wasm: Vec<u8>,
     ) -> Result<()> {
