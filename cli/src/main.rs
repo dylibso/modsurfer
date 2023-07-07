@@ -315,7 +315,7 @@ fn make_subcommands() -> Vec<Command> {
         );
 
     let plugin = clap::Command::new("plugin")
-        .about("Manage your Modsurfer plugins")
+        .about("Manage and invoke your Modsurfer plugins")
         .subcommand(call_plugin)
         .subcommand(install_plugin)
         .subcommand(uninstall_plugin);
