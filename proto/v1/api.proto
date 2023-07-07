@@ -326,8 +326,8 @@ message UninstallPluginResponse {
 
 // POST /api/v1/plugin:
 message CallPluginRequest {
-  string function_name = 1;
-  string identifier = 2; 
+  string identifier = 1; 
+  string function_name = 2;
   bytes input = 3;
   optional string hash = 4;
   // bytes config = 5;

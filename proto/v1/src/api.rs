@@ -5201,10 +5201,10 @@ impl ::protobuf::reflect::ProtobufValue for UninstallPluginResponse {
 // @@protoc_insertion_point(message:CallPluginRequest)
 pub struct CallPluginRequest {
     // message fields
-    // @@protoc_insertion_point(field:CallPluginRequest.function_name)
-    pub function_name: ::std::string::String,
     // @@protoc_insertion_point(field:CallPluginRequest.identifier)
     pub identifier: ::std::string::String,
+    // @@protoc_insertion_point(field:CallPluginRequest.function_name)
+    pub function_name: ::std::string::String,
     // @@protoc_insertion_point(field:CallPluginRequest.input)
     pub input: ::std::vec::Vec<u8>,
     // @@protoc_insertion_point(field:CallPluginRequest.hash)
@@ -5229,14 +5229,14 @@ impl CallPluginRequest {
         let mut fields = ::std::vec::Vec::with_capacity(4);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
         fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
-            "function_name",
-            |m: &CallPluginRequest| { &m.function_name },
-            |m: &mut CallPluginRequest| { &mut m.function_name },
-        ));
-        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
             "identifier",
             |m: &CallPluginRequest| { &m.identifier },
             |m: &mut CallPluginRequest| { &mut m.identifier },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
+            "function_name",
+            |m: &CallPluginRequest| { &m.function_name },
+            |m: &mut CallPluginRequest| { &mut m.function_name },
         ));
         fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
             "input",
@@ -5267,10 +5267,10 @@ impl ::protobuf::Message for CallPluginRequest {
         while let Some(tag) = is.read_raw_tag_or_eof()? {
             match tag {
                 10 => {
-                    self.function_name = is.read_string()?;
+                    self.identifier = is.read_string()?;
                 },
                 18 => {
-                    self.identifier = is.read_string()?;
+                    self.function_name = is.read_string()?;
                 },
                 26 => {
                     self.input = is.read_bytes()?;
@@ -5290,11 +5290,11 @@ impl ::protobuf::Message for CallPluginRequest {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u64 {
         let mut my_size = 0;
-        if !self.function_name.is_empty() {
-            my_size += ::protobuf::rt::string_size(1, &self.function_name);
-        }
         if !self.identifier.is_empty() {
-            my_size += ::protobuf::rt::string_size(2, &self.identifier);
+            my_size += ::protobuf::rt::string_size(1, &self.identifier);
+        }
+        if !self.function_name.is_empty() {
+            my_size += ::protobuf::rt::string_size(2, &self.function_name);
         }
         if !self.input.is_empty() {
             my_size += ::protobuf::rt::bytes_size(3, &self.input);
@@ -5308,11 +5308,11 @@ impl ::protobuf::Message for CallPluginRequest {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
-        if !self.function_name.is_empty() {
-            os.write_string(1, &self.function_name)?;
-        }
         if !self.identifier.is_empty() {
-            os.write_string(2, &self.identifier)?;
+            os.write_string(1, &self.identifier)?;
+        }
+        if !self.function_name.is_empty() {
+            os.write_string(2, &self.function_name)?;
         }
         if !self.input.is_empty() {
             os.write_bytes(3, &self.input)?;
@@ -5337,8 +5337,8 @@ impl ::protobuf::Message for CallPluginRequest {
     }
 
     fn clear(&mut self) {
-        self.function_name.clear();
         self.identifier.clear();
+        self.function_name.clear();
         self.input.clear();
         self.hash = ::std::option::Option::None;
         self.special_fields.clear();
@@ -5346,8 +5346,8 @@ impl ::protobuf::Message for CallPluginRequest {
 
     fn default_instance() -> &'static CallPluginRequest {
         static instance: CallPluginRequest = CallPluginRequest {
-            function_name: ::std::string::String::new(),
             identifier: ::std::string::String::new(),
+            function_name: ::std::string::String::new(),
             input: ::std::vec::Vec::new(),
             hash: ::std::option::Option::None,
             special_fields: ::protobuf::SpecialFields::new(),
@@ -5971,8 +5971,8 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     ninstallPluginRequest\x12\x1e\n\nidentifier\x18\x01\x20\x01(\tR\nidentif\
     ier\"F\n\x17UninstallPluginResponse\x12!\n\x05error\x18\x01\x20\x01(\x0b\
     2\x06.ErrorH\0R\x05error\x88\x01\x01B\x08\n\x06_error\"\x90\x01\n\x11Cal\
-    lPluginRequest\x12#\n\rfunction_name\x18\x01\x20\x01(\tR\x0cfunctionName\
-    \x12\x1e\n\nidentifier\x18\x02\x20\x01(\tR\nidentifier\x12\x14\n\x05inpu\
+    lPluginRequest\x12\x1e\n\nidentifier\x18\x01\x20\x01(\tR\nidentifier\x12\
+    #\n\rfunction_name\x18\x02\x20\x01(\tR\x0cfunctionName\x12\x14\n\x05inpu\
     t\x18\x03\x20\x01(\x0cR\x05input\x12\x17\n\x04hash\x18\x04\x20\x01(\tH\0\
     R\x04hash\x88\x01\x01B\x07\n\x05_hash\"Y\n\x12CallPluginResponse\x12\x16\
     \n\x06output\x18\x01\x20\x01(\x0cR\x06output\x12!\n\x05error\x18\x02\x20\
@@ -6495,12 +6495,12 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x11\x16\n\r\n\x05\x04\x1d\x02\0\x03\x12\x04\xc3\x02\x19\x1a\n$\n\x02\
     \x04\x1e\x12\x06\xc7\x02\0\xcd\x02\x01\x1a\x16\x20POST\x20/api/v1/plugin\
     :\n\n\x0b\n\x03\x04\x1e\x01\x12\x04\xc7\x02\x08\x19\n\x0c\n\x04\x04\x1e\
-    \x02\0\x12\x04\xc8\x02\x02\x1b\n\r\n\x05\x04\x1e\x02\0\x05\x12\x04\xc8\
-    \x02\x02\x08\n\r\n\x05\x04\x1e\x02\0\x01\x12\x04\xc8\x02\t\x16\n\r\n\x05\
-    \x04\x1e\x02\0\x03\x12\x04\xc8\x02\x19\x1a\n\x0c\n\x04\x04\x1e\x02\x01\
-    \x12\x04\xc9\x02\x02\x18\n\r\n\x05\x04\x1e\x02\x01\x05\x12\x04\xc9\x02\
-    \x02\x08\n\r\n\x05\x04\x1e\x02\x01\x01\x12\x04\xc9\x02\t\x13\n\r\n\x05\
-    \x04\x1e\x02\x01\x03\x12\x04\xc9\x02\x16\x17\n\x0c\n\x04\x04\x1e\x02\x02\
+    \x02\0\x12\x04\xc8\x02\x02\x18\n\r\n\x05\x04\x1e\x02\0\x05\x12\x04\xc8\
+    \x02\x02\x08\n\r\n\x05\x04\x1e\x02\0\x01\x12\x04\xc8\x02\t\x13\n\r\n\x05\
+    \x04\x1e\x02\0\x03\x12\x04\xc8\x02\x16\x17\n\x0c\n\x04\x04\x1e\x02\x01\
+    \x12\x04\xc9\x02\x02\x1b\n\r\n\x05\x04\x1e\x02\x01\x05\x12\x04\xc9\x02\
+    \x02\x08\n\r\n\x05\x04\x1e\x02\x01\x01\x12\x04\xc9\x02\t\x16\n\r\n\x05\
+    \x04\x1e\x02\x01\x03\x12\x04\xc9\x02\x19\x1a\n\x0c\n\x04\x04\x1e\x02\x02\
     \x12\x04\xca\x02\x02\x12\n\r\n\x05\x04\x1e\x02\x02\x05\x12\x04\xca\x02\
     \x02\x07\n\r\n\x05\x04\x1e\x02\x02\x01\x12\x04\xca\x02\x08\r\n\r\n\x05\
     \x04\x1e\x02\x02\x03\x12\x04\xca\x02\x10\x11\n!\n\x04\x04\x1e\x02\x03\
