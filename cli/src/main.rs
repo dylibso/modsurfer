@@ -289,7 +289,7 @@ fn make_subcommands() -> Vec<Command> {
     // TODO: allow specification of plugin "config"
     let install_plugin =
         clap::Command::new("install")
-            .about("Install a Modsurfer plugin.")
+            .about("Install a Modsurfer plugin to a given `identifier`. Any subsequent installs for a given `identifier` will overwrite the plugin at that `identifier` with the data provided on the command.")
             .arg(
                 Arg::new("identifier")
                     .long("id")
