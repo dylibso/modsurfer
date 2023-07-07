@@ -313,17 +313,15 @@ message InstallPluginRequest {
 message InstallPluginResponse { 
   string hash = 1;
   optional Error error = 2;
-  // ... 
 }
 
-
-// PUT /api/v1/plugin:
+// DELETE /api/v1/plugin:
 message UninstallPluginRequest {
   string identifier = 1;
 }
 
 message UninstallPluginResponse { 
-  optional Error error = 2;
+  optional Error error = 1;
 }
 
 // POST /api/v1/plugin:
@@ -337,6 +335,5 @@ message CallPluginRequest {
 
 message CallPluginResponse {
   bytes output = 1;
-  int32 return_code = 2;
-  optional Error error = 3;
+  optional Error error = 2;
 }
