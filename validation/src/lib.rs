@@ -1,25 +1,75 @@
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 use std::path::PathBuf;
 
-use std::{collections::BTreeMap, fmt::Display, process::ExitCode};
+use std::{
+    collections::{BTreeMap, HashMap},
+    fmt::Display,
+    process::ExitCode,
+};
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
-use extism::{Context, Plugin};
+use extism::{
+    manifest::{HttpRequest, Wasm, WasmMetadata},
+    Context, Plugin,
+};
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
-use modsurfer_convert::from_api;
+use modsurfer_convert::{from_api, to_api};
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+use modsurfer_proto_v1::api;
 
 use anyhow::Result;
+use futures::{future::LocalBoxFuture, FutureExt};
 use human_bytes::human_bytes;
 use parse_size::parse_size;
+use protobuf::Message;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
+// use tokio::sync::mpsc::{channel, Sender};
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub enum PluginSource {
+    #[serde(rename = "url")]
+    Url(String),
+    #[serde(rename = "file")]
+    File(String),
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+#[serde(untagged)]
+pub enum PluginWasi {
+    WithConfig(PluginWasiConfig),
+    NoConfig(bool),
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct PluginConfig {
+    #[serde(flatten)]
+    pub source: PluginSource,
+    pub name: String,
+    pub wasi: Option<PluginWasi>,
+    pub config: Option<BTreeMap<String, String>>,
+    pub digest: Option<String>,
+    pub serial: Option<Vec<PluginConfig>>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct PluginWasiConfig {
+    pub allowed_hosts: Vec<String>,
+    pub allowed_paths: BTreeMap<PathBuf, PathBuf>,
+}
 
 #[derive(Debug, Deserialize, Default, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Validation {
     pub validate: Check,
+    pub plugins: Option<Vec<PluginConfig>>,
 }
 
 #[skip_serializing_none]
@@ -260,7 +310,7 @@ pub struct Size {
     pub max: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum Classification {
     AbiCompatibilty,
     ResourceLimit,
@@ -278,7 +328,7 @@ impl Display for Classification {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FailureDetail {
     actual: String,
     expected: String,
@@ -286,9 +336,10 @@ pub struct FailureDetail {
     classification: Classification,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Report {
-    /// k/v pair of the dot-separated path to validation field and expectation info
+    /// k/v pair of the dot-separated path to validation field and expectation info, plus any info
+    /// provided by plugins executed after built-in validation
     fails: BTreeMap<String, FailureDetail>,
 }
 
@@ -302,6 +353,10 @@ impl Report {
 
     pub fn has_failures(&self) -> bool {
         !self.fails.is_empty()
+    }
+
+    pub fn merge(&mut self, other: &mut Report) {
+        self.fails.append(&mut other.fails);
     }
 }
 
@@ -482,7 +537,11 @@ fn namespace_prefix(import_item: &ImportItem, fn_name: &str) -> String {
     }
 }
 
-pub async fn validate(validation: Validation, module: modsurfer_module::Module) -> Result<Report> {
+pub async fn validate(
+    raw: impl AsRef<[u8]>,
+    validation: Validation,
+    module: modsurfer_module::Module,
+) -> Result<Report> {
     let mut report = Report::new();
 
     // WASI
@@ -791,7 +850,199 @@ pub async fn validate(validation: Validation, module: modsurfer_module::Module) 
         }
     }
 
+    // Plugins
+    if let Some(plugins) = validation.plugins {
+        let local_set = tokio::task::LocalSet::new();
+        let plugin_fails = run_plugins(local_set, plugins, &report, &module, &raw).await;
+        for p in plugin_fails {
+            p.into_iter().for_each(|(name, detail)| {
+                report.fails.insert(name, detail);
+            })
+        }
+    }
+
     Ok(report)
+}
+
+// executes all plugins and nested serial plugins recursively and returns a consolidated `Report`
+// consisting of all output validation failures produced by plugins.
+fn run_plugins(
+    local_set: tokio::task::LocalSet,
+    plugins: Vec<PluginConfig>,
+    report: &Report,
+    module: &modsurfer_module::Module,
+    wasm: impl AsRef<[u8]>,
+) -> LocalBoxFuture<'static, Vec<Vec<(String, FailureDetail)>>> {
+    let fut_plugin_runs = plugins
+        .into_iter()
+        .map(|cfg| {
+            local_set.spawn_local(cfg.run(report.clone(), module.clone(), wasm.as_ref().to_vec()))
+        })
+        .collect::<Vec<_>>();
+
+    async move {
+        let plugin_fails = futures::future::join_all(fut_plugin_runs).await;
+        plugin_fails
+            .into_iter()
+            .filter_map(|join_handle| join_handle.ok())
+            .map(|failure| {
+                if let Err(e) = &failure {
+                    eprintln!("plugin error: {}", e);
+                }
+                failure
+            })
+            .filter_map(|failures| failures.ok())
+            .collect::<Vec<_>>()
+    }
+    .boxed()
+}
+
+impl PluginConfig {
+    fn run(
+        self,
+        report: Report,
+        module: modsurfer_module::Module,
+        wasm: Vec<u8>,
+    ) -> Result<Vec<(String, FailureDetail)>> {
+        println!("running plugin {}", self.name);
+        // load the plugin via URL or local filepath
+        let source_wasm = match &self.source {
+            PluginSource::Url(url) => {
+                let mut wasm = Wasm::url(HttpRequest::new(url.clone()));
+                if let Some(digest) = &self.digest {
+                    let parts = digest.split(':').collect::<Vec<&str>>();
+                    if parts.len() < 2 {
+                        anyhow::bail!(
+                            "Invalid plugin digest, must be in the form 'hash_function:hash_value'"
+                        );
+                    }
+                    let func = parts[0].to_lowercase();
+                    let hash = parts[1];
+                    if func != "sha256" {
+                        anyhow::bail!("Unsupported hash function: {}, must be sha256", func);
+                    } else {
+                        let meta = WasmMetadata {
+                            name: Some(self.name.clone()),
+                            hash: Some(hash.to_string()),
+                        };
+                        wasm = Wasm::Url {
+                            req: HttpRequest::new(url),
+                            meta,
+                        };
+                    }
+                }
+                wasm
+            }
+            PluginSource::File(file) => Wasm::file(file),
+        };
+        // map allowed hosts & paths from configuration to plugin instance via manifest
+        let mut allowed_hosts: Option<Vec<String>> = None;
+        let mut allowed_paths: Option<BTreeMap<PathBuf, PathBuf>> = None;
+        if let Some(wasi) = &self.wasi {
+            match wasi {
+                PluginWasi::WithConfig(conf) => {
+                    if !conf.allowed_hosts.is_empty() {
+                        allowed_hosts = Some(conf.allowed_hosts.clone());
+                    }
+                    if !conf.allowed_paths.is_empty() {
+                        allowed_paths = Some(conf.allowed_paths.clone());
+                    }
+                }
+                _ => {}
+            }
+        }
+        let manifest = extism::Manifest {
+            wasm: vec![source_wasm],
+            config: self.config.clone().unwrap_or_default(),
+            allowed_hosts,
+            allowed_paths,
+            ..Default::default()
+        };
+        let ctx = Context::new();
+        let mut plugin = extism::Plugin::new_with_manifest(&ctx, &manifest, &[], true)?;
+        if !plugin.has_function("run") {
+            // TODO: add link to docs about modsurfer CLI plugins in error message
+            anyhow::bail!(
+                "Invalid modsurfer plugin: '{}', must export a `run` function with correct signature.",
+                self.name
+            );
+        }
+
+        // construct the input data
+        let mut fails: HashMap<String, api::FailureDetail> = HashMap::new();
+        report.fails.iter().for_each(|(k, v)| {
+            fails.insert(
+                k.clone(),
+                api::FailureDetail {
+                    actual: v.actual.clone(),
+                    expected: v.expected.clone(),
+                    severity: v.severity as u32,
+                    classification: protobuf::EnumOrUnknown::new(match v.classification {
+                        Classification::AbiCompatibilty => api::Classification::ABI_COMPATIBILITY,
+                        Classification::ResourceLimit => api::Classification::RESOURCE_LIMIT,
+                        Classification::Security => api::Classification::SECURITY,
+                    }),
+                    ..Default::default()
+                },
+            );
+        });
+        let plugin_report = api::Report {
+            fails,
+            ..Default::default()
+        };
+        let plugin_module = to_api::module(module.clone(), 0);
+        let plugin_input = api::PluginInput {
+            report: protobuf::MessageField::some(plugin_report),
+            module: protobuf::MessageField::some(plugin_module),
+            wasm: wasm.clone(),
+            ..Default::default()
+        };
+        let input = plugin_input.write_to_bytes()?;
+
+        // call the `run` function with input data
+        let output = plugin.call("run", input)?;
+        let plugin_output: api::PluginOutput = protobuf::Message::parse_from_bytes(output)?;
+        let mut plugin_fails = plugin_output
+            .failures
+            .into_iter()
+            .enumerate()
+            .map(|(i, f)| {
+                (
+                    format!("{} ({})", self.name, i),
+                    FailureDetail {
+                        actual: f.actual,
+                        expected: f.expected,
+                        severity: f.severity as usize,
+                        classification: match f.classification.enum_value_or_default() {
+                            api::Classification::ABI_COMPATIBILITY
+                            | api::Classification::UNKNOWN => Classification::AbiCompatibilty,
+                            api::Classification::RESOURCE_LIMIT => Classification::ResourceLimit,
+                            api::Classification::SECURITY => Classification::Security,
+                        },
+                    },
+                )
+            })
+            .collect::<Vec<_>>();
+
+        // if we have plugins in `serial`, run them one at a time re-construcing the input data
+        // from the return value from the previous plugin `run` call
+        if let Some(plugins) = self.serial {
+            // add the parent plugin's validation failures to the report before passing it to the
+            // serial plugins. these will be combined before the function returns.
+            let mut updated_report = report;
+            plugin_fails.iter().for_each(|(name, failure)| {
+                updated_report.fails.insert(name.clone(), failure.clone());
+            });
+            let local_set = tokio::task::LocalSet::new();
+            let serial_plugin_fails =
+                run_plugins(local_set, plugins, &updated_report, &module, wasm).await;
+            serial_plugin_fails
+                .into_iter()
+                .for_each(|fails| plugin_fails.extend(fails))
+        }
+
+        Ok(plugin_fails)
+    }
 }
 
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
@@ -825,5 +1076,5 @@ pub async fn validate_module(file: &PathBuf, check: &PathBuf) -> Result<Report> 
         validation = serde_yaml::from_slice(&buf)?;
     }
 
-    validate(validation, module).await
+    validate(&module_data, validation, module).await
 }

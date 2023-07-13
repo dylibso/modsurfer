@@ -1,0 +1,46 @@
+validate:
+  exports:
+    include: 
+      - count_vowels
+plugins:
+  # - file: test/spidermonkey.wasm
+  #   name: Run spidermonkey
+  #   wasi:
+  #     allowed_hosts: ["example.com", "github.com"] 
+  #     allowed_paths: 
+  #       .: /
+  #       ./test: ./test-files
+  - file: ../modsurfer-plugin/target/wasm32-unknown-unknown/debug/modsurfer_plugin.wasm
+    name: Run test plugin
+  # - url: https://raw.githubusercontent.com/extism/extism/main/wasm/code.wasm
+  #   name: count some vowels
+  #   digest: sha256:7def5bb4aa3843a5daf5d6078f1e8540e5ef10b035a9d9387e9bd5156d2b2565
+  # - url: https://raw.githubusercontent.com/extism/extism/main/wasm/code.wasm
+  #   name: count some vowels
+  #   digest: sha256:7def5bb4aa3843a5daf5d6078f1e8540e5ef10b035a9d9387e9bd5156d2b2565
+  # - url: https://raw.githubusercontent.com/extism/extism/main/wasm/code.wasm
+  #   name: count some vowels
+  #   digest: sha256:7def5bb4aa3843a5daf5d6078f1e8540e5ef10b035a9d9387e9bd5156d2b2565
+  # - url: https://raw.githubusercontent.com/extism/extism/main/wasm/code.wasm
+  #   name: count some vowels
+  #   digest: sha256:7def5bb4aa3843a5daf5d6078f1e8540e5ef10b035a9d9387e9bd5156d2b2565
+  # - url: https://raw.githubusercontent.com/extism/extism/main/wasm/code.wasm
+  #   name: count some vowels
+  #   digest: sha256:7def5bb4aa3843a5daf5d6078f1e8540e5ef10b035a9d9387e9bd5156d2b2565
+    # serial:
+    #   - file: test/spidermonkey.wasm
+    #     name: (nested) Run spidermonkey
+    #     wasi: true
+    #   - url: https://raw.githubusercontent.com/extism/extism/main/wasm/code.wasm
+    #     name: count some vowels
+    #     digest: sha256:a1c8f57a818056e32677f2499f90520b9f1fb41dacd0bf06f76053b40b5ea04f
+    #     serial:
+    #       - file: test/spidermonkey.wasm
+    #         name: (nested nested) Run spidermonkey
+    #         config:
+    #           API_URL: https://example.com
+    #         wasi:
+    #           allowed_hosts: ["example.com", "github.com"] 
+    #           allowed_paths: 
+    #             .: /
+    #             ./test: ./test-files

@@ -1,4 +1,5 @@
 syntax = "proto3";
+package modsurfer.v1;
 
 import "google/protobuf/timestamp.proto";
 
@@ -244,4 +245,44 @@ message AuditModulesResponse {
   // `modules`).
   uint64 total = 3;
   optional Error error = 4;
+}
+
+/*
+  Modsurfer CLI Plug-in Definitions
+*/
+
+// classifies a validation failure as a particular kind
+enum Classification {
+  UNKNOWN = 0;
+  ABI_COMPATIBILITY = 1;
+  RESOURCE_LIMIT = 2;
+  SECURITY = 3;
+}
+
+// provides context around the validation failure, used in the Report
+message FailureDetail {
+  string actual = 1;
+  string expected = 2;
+  uint32 severity = 3;
+  Classification classification = 4;
+}
+
+// k/v pair of the dot-separated path to validation field and expectation info, plus any info
+// provided by plugins executed after built-in validation
+message Report {
+  map<string, FailureDetail> fails = 1;
+}
+
+// input provided to a plugin when it is executed, possibly after another plugin, who would update
+// the report and provide it to the currently running plugin via this value
+message PluginInput {
+  Report report = 1;
+  Module module = 2;
+  bytes wasm = 3;
+}
+
+// output returned from a plugin after it's executed, containing failures which are added to the 
+// parent context Report, which will be provided to the plugin's serial nested Report
+message PluginOutput {
+  repeated FailureDetail failures = 1;
 }

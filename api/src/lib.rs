@@ -14,8 +14,8 @@ pub use mock_client::Client;
 #[cfg(not(feature = "mock"))]
 pub use client::Client;
 
-pub use interop::{List, Persisted};
 pub use client::{SortDirection, SortField};
+pub use interop::{List, Persisted};
 
 pub use anyhow::Result;
 use async_trait::async_trait;
