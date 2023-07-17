@@ -1589,6 +1589,7 @@ version = "0.1.0"
 dependencies = [
  "cpp_demangle 0.4.1",
  "rustc-demangle",
+ "wasm-bindgen",
 ]
 
 [[package]]
