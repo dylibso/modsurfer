@@ -13,10 +13,10 @@ pub fn demangle_function_name(name: impl Into<String>) -> String {
     name
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "web"))]
 use wasm_bindgen::prelude::*;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "web"))]
 #[wasm_bindgen]
 pub fn demangle(name: String) -> String {
     demangle_function_name(name)

@@ -1,9 +1,11 @@
 #![allow(unused)]
 use std::io::Write;
+use std::ops::Sub;
+use std::path::Path;
 use std::process::ExitCode;
 use std::{collections::HashMap, ffi::OsString, path::PathBuf};
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use human_bytes::human_bytes;
 use modsurfer_api::{ApiClient, Client, Persisted};
 use modsurfer_convert::{Audit, AuditOutcome, Pagination};
@@ -27,6 +29,57 @@ pub type ModuleFile = PathBuf;
 pub type CheckFile = PathBuf;
 pub type MetadataEntry = String;
 pub type WithContext = bool;
+pub type Identifier = String;
+pub type PluginName = String;
+pub type OutputFile = PathBuf;
+
+#[derive(Clone, Debug)]
+pub enum BytesOrPath {
+    Bytes(Vec<u8>),
+    Path(PathBuf),
+}
+
+impl BytesOrPath {
+    fn from(s: &str) -> Self {
+        if s.to_owned().starts_with("@") {
+            let path = s.chars().skip(1).take(s.len() - 1).collect::<String>();
+            return BytesOrPath::Path(PathBuf::from(path));
+        }
+        BytesOrPath::Bytes(s.as_bytes().to_vec())
+    }
+
+    async fn resolve(&self) -> Result<Vec<u8>, anyhow::Error> {
+        match self {
+            BytesOrPath::Bytes(v) => Ok(v.to_vec()),
+            BytesOrPath::Path(v) => {
+                let data = tokio::fs::read(Path::new(&v)).await?;
+                return Ok(data);
+            }
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum PathOrUrl {
+    Path(PathBuf),
+    Url(url::Url),
+}
+
+impl PathOrUrl {
+    fn from(s: &str) -> Self {
+        match url::Url::parse(s) {
+            Ok(v) => PathOrUrl::Url(v),
+            Err(_) => PathOrUrl::Path(PathBuf::from(s)),
+        }
+    }
+
+    async fn resolve(&self) -> Result<Vec<u8>, anyhow::Error> {
+        match self {
+            PathOrUrl::Path(v) => Ok(tokio::fs::read(v).await?),
+            PathOrUrl::Url(v) => Ok(reqwest::get(v.as_str()).await?.bytes().await?.to_vec()),
+        }
+    }
+}
 
 #[derive(Debug)]
 pub struct Cli {
@@ -119,6 +172,14 @@ pub enum Subcommand<'a> {
     Yank(Id, Version, &'a OutputFormat),
     Audit(CheckFile, AuditOutcome, Offset, Limit, &'a OutputFormat),
     Diff(IdOrFilename, IdOrFilename, WithContext),
+    CallPlugin(
+        Identifier,
+        FunctionName,
+        BytesOrPath,
+        Option<&'a OutputFile>,
+    ),
+    InstallPlugin(Identifier, Option<&'a PluginName>, PathOrUrl),
+    UninstallPlugin(Identifier),
 }
 
 impl Cli {
@@ -350,6 +411,41 @@ impl Cli {
                 print!("{}", diff);
                 Ok(ExitCode::SUCCESS)
             }
+            Subcommand::CallPlugin(identifier, function, input_arg, output) => {
+                let input = input_arg.resolve().await?;
+
+                let client = Client::new(self.host.as_str())?;
+                let res = client.call_plugin(identifier, function, input).await?;
+
+                if let Some(output) = output {
+                    tokio::fs::write(output, res).await?;
+                } else {
+                    std::io::stdout().write_all(&res);
+                }
+
+                Ok(ExitCode::SUCCESS)
+            }
+            Subcommand::InstallPlugin(identifier, name, wasm) => {
+                let location = match &wasm {
+                    PathOrUrl::Path(v) => v.to_str().unwrap_or_else(|| ""),
+                    PathOrUrl::Url(v) => v.as_str(),
+                }
+                .to_string();
+                let name = name.cloned();
+                let wasm = wasm.resolve().await?;
+
+                let client = Client::new(self.host.as_str())?;
+                let res = client
+                    .install_plugin(identifier, name, location, wasm)
+                    .await?;
+
+                Ok(ExitCode::SUCCESS)
+            }
+            Subcommand::UninstallPlugin(identifier) => {
+                let client = Client::new(self.host.as_str())?;
+                let res = client.uninstall_plugin(identifier).await?;
+                Ok(ExitCode::SUCCESS)
+            }
         }
     }
 }
@@ -501,6 +597,40 @@ impl<'a> From<(&'a str, &'a clap::ArgMatches)> for Subcommand<'a> {
                     with_context,
                 )
             }
+            ("plugin", args) => match args.subcommand() {
+                Some(("call", args)) => {
+                    let identifier = args
+                        .get_one::<Identifier>("identifier")
+                        .expect("identifier is required");
+                    let function_name = args
+                        .get_one::<FunctionName>("function")
+                        .expect("function is required");
+                    let input = args.get_one::<String>("input").expect("input is required");
+                    let output = args.get_one::<OutputFile>("output");
+
+                    Subcommand::CallPlugin(
+                        identifier.to_string(),
+                        function_name.to_string(),
+                        BytesOrPath::from(input),
+                        output,
+                    )
+                }
+                Some(("install", args)) => {
+                    let identifier = args
+                        .get_one::<Identifier>("identifier")
+                        .expect("identifier is required");
+                    let name = args.get_one::<PluginName>("name");
+                    let wasm = args.get_one::<String>("wasm").expect("wasm is required");
+                    Subcommand::InstallPlugin(identifier.to_string(), name, PathOrUrl::from(wasm))
+                }
+                Some(("uninstall", args)) => {
+                    let identifier = args
+                        .get_one::<Identifier>("identifier")
+                        .expect("identifier is required");
+                    Subcommand::UninstallPlugin(identifier.to_string())
+                }
+                _ => Subcommand::Unknown,
+            },
             _ => Subcommand::Unknown,
         }
     }

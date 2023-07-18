@@ -300,3 +300,40 @@ message GetModuleGraphResponse {
   ModuleGraph module_graph = 1;
   optional Error error = 2;
 }
+
+// PUT /api/v1/plugin:
+message InstallPluginRequest {
+  string identifier = 1;
+  optional string name = 2;
+  string location = 3;
+  bytes wasm = 4;
+  // bytes config = 5;
+}
+
+message InstallPluginResponse { 
+  string hash = 1;
+  optional Error error = 2;
+}
+
+// DELETE /api/v1/plugin:
+message UninstallPluginRequest {
+  string identifier = 1;
+}
+
+message UninstallPluginResponse { 
+  optional Error error = 1;
+}
+
+// POST /api/v1/plugin:
+message CallPluginRequest {
+  string identifier = 1; 
+  string function_name = 2;
+  bytes input = 3;
+  optional string hash = 4;
+  // bytes config = 5;
+}
+
+message CallPluginResponse {
+  bytes output = 1;
+  optional Error error = 2;
+}

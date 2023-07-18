@@ -259,9 +259,72 @@ fn make_subcommands() -> Vec<Command> {
         .arg(Arg::new("module1").help("first module ID or path to .wasm"))
         .arg(Arg::new("module2").help("second module ID or path to .wasm"));
 
+    let call_plugin = clap::Command::new("call")
+        .about("Call a Modsurfer plugin.")
+        .arg(
+            Arg::new("identifier")
+                .long("id")
+                .help("the identifier of the registered plugin"),
+        )
+        .arg(
+            Arg::new("function")
+                .long("function")
+                .short('f')
+                .help("the function to be called"),
+        )
+        .arg(
+            Arg::new("input")
+                .long("input")
+                .short('i')
+                .help("use @{path_to_file} to specify a file as input to your plugin's function. Otherwise, the value provided will used as input to your function as raw bytes"),
+        )
+        .arg(
+            Arg::new("output")
+                .value_parser(clap::value_parser!(PathBuf))
+                .long("output")
+                .short('o')
+                .help("a location on disk to write the output.  The output of the call will be written to stdout if not specified"),
+        );
+
+    // TODO: allow specification of plugin "config"
+    let install_plugin =
+        clap::Command::new("install")
+            .about("Install a Modsurfer plugin to a given `identifier`. Any subsequent installs for a given `identifier` will overwrite the plugin at that `identifier` with the data provided on the command.")
+            .arg(
+                Arg::new("identifier")
+                    .long("id")
+                    .help("the identifier of the plugin to be installed"),
+            )
+            .arg(
+                Arg::new("name")
+                    .required(false)
+                    .long("name")
+                    .short('n')
+                    .help("the human readable name of the plugin"),
+            )
+            .arg(Arg::new("wasm").long("wasm").short('w').help(
+                "a path on disk or a remote URL to the wasm you'd like to install as a plugin",
+            ));
+
+    let uninstall_plugin = clap::Command::new("uninstall")
+        .about("Uninstall a Modsurfer plugin.")
+        .arg(
+            Arg::new("identifier")
+                .long("id")
+                .help("the identifier of the plugin to uninstall"),
+        );
+
+    let plugin = clap::Command::new("plugin")
+        .about("Manage and invoke your Modsurfer plugins")
+        .subcommand(call_plugin)
+        .subcommand(install_plugin)
+        .subcommand(uninstall_plugin);
+
+    // This collection of commands should be exclusive to ones whose output can be formatted based on the --output-format arg, either `table` (default) or `json`.
+    // If the command does not reliably support this kind of formatting, put the command within the "chained" vec below.
     [create, delete, get, list, search, validate, yank, audit]
         .into_iter()
         .map(add_output_arg)
-        .chain(vec![generate, diff])
+        .chain(vec![generate, diff, plugin])
         .collect()
 }
