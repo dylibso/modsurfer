@@ -6,8 +6,8 @@ use std::{collections::BTreeMap, fmt::Display, process::ExitCode};
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
-use extism::{Context, Plugin};
-
+use extism::Plugin;
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 use modsurfer_convert::from_api;
 
 use anyhow::Result;
@@ -461,6 +461,10 @@ impl Display for Exist {
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 pub struct Module {}
 
+extism::typed_plugin!(ModsurferParser {
+    parse_module(&[u8]) -> Protobuf<modsurfer_proto_v1::api::Module>;
+});
+
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 impl Module {
     // NOTE: this function executes WebAssembly code as a plugin managed by Extism (https://extism.org)
@@ -478,10 +482,9 @@ impl Module {
     // the host context (the `wasm`), and collects parsed information into the `Module` which is
     // returned as a protobuf-encoded struct.
     pub fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer_module::Module> {
-        let ctx = Context::new();
-        let mut plugin = Plugin::new(&ctx, modsurfer_plugins::MODSURFER_WASM, [], false)?;
-        let data = plugin.call("parse_module", wasm)?;
-        let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
+        let mut plugin: ModsurferParser =
+            Plugin::new(modsurfer_plugins::MODSURFER_WASM, [], false)?.into();
+        let Protobuf(a) = plugin.parse_module(wasm.as_ref())?;
         let metadata = if a.metadata.is_empty() {
             None
         } else {
@@ -551,7 +554,7 @@ pub fn validate(validation: Validation, module: modsurfer_module::Module) -> Res
             .collect::<std::collections::BTreeMap<_, _>>();
         let import_func_types = actual_import_module_func_types
             .iter()
-            .map(|((_, k), ty)| (*k, ty.clone()))
+            .map(|((_, k), ty)| (*k, *ty))
             .collect::<BTreeMap<_, _>>();
 
         let import_module_names = module.get_import_namespaces();
@@ -951,4 +954,22 @@ pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validatio
     validation.validate.complexity = Some(complexity);
 
     Ok(validation)
+}
+
+use extism::convert::{Error, FromBytesOwned, ToBytes};
+
+pub struct Protobuf<T: protobuf::Message>(pub T);
+
+impl<'a, T: protobuf::Message> ToBytes<'a> for Protobuf<T> {
+    type Bytes = Vec<u8>;
+
+    fn to_bytes(&self) -> Result<Self::Bytes, Error> {
+        Ok(self.0.write_to_bytes()?)
+    }
+}
+
+impl<'a, T: Default + protobuf::Message> FromBytesOwned for Protobuf<T> {
+    fn from_bytes_owned(data: &[u8]) -> Result<Self, Error> {
+        Ok(Protobuf(T::parse_from_bytes(data)?))
+    }
 }
