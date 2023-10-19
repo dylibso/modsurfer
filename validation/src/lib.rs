@@ -952,3 +952,84 @@ pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validatio
 
     Ok(validation)
 }
+
+pub fn generate_checkfile_from_proto(
+    module: &modsurfer_proto_v1::api::Module,
+) -> Result<Validation> {
+    let mut validation = Validation::default();
+
+    let namespaces: Vec<&str> = module
+        .imports
+        .iter()
+        .fold(std::collections::HashSet::new(), |mut acc, import| {
+            acc.insert(import.module_name.as_str());
+            acc
+        })
+        .into_iter()
+        .collect();
+
+    // allow_wasi
+    if namespaces.contains(&"wasi_snapshot_preview1") {
+        validation.validate.allow_wasi = Some(true);
+    }
+
+    // imports (add all to include + namespace)
+    let mut imports = Imports::default();
+    let mut include_imports = vec![];
+    let mod_imports = modsurfer_convert::from_api::imports(module.imports.clone());
+    mod_imports.iter().for_each(|imp| {
+        include_imports.push(ImportItem::Item {
+            namespace: Some(imp.module_name.clone()),
+            name: imp.func.name.clone(),
+            params: Some(imp.func.ty.params.clone()),
+            results: Some(imp.func.ty.results.clone()),
+        });
+    });
+    imports.include = Some(include_imports);
+
+    // imports.namespace (add all to imports)
+    let mut namespace = Namespace::default();
+    namespace.include = Some(
+        namespaces
+            .iter()
+            .map(|name| NamespaceItem::Name(name.to_string()))
+            .collect::<Vec<_>>(),
+    );
+    if !namespaces.is_empty() {
+        imports.namespace = Some(namespace);
+    }
+
+    // exports (add all exports)
+    let mut exports = Exports::default();
+    let mut include_exports = vec![];
+    let mod_exports = modsurfer_convert::from_api::exports(module.exports.clone());
+    mod_exports.iter().for_each(|exp| {
+        include_exports.push(FunctionItem::Item {
+            name: exp.func.name.clone(),
+            params: Some(exp.func.ty.params.clone()),
+            results: Some(exp.func.ty.results.clone()),
+            hash: module.function_hashes.get(&exp.func.name).cloned(),
+        });
+    });
+    let export_count = include_exports.len();
+    exports.include = Some(include_exports);
+
+    // exports.max (match number of exports)
+    exports.max = Some(export_count as u32);
+
+    // size.max (use size from module)
+    let mut size = Size::default();
+    size.max = Some(human_bytes(module.size as f64));
+
+    // complexity.max_risk (use complexity)
+    let mut complexity = Complexity::default();
+    complexity.max_risk = Some(RiskLevel::from(module.complexity.unwrap_or_default()));
+
+    validation.validate.url = None;
+    validation.validate.imports = Some(imports);
+    validation.validate.exports = Some(exports);
+    validation.validate.size = Some(size);
+    validation.validate.complexity = Some(complexity);
+
+    Ok(validation)
+}
