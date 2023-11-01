@@ -952,10 +952,3 @@ pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validatio
 
     Ok(validation)
 }
-
-pub fn generate_checkfile_from_proto(
-    module: &modsurfer_proto_v1::api::Module,
-) -> Result<Validation> {
-    let validation = generate_checkfile(&(from_api::module(&module)))?;
-    Ok(validation)
-}
