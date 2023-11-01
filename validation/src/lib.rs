@@ -7,7 +7,7 @@ use std::{collections::BTreeMap, fmt::Display, process::ExitCode};
 use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 use extism::{Context, Plugin};
-#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+
 use modsurfer_convert::from_api;
 
 use anyhow::Result;
