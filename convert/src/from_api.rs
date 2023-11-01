@@ -3,6 +3,9 @@ use crate::*;
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 use crate::types::Audit;
 
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+use chrono::offset::TimeZone;
+
 use modsurfer_module::{Export, Function, FunctionType, Import, ValType};
 
 pub fn source_language(src: api::SourceLanguage) -> SourceLanguage {
@@ -103,18 +106,13 @@ pub fn module(module: &modsurfer_proto_v1::api::Module) -> modsurfer_module::Mod
         complexity: module.complexity,
         graph: module.graph.clone(),
         function_hashes: module.function_hashes.clone(),
-        ..Default::default()
+        #[cfg(not(target_arch = "wasm32"))]
+        inserted_at: chrono::DateTime::from(
+            chrono::Utc.timestamp_nanos(module.inserted_at.nanos as i64),
+        ),
+        #[cfg(target_arch = "wasm32")]
+        inserted_at: module.inserted_at.nanos as u64,
     };
-
-    // TODO: figure out how to do this
-    // if cfg!(not(target_arch = "wasm32")) {
-    //     use chrono::{TimeZone, Utc};
-
-    //     modsurfer_module.inserted_at =
-    //         chrono::DateTime::from(Utc.timestamp_nanos(module.inserted_at.nanos as i64));
-    // } else {
-    //     modsurfer_module.inserted_at = module.inserted_at.nanos as u64;
-    // }
 
     return modsurfer_module.clone();
 }
