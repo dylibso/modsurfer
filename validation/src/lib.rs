@@ -461,10 +461,6 @@ impl Display for Exist {
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 pub struct Module {}
 
-extism::typed_plugin!(ModsurferParser {
-    parse_module(&[u8]) -> Protobuf<modsurfer_proto_v1::api::Module>;
-});
-
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 impl Module {
     // NOTE: this function executes WebAssembly code as a plugin managed by Extism (https://extism.org)
@@ -482,9 +478,9 @@ impl Module {
     // the host context (the `wasm`), and collects parsed information into the `Module` which is
     // returned as a protobuf-encoded struct.
     pub fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer_module::Module> {
-        let mut plugin: ModsurferParser =
-            Plugin::new(modsurfer_plugins::MODSURFER_WASM, [], false)?.into();
-        let Protobuf(a) = plugin.parse_module(wasm.as_ref())?;
+        let mut plugin = Plugin::new(modsurfer_plugins::MODSURFER_WASM, [], false)?;
+        let Protobuf(a): Protobuf<modsurfer_proto_v1::api::Module> =
+            plugin.call("parse_module", wasm.as_ref())?;
         let metadata = if a.metadata.is_empty() {
             None
         } else {

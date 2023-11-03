@@ -24,7 +24,8 @@ similar = "2.2.1"
 colored = { workspace = true }
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
-extism = "0.5.4"
+extism = { git = "https://github.com/extism/extism", branch = "main" }
+extism-convert = "0.2.0"
 getrandom = { version = "*", features = ["js"] }
 tokio = { workspace = true }
 modsurfer-plugins = { workspace = true }
