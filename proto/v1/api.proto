@@ -12,6 +12,34 @@ enum ValType {
   V128 = 4;
   FuncRef = 5;
   ExternRef = 6;
+
+  // begin component valtypes
+  /// The type is a boolean.
+  Bool = 7;
+  /// The type is a signed 8-bit integer.
+  S8 = 8;
+  /// The type is an unsigned 8-bit integer.
+  U8 = 9;
+  /// The type is a signed 16-bit integer.
+  S16 = 10;
+  /// The type is an unsigned 16-bit integer.
+  U16 = 11;
+  /// The type is a signed 32-bit integer.
+  S32 = 12;
+  /// The type is an unsigned 32-bit integer.
+  U32 = 13;
+  /// The type is a signed 64-bit integer.
+  S64 = 14;
+  /// The type is an unsigned 64-bit integer.
+  U64 = 15;
+  /// The type is a 32-bit floating point number.
+  Float32 = 16;
+  /// The type is a 64-bit floating point number.
+  Float64 = 17;
+  /// The type is a Unicode character.
+  Char = 18;
+  /// The type is a string.
+  String = 19;
 }
 
 // Contained by an import or export element within a wasm binary.
@@ -40,6 +68,24 @@ enum SourceLanguage {
   C = 3;
   Cpp = 4;
   AssemblyScript = 5;
+}
+
+message Wasm {
+  int64 id = 1;
+  string hash = 2;
+  repeated Component component = 3;
+  repeated Module module = 4;
+  uint64 size = 5;
+}
+
+message Component {
+  int64 id = 1;
+  string hash = 2;
+  repeated Component components = 3;
+  repeated Module modules = 4;
+  uint64 size = 5;
+  repeated Import imports = 6;
+  repeated Export exports = 7;
 }
 
 // Details about a wasm module, either extracted directly from the binary, or

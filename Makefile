@@ -12,7 +12,7 @@ unknown-cli:
 
 install:
 	@echo "check PROTOC: `which protoc`"
-	cargo install protobuf-codegen
+	cargo install protobuf-codegen@3.2.0
 
 generate: install
 	protoc --experimental_allow_proto3_optional --rust_out=proto/v1/src proto/v1/api.proto

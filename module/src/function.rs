@@ -27,6 +27,34 @@ pub enum ValType {
     FuncRef,
     /// The value type is an extern reference.
     ExternRef,
+    /// The type is a boolean.
+
+    /// begin component types
+    Bool,
+    /// The type is a signed 8-bit integer.
+    S8,
+    /// The type is an unsigned 8-bit integer.
+    U8,
+    /// The type is a signed 16-bit integer.
+    S16,
+    /// The type is an unsigned 16-bit integer.
+    U16,
+    /// The type is a signed 32-bit integer.
+    S32,
+    /// The type is an unsigned 32-bit integer.
+    U32,
+    /// The type is a signed 64-bit integer.
+    S64,
+    /// The type is an unsigned 64-bit integer.
+    U64,
+    /// The type is a 32-bit floating point number.
+    Float32,
+    /// The type is a 64-bit floating point number.
+    Float64,
+    /// The type is a Unicode character.
+    Char,
+    /// The type is a string.
+    String,
 }
 
 impl ValType {
@@ -66,6 +94,8 @@ impl From<ValType> for wasmparser::ValType {
             ValType::V128 => V::V128,
             ValType::FuncRef => V::FUNCREF,
             ValType::ExternRef => V::EXTERNREF,
+            // the remainder of the types are only applicable for components
+            _ => V::EXTERNREF, // todo: handle this better
         }
     }
 }

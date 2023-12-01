@@ -34,6 +34,19 @@ pub fn val_type(v: api::ValType) -> ValType {
         api::ValType::V128 => ValType::V128,
         api::ValType::FuncRef => ValType::FuncRef,
         api::ValType::ExternRef => ValType::ExternRef,
+        api::ValType::Bool => ValType::ExternRef,
+        api::ValType::S8 => ValType::ExternRef,
+        api::ValType::U8 => ValType::ExternRef,
+        api::ValType::S16 => ValType::ExternRef,
+        api::ValType::U16 => ValType::ExternRef,
+        api::ValType::S32 => ValType::ExternRef,
+        api::ValType::U32 => ValType::ExternRef,
+        api::ValType::S64 => ValType::ExternRef,
+        api::ValType::U64 => ValType::ExternRef,
+        api::ValType::Float32 => ValType::ExternRef,
+        api::ValType::Float64 => ValType::ExternRef,
+        api::ValType::Char => ValType::ExternRef,
+        api::ValType::String => ValType::ExternRef,
     }
 }
 

@@ -28,6 +28,8 @@ pub fn val_type(v: ValType) -> api::ValType {
         ValType::V128 => api::ValType::V128,
         ValType::FuncRef => api::ValType::FuncRef,
         ValType::ExternRef => api::ValType::ExternRef,
+        // the remainder of the types are only applicable for components
+        _ => api::ValType::ExternRef, // todo: handle this better
     }
 }
 
