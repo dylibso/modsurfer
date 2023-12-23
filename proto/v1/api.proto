@@ -40,6 +40,10 @@ enum SourceLanguage {
   C = 3;
   Cpp = 4;
   AssemblyScript = 5;
+  Swift = 6;
+  JavaScript = 7;
+  Haskell = 8;
+  Zig = 9;
 }
 
 // Details about a wasm module, either extracted directly from the binary, or
