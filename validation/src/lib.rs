@@ -1,3 +1,5 @@
+#![allow(suspicious_double_ref_op)]
+
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 use std::path::PathBuf;
 
