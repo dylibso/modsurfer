@@ -1,5 +1,6 @@
 [workspace]
 members = ["api", "cli", "demangle", "module", "plugins", "proto/v1", "validation"]
+resolver = "2"
 
 [workspace.dependencies]
 anyhow = "1"

@@ -3,6 +3,7 @@ use std::ffi::OsString;
 /// Detected from the `producers` section in the wasm binary, or from other implicit values within
 /// the wasm binary.
 /// See more: <https://github.com/WebAssembly/tool-conventions/blob/main/ProducersSection.md>
+#[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum SourceLanguage {
     Unknown,
@@ -11,6 +12,10 @@ pub enum SourceLanguage {
     C,
     Cpp,
     AssemblyScript,
+    Swift,
+    JavaScript,
+    Haskell,
+    Zig,
 }
 
 impl From<String> for SourceLanguage {
@@ -21,6 +26,10 @@ impl From<String> for SourceLanguage {
             "C" => SourceLanguage::C,
             "C++" => SourceLanguage::Cpp,
             "AssemblyScript" => SourceLanguage::AssemblyScript,
+            "Swift" => SourceLanguage::Swift,
+            "JavaScript" => SourceLanguage::JavaScript,
+            "Haskell" => SourceLanguage::Haskell,
+            "Zig" => SourceLanguage::Zig,
             _ => SourceLanguage::Unknown,
         }
     }
@@ -42,6 +51,10 @@ impl std::fmt::Display for SourceLanguage {
             SourceLanguage::C => "C",
             SourceLanguage::Cpp => "C++",
             SourceLanguage::AssemblyScript => "AssemblyScript",
+            SourceLanguage::Swift => "Swift",
+            SourceLanguage::JavaScript => "JavaScript",
+            SourceLanguage::Haskell => "Haskell",
+            SourceLanguage::Zig => "Zig",
         };
 
         f.write_str(s)

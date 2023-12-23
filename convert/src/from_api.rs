@@ -16,6 +16,10 @@ pub fn source_language(src: api::SourceLanguage) -> SourceLanguage {
         api::SourceLanguage::Cpp => SourceLanguage::Cpp,
         api::SourceLanguage::Go => SourceLanguage::Go,
         api::SourceLanguage::Rust => SourceLanguage::Rust,
+        api::SourceLanguage::Swift => SourceLanguage::Swift,
+        api::SourceLanguage::JavaScript => SourceLanguage::JavaScript,
+        api::SourceLanguage::Haskell => SourceLanguage::Haskell,
+        api::SourceLanguage::Zig => SourceLanguage::Zig,
     }
 }
 
