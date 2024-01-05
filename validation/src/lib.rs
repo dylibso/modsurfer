@@ -8,6 +8,8 @@ use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, 
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 use extism::Plugin;
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+use extism_convert::Protobuf;
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 use modsurfer_convert::from_api;
 
 use anyhow::Result;
@@ -950,22 +952,4 @@ pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validatio
     validation.validate.complexity = Some(complexity);
 
     Ok(validation)
-}
-
-use extism::convert::{Error, FromBytesOwned, ToBytes};
-
-pub struct Protobuf<T: protobuf::Message>(pub T);
-
-impl<'a, T: protobuf::Message> ToBytes<'a> for Protobuf<T> {
-    type Bytes = Vec<u8>;
-
-    fn to_bytes(&self) -> Result<Self::Bytes, Error> {
-        Ok(self.0.write_to_bytes()?)
-    }
-}
-
-impl<'a, T: Default + protobuf::Message> FromBytesOwned for Protobuf<T> {
-    fn from_bytes_owned(data: &[u8]) -> Result<Self, Error> {
-        Ok(Protobuf(T::parse_from_bytes(data)?))
-    }
 }

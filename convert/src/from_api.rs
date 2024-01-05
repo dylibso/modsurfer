@@ -130,13 +130,13 @@ pub fn search(mut req: api::SearchModulesRequest) -> Search {
         function_name: req.function_name,
         module_name: req.module_name,
         inserted_after: req.inserted_after.as_ref().and_then(|x| {
-            Some(chrono::DateTime::<chrono::Utc>::from_utc(
+            Some(chrono::DateTime::from_naive_utc_and_offset(
                 chrono::NaiveDateTime::from_timestamp_opt(x.seconds, x.nanos as u32)?,
                 chrono::Utc,
             ))
         }),
         inserted_before: req.inserted_before.as_ref().and_then(|x| {
-            Some(chrono::DateTime::<chrono::Utc>::from_utc(
+            Some(chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(
                 chrono::NaiveDateTime::from_timestamp_opt(x.seconds, x.nanos as u32)?,
                 chrono::Utc,
             ))
