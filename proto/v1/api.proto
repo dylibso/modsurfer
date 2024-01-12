@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "./modsurferpb";
+
 import "google/protobuf/timestamp.proto";
 
 // Used to type the arguments and return types from wasm elements such as import
