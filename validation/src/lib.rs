@@ -8,9 +8,12 @@ use std::{collections::BTreeMap, fmt::Display, process::ExitCode};
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 use comfy_table::{modifiers::UTF8_SOLID_INNER_BORDERS, presets::UTF8_FULL, Row, Table};
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
-use extism::{Context, Plugin};
+use extism::Plugin;
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+use extism_convert::Protobuf;
 
 use modsurfer_convert::from_api;
+use modsurfer_proto_v1::api::Module as ApiModule;
 
 use anyhow::Result;
 use human_bytes::human_bytes;
@@ -463,6 +466,13 @@ impl Display for Exist {
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 pub struct Module {}
 
+// this uses Extism's "typed plugin" macro to produce a new struct `ModuleParser`, which contains
+// an associated function `parse_module`. This enables us to wrap the extism::Plugin type and feel
+// more like regular Rust functions vs. the using the generalized `Plugin::call` function.
+extism::typed_plugin!(ModuleParser {
+    parse_module(&[u8]) -> Protobuf<ApiModule>;
+});
+
 #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 impl Module {
     // NOTE: this function executes WebAssembly code as a plugin managed by Extism (https://extism.org)
@@ -480,34 +490,35 @@ impl Module {
     // the host context (the `wasm`), and collects parsed information into the `Module` which is
     // returned as a protobuf-encoded struct.
     pub fn parse(wasm: impl AsRef<[u8]>) -> Result<modsurfer_module::Module> {
-        let ctx = Context::new();
-        let mut plugin = Plugin::new(&ctx, modsurfer_plugins::MODSURFER_WASM, [], false)?;
-        let data = plugin.call("parse_module", wasm)?;
-        let a: modsurfer_proto_v1::api::Module = protobuf::Message::parse_from_bytes(&data)?;
-        let metadata = if a.metadata.is_empty() {
+        let mut plugin: ModuleParser =
+            Plugin::new(modsurfer_plugins::MODSURFER_WASM, [], false)?.try_into()?;
+        let Protobuf(data) = plugin.parse_module(wasm.as_ref())?;
+        let metadata = if data.metadata.is_empty() {
             None
         } else {
-            Some(a.metadata)
+            Some(data.metadata)
         };
 
-        let inserted_at: std::time::SystemTime = a
+        let inserted_at: std::time::SystemTime = data
             .inserted_at
             .unwrap_or_else(|| protobuf::well_known_types::timestamp::Timestamp::new())
             .into();
 
         let module = modsurfer_module::Module {
-            hash: a.hash,
-            imports: from_api::imports(a.imports),
-            exports: from_api::exports(a.exports),
-            size: a.size as u64,
-            location: a.location,
-            source_language: from_api::source_language(a.source_language.enum_value_or_default()),
+            hash: data.hash,
+            imports: from_api::imports(data.imports),
+            exports: from_api::exports(data.exports),
+            size: data.size as u64,
+            location: data.location,
+            source_language: from_api::source_language(
+                data.source_language.enum_value_or_default(),
+            ),
             metadata,
             inserted_at: inserted_at.into(),
-            strings: a.strings,
-            complexity: a.complexity,
-            graph: a.graph,
-            function_hashes: a.function_hashes,
+            strings: data.strings,
+            complexity: data.complexity,
+            graph: data.graph,
+            function_hashes: data.function_hashes,
         };
 
         Ok(module)
