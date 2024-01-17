@@ -19,7 +19,13 @@ generate: install
 	protoc --experimental_allow_proto3_optional \
 		--rust_out=proto/v1/src \
 		--go_out=proto/v1/go \
+		--php_out=proto/v1/php \
 		proto/v1/api.proto
+
+generate-php: install
+	protoc --experimental_allow_proto3_optional \
+		--php_out=proto/v1/php \
+		proto/v1/module-no-option.proto
 
 generate-web-list-mods-response:
 	cd scripts/protobuf-list-modules-response && cargo run --release -- $(take)
