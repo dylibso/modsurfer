@@ -951,7 +951,9 @@ pub fn generate_checkfile(module: &modsurfer_module::Module) -> Result<Validatio
 
     // size.max (use size from module)
     let mut size = Size::default();
-    size.max = Some(human_bytes(module.size as f64));
+    // add 10% padded size to max.size (ref: https://github.com/dylibso/modsurfer/issues/71)
+    let padded_size = module.size as f64 * 1.1;
+    size.max = Some(human_bytes(padded_size));
 
     // complexity.max_risk (use complexity)
     let mut complexity = Complexity::default();
