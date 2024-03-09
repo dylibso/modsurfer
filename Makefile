@@ -13,7 +13,7 @@ unknown-cli:
 install:
 	@echo "check PROTOC: `which protoc`"
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.32.0
-	cargo install protobuf-codegen@3.2.0
+	cargo install protobuf-codegen@3.4.0
 
 generate: install
 	protoc --experimental_allow_proto3_optional \
