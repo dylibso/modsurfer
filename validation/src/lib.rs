@@ -469,6 +469,7 @@ pub struct Module {}
 // this uses Extism's "typed plugin" macro to produce a new struct `ModuleParser`, which contains
 // an associated function `parse_module`. This enables us to wrap the extism::Plugin type and feel
 // more like regular Rust functions vs. the using the generalized `Plugin::call` function.
+#[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
 extism::typed_plugin!(ModuleParser {
     parse_module(&[u8]) -> Protobuf<ApiModule>;
 });
