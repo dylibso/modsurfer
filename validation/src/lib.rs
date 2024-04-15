@@ -297,16 +297,16 @@ impl Display for Classification {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FailureDetail {
-    actual: String,
-    expected: String,
-    severity: usize,
-    classification: Classification,
+    pub actual: String,
+    pub expected: String,
+    pub severity: usize,
+    pub classification: Classification,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Report {
     /// k/v pair of the dot-separated path to validation field and expectation info
-    fails: BTreeMap<String, FailureDetail>,
+    pub fails: BTreeMap<String, FailureDetail>,
 }
 
 impl Report {
